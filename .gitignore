@@ -1,0 +1,43 @@
+# =============================================================================
+# 10xDevs / 10x-cli — course tooling only (NOT project artifacts)
+# Project docs in context/ and app source ARE committed.
+# =============================================================================
+
+# 10x-cli manifest (lesson install tracking)
+.claude/.10x-cli-manifest.json
+.cursor/.10x-cli-manifest.json
+.agents/.10x-cli-manifest.json
+.github/.10x-cli-manifest.json
+.ai/.10x-cli-manifest.json
+
+# 10x course skills (all AI tool profiles)
+.claude/skills/10x-*/
+.cursor/skills/10x-*/
+.agents/skills/10x-*/
+.github/skills/10x-*/
+.ai/skills/10x-*/
+
+# 10x course prompts & config templates
+.claude/prompts/10x-*
+.cursor/prompts/10x-*
+.agents/prompts/10x-*
+.github/prompts/10x-*
+.ai/prompts/10x-*
+
+.claude/config-templates/
+.cursor/config-templates/
+.agents/config-templates/
+.github/config-templates/
+.ai/config-templates/
+
+# 10x-managed course rules (sentinel blocks from 10x-cli)
+CLAUDE.md
+AGENTS.md
+.cursor/rules/10x-course.mdc
+.github/copilot-instructions.md
+
+# Skill lock file (tracks course skill versions from przeprogramowani/10x-cli)
+skills-lock.json
+
+# Bootstrapper temp directory
+.bootstrap-scaffold/
