@@ -61,6 +61,7 @@ next-env.d.ts
 .ai/skills/10x-*/
 
 # 10x course prompts & config templates
+.claude/prompts
 .claude/prompts/10x-*
 .cursor/prompts/10x-*
 .agents/prompts/10x-*
