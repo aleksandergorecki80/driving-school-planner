@@ -393,19 +393,19 @@ This is the initial schema — no existing data to migrate. Rollback for the hos
 
 #### Manual
 
-- [ ] 3.1 `instructors` table: 5 rows with non-null `token` for all rows
-- [ ] 3.2 `students` table: 8 rows with name, phone, category
-- [ ] 3.3 `lessons` table: 0 rows
+- [x] 3.1 `instructors` table: 5 rows with non-null `token` for all rows
+- [x] 3.2 `students` table: 8 rows with name, phone, category
+- [x] 3.3 `lessons` table: 0 rows
 
 ### Phase 4: Client Utilities and Verification
 
 #### Automated
 
-- [ ] 4.1 `npm run build` exits 0
-- [ ] 4.2 `npm run lint` exits 0
-- [ ] 4.3 `src/lib/supabase/server.ts` and `src/lib/supabase/client.ts` both exist
+- [x] 4.1 `npm run build` exits 0
+- [x] 4.2 `npm run lint` exits 0
+- [x] 4.3 `src/lib/supabase/server.ts` and `src/lib/supabase/client.ts` both exist
 
 #### Manual
 
-- [ ] 4.4 `.env.local` contains all 4 env vars with real values
-- [ ] 4.5 Supabase dashboard confirms complete schema and seed data
+- [x] 4.4 `.env.local` contains all 4 env vars with real values
+- [x] 4.5 Supabase dashboard confirms complete schema and seed data
