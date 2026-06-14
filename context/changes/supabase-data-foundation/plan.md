@@ -401,11 +401,11 @@ This is the initial schema — no existing data to migrate. Rollback for the hos
 
 #### Automated
 
-- [x] 4.1 `npm run build` exits 0
-- [x] 4.2 `npm run lint` exits 0
-- [x] 4.3 `src/lib/supabase/server.ts` and `src/lib/supabase/client.ts` both exist
+- [x] 4.1 `npm run build` exits 0 — ebc175a
+- [x] 4.2 `npm run lint` exits 0 — ebc175a
+- [x] 4.3 `src/lib/supabase/server.ts` and `src/lib/supabase/client.ts` both exist — ebc175a
 
 #### Manual
 
-- [x] 4.4 `.env.local` contains all 4 env vars with real values
-- [x] 4.5 Supabase dashboard confirms complete schema and seed data
+- [x] 4.4 `.env.local` contains all 4 env vars with real values — ebc175a
+- [x] 4.5 Supabase dashboard confirms complete schema and seed data — ebc175a
