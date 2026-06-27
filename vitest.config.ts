@@ -13,6 +13,12 @@ export default defineConfig(({ mode }) => {
       include: ['src/**/*.test.ts'],
       passWithNoTests: true,
       env,
+      webServer: {
+        command: 'npm run dev',
+        url: 'http://localhost:3000',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120_000,
+      },
     },
   }
 })

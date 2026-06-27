@@ -379,32 +379,32 @@ No database migrations needed. All required RLS policies and the `get_instructor
 
 #### Automated
 
-- [x] 3.1 `npm run build` exits 0
-- [x] 3.2 `npm run lint` exits 0
-- [x] 3.3 `src/lib/supabase/service.ts` exists
-- [x] 3.4 `src/app/office/layout.tsx` and `src/app/office/page.tsx` exist
-- [x] 3.5 `src/app/instructor/[token]/page.tsx` no longer returns `null`
+- [x] 3.1 `npm run build` exits 0 — 3d26cac
+- [x] 3.2 `npm run lint` exits 0 — 3d26cac
+- [x] 3.3 `src/lib/supabase/service.ts` exists — 3d26cac
+- [x] 3.4 `src/app/office/layout.tsx` and `src/app/office/page.tsx` exist — 3d26cac
+- [x] 3.5 `src/app/instructor/[token]/page.tsx` no longer returns `null` — 3d26cac
 
 #### Manual
 
-- [x] 3.6 `/office` shows placeholder text and logout button
-- [x] 3.7 Logout → `/login`
-- [x] 3.8 `/instructor/<valid-seed-token>` → "Instructor: {name}" heading
-- [x] 3.9 `/instructor/00000000-…` → 404
-- [x] 3.10 `/instructor/not-a-uuid` → 404
+- [x] 3.6 `/office` shows placeholder text and logout button — 3d26cac
+- [x] 3.7 Logout → `/login` — 3d26cac
+- [x] 3.8 `/instructor/<valid-seed-token>` → "Instructor: {name}" heading — 3d26cac
+- [x] 3.9 `/instructor/00000000-…` → 404 — 3d26cac
+- [x] 3.10 `/instructor/not-a-uuid` → 404 — 3d26cac
 
 ### Phase 4: Middleware
 
 #### Automated
 
-- [ ] 4.1 `npm run build` exits 0
-- [ ] 4.2 `npm run lint` exits 0
-- [ ] 4.3 `npm test` exits 0 (all middleware + RLS tests pass)
+- [x] 4.1 `npm run build` exits 0
+- [x] 4.2 `npm run lint` exits 0
+- [x] 4.3 `npm test` exits 0 (all middleware + RLS tests pass)
 
 #### Manual
 
-- [ ] 4.4 Unauthenticated `/office` → redirected to `/login?next=%2Foffice`
-- [ ] 4.5 Login → redirected to `/office`, page visible
-- [ ] 4.6 Logout → `/login`
-- [ ] 4.7 `/instructor/<token>` accessible without session (no redirect)
-- [ ] 4.8 `/office/any-path` → redirected with correct `next` param
+- [x] 4.4 Unauthenticated `/office` → redirected to `/login?next=%2Foffice`
+- [x] 4.5 Login → redirected to `/office`, page visible
+- [x] 4.6 Logout → `/login`
+- [x] 4.7 `/instructor/<token>` accessible without session (no redirect)
+- [x] 4.8 `/office/any-path` → redirected with correct `next` param
