@@ -351,29 +351,29 @@ No database migrations needed. All required RLS policies and the `get_instructor
 
 #### Automated
 
-- [x] 1.1 `npm run build` exits 0
-- [x] 1.2 `npm run lint` exits 0
-- [x] 1.3 `src/app/actions/auth.ts` exists
+- [x] 1.1 `npm run build` exits 0 — c6b144e
+- [x] 1.2 `npm run lint` exits 0 — c6b144e
+- [x] 1.3 `src/app/actions/auth.ts` exists — c6b144e
 
 #### Manual
 
-- [x] 1.4 Supabase dashboard shows office Auth user
-- [x] 1.5 Office credentials in `.env.test` as `OFFICE_EMAIL` / `OFFICE_PASSWORD`
+- [x] 1.4 Supabase dashboard shows office Auth user — c6b144e
+- [x] 1.5 Office credentials in `.env.test` as `OFFICE_EMAIL` / `OFFICE_PASSWORD` — c6b144e
 
 ### Phase 2: Login Page
 
 #### Automated
 
-- [ ] 2.1 `npm run build` exits 0
-- [ ] 2.2 `npm run lint` exits 0
-- [ ] 2.3 `src/app/login/page.tsx` and `src/app/login/LoginForm.tsx` exist
+- [x] 2.1 `npm run build` exits 0
+- [x] 2.2 `npm run lint` exits 0
+- [x] 2.3 `src/app/login/page.tsx` and `src/app/login/LoginForm.tsx` exist
 
 #### Manual
 
-- [ ] 2.4 `/login` form renders with email and password fields
-- [ ] 2.5 Wrong credentials → inline error, no redirect
-- [ ] 2.6 Correct credentials → redirects toward `/office` (404 expected at this phase)
-- [ ] 2.7 `?next=/office/calendar` honored in post-login redirect (verified via DevTools Network)
+- [x] 2.4 `/login` form renders with email and password fields
+- [x] 2.5 Wrong credentials → inline error, no redirect
+- [x] 2.6 Correct credentials → redirects toward `/office` (404 expected at this phase)
+- [x] 2.7 `?next=/office/calendar` honored in post-login redirect (verified via DevTools Network)
 
 ### Phase 3: Protected Page Shells
 
