@@ -747,5 +747,5 @@ Enabling a pending test requires:
 #### Manual
 
 - [x] 4.1 §6.1 of `test-plan.md` covers all four points (test type, file location,
-          fixture pattern, run command, reference test)
-- [x] 4.2 No remaining `TBD` placeholder in §6.1
+          fixture pattern, run command, reference test) — 7eb618d
+- [x] 4.2 No remaining `TBD` placeholder in §6.1 — 7eb618d
