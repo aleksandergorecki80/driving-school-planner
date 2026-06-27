@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "prepare": "lefthook install",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },
@@ -26,6 +28,7 @@
     "@vitest/coverage-v8": "^4.1.9",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "lefthook": "^2.1.9",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vercel": "^54.7.1",

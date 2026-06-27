@@ -16,6 +16,13 @@
 - **Rule**: Always specify `ON DELETE` behavior explicitly on FK columns. Default to `RESTRICT` with a comment if that is intentional, or choose `CASCADE`/`SET NULL` deliberately. Never leave it implicit.
 - **Applies to**: plan, implement — when writing any SQL migration that adds FK references.
 
+## No non-null assertion operator (!) — use guard blocks with a descriptive error instead
+
+- **Context**: Any TypeScript file in the project where a value may be `undefined` (env vars, query results, optional props).
+- **Problem**: Non-null assertion (`!`) silences the TypeScript error with no runtime protection — when the value actually is `undefined`, the code crashes without any context about where or why.
+- **Rule**: Do not use `!`. Instead write a guard block that throws a descriptive error: `if (!value) { throw new Error('Missing X — ...') }`. If TypeScript does not narrow the type through a closure, re-bind after the guard (`const validX = x`) — TypeScript infers `string` from the already-narrowed value.
+- **Applies to**: implement, impl-review — every TS/TSX file in the project.
+
 ## Soft-delete users/instructors/students via deactivated_at, never hard-delete
 
 - **Context**: Any migration or query touching users, instructors, or students tables.

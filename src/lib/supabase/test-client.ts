@@ -12,12 +12,18 @@ if (!url || !anonKey || !serviceKey) {
   )
 }
 
+// After the guard, TypeScript narrows these to string at module scope.
+// Re-bind so closures capture string, not string | undefined.
+const validUrl = url
+const validAnonKey = anonKey
+const validServiceKey = serviceKey
+
 export function createTestServiceRoleClient() {
-  return createClient(url, serviceKey)
+  return createClient(validUrl, validServiceKey)
 }
 
 export function createTestAnonClient() {
-  return createClient(url, anonKey)
+  return createClient(validUrl, validAnonKey)
 }
 
 type ServiceClient = ReturnType<typeof createTestServiceRoleClient>
