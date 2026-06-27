@@ -716,31 +716,31 @@ Enabling a pending test requires:
 
 #### Automated
 
-- [x] 2.1 `npx supabase db push` exits with code 0 (migration applies cleanly)
-- [x] 2.2 `npm run test` → all three `rls.test.ts` tests pass
-- [x] 2.3 `npm run lint` passes
+- [x] 2.1 `npx supabase db push` exits with code 0 (migration applies cleanly) — bb6d7a1
+- [x] 2.2 `npm run test` → all three `rls.test.ts` tests pass — bb6d7a1
+- [x] 2.3 `npm run lint` passes — bb6d7a1
 
 #### Manual
 
-- [x] 2.4 `get_instructor_lessons` function visible in Supabase dashboard
-- [x] 2.5 Three RLS policies visible on `lessons`, `instructors`, `students` tables
+- [x] 2.4 `get_instructor_lessons` function visible in Supabase dashboard — bb6d7a1
+- [x] 2.5 Three RLS policies visible on `lessons`, `instructors`, `students` tables — bb6d7a1
 - [x] 2.6 Manual SQL editor call with a seed instructor token returns only that
-          instructor's lessons
+          instructor's lessons — bb6d7a1
 
 ### Phase 3: Stub Source Files and Pending HTTP Tests
 
 #### Automated
 
-- [ ] 3.1 `npm run test` — Phase 2 tests still pass; `.todo()` tests report as "todo",
+- [x] 3.1 `npm run test` — Phase 2 tests still pass; `.todo()` tests report as "todo",
           not as failures; exit code 0
-- [ ] 3.2 `npm run build` passes — stub files compile without TypeScript errors
-- [ ] 3.3 `npm run lint` passes
+- [x] 3.2 `npm run build` passes — stub files compile without TypeScript errors
+- [x] 3.3 `npm run lint` passes
 
 #### Manual
 
-- [ ] 3.4 Pending test assertions in `middleware.test.ts` and `page.test.ts` match the
+- [x] 3.4 Pending test assertions in `middleware.test.ts` and `page.test.ts` match the
           Risk Response Guidance in `test-plan.md` §2 rows #1 and #6
-- [ ] 3.5 Both stub source files appear in `git status` as new tracked files
+- [x] 3.5 Both stub source files appear in `git status` as new tracked files
 
 ### Phase 4: §6.1 Cookbook Update
 
