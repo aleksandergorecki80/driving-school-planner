@@ -704,27 +704,27 @@ Enabling a pending test requires:
 
 #### Automated
 
-- [x] 1.1 `npm run test` exits with code 0 (runner starts, no config errors)
-- [x] 1.2 `npm run build` passes — no TypeScript errors introduced
+- [x] 1.1 `npm run test` exits with code 0 (runner starts, no config errors) — cecc02d
+- [x] 1.2 `npm run build` passes — no TypeScript errors introduced — cecc02d
 
 #### Manual
 
-- [x] 1.3 `.env.test` is listed in `.gitignore` and does not appear in `git status`
-- [x] 1.4 `node_modules/vitest` exists after install
+- [x] 1.3 `.env.test` is listed in `.gitignore` and does not appear in `git status` — cecc02d
+- [x] 1.4 `node_modules/vitest` exists after install — cecc02d
 
 ### Phase 2: RLS Migration, SECURITY DEFINER Function, and Data-Layer Tests
 
 #### Automated
 
-- [ ] 2.1 `npx supabase db push` exits with code 0 (migration applies cleanly)
-- [ ] 2.2 `npm run test` → all three `rls.test.ts` tests pass
-- [ ] 2.3 `npm run lint` passes
+- [x] 2.1 `npx supabase db push` exits with code 0 (migration applies cleanly)
+- [x] 2.2 `npm run test` → all three `rls.test.ts` tests pass
+- [x] 2.3 `npm run lint` passes
 
 #### Manual
 
-- [ ] 2.4 `get_instructor_lessons` function visible in Supabase dashboard
-- [ ] 2.5 Three RLS policies visible on `lessons`, `instructors`, `students` tables
-- [ ] 2.6 Manual SQL editor call with a seed instructor token returns only that
+- [x] 2.4 `get_instructor_lessons` function visible in Supabase dashboard
+- [x] 2.5 Three RLS policies visible on `lessons`, `instructors`, `students` tables
+- [x] 2.6 Manual SQL editor call with a seed instructor token returns only that
           instructor's lessons
 
 ### Phase 3: Stub Source Files and Pending HTTP Tests
