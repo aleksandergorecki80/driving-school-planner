@@ -23,15 +23,17 @@ describe('Risk #1 — Instructor token IDOR protection (data layer)', () => {
     student = await seedStudent(db)
     instructorA = await seedInstructor(db)
     instructorB = await seedInstructor(db)
-    lessonA = await seedLesson(db, instructorA.id, student.id)
-    lessonB = await seedLesson(db, instructorB.id, student.id)
+    // Register FK parents before seeding their children — ensures cleanup even on partial failure.
+    // Parents go to the END so cleanupRows deletes dependents (lessons) first.
     cleanup.push(
-      { table: 'lessons', id: lessonA.id },
-      { table: 'lessons', id: lessonB.id },
       { table: 'instructors', id: instructorA.id },
       { table: 'instructors', id: instructorB.id },
       { table: 'students', id: student.id },
     )
+    lessonA = await seedLesson(db, instructorA.id, student.id)
+    cleanup.unshift({ table: 'lessons', id: lessonA.id }) // lessons go to FRONT — deleted first
+    lessonB = await seedLesson(db, instructorB.id, student.id)
+    cleanup.unshift({ table: 'lessons', id: lessonB.id })
   })
 
   afterAll(async () => {

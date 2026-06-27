@@ -166,7 +166,10 @@ export default defineConfig({
 })
 ```
 
-Vitest loads `.env.test` automatically in test mode — no explicit `dotenv` call needed.
+Vitest's automatic env loading filters by the `VITE_` prefix, silently dropping
+`NEXT_PUBLIC_*` and `SUPABASE_*` vars. Use the function form of `defineConfig` and pass
+`loadEnv(mode, process.cwd(), '')` (from `'vite'`) as `test.env` — the empty-string
+prefix loads ALL vars from `.env.test` into `process.env` for the test runner.
 
 ---
 

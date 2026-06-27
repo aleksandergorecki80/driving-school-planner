@@ -1,17 +1,23 @@
+// Uses @supabase/supabase-js directly — not @supabase/ssr — because Node.js tests have no Next.js cookie plumbing.
 import { createClient } from '@supabase/supabase-js'
 
-export function createTestServiceRoleClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+if (!url || !anonKey || !serviceKey) {
+  throw new Error(
+    'Missing test env vars. Copy .env.test (fill in NEXT_PUBLIC_SUPABASE_URL, ' +
+      'NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY) and re-run.',
   )
 }
 
+export function createTestServiceRoleClient() {
+  return createClient(url, serviceKey)
+}
+
 export function createTestAnonClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  )
+  return createClient(url, anonKey)
 }
 
 type ServiceClient = ReturnType<typeof createTestServiceRoleClient>
