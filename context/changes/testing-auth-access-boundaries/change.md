@@ -1,7 +1,7 @@
 ---
 change_id: testing-auth-access-boundaries
 title: Testing auth access boundaries
-status: planned
+status: implementing
 created: 2026-06-27
 updated: 2026-06-27
 archived_at: null

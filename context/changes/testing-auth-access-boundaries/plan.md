@@ -704,13 +704,13 @@ Enabling a pending test requires:
 
 #### Automated
 
-- [ ] 1.1 `npm run test` exits with code 0 (runner starts, no config errors)
-- [ ] 1.2 `npm run build` passes — no TypeScript errors introduced
+- [x] 1.1 `npm run test` exits with code 0 (runner starts, no config errors)
+- [x] 1.2 `npm run build` passes — no TypeScript errors introduced
 
 #### Manual
 
-- [ ] 1.3 `.env.test` is listed in `.gitignore` and does not appear in `git status`
-- [ ] 1.4 `node_modules/vitest` exists after install
+- [x] 1.3 `.env.test` is listed in `.gitignore` and does not appear in `git status`
+- [x] 1.4 `node_modules/vitest` exists after install
 
 ### Phase 2: RLS Migration, SECURITY DEFINER Function, and Data-Layer Tests
 
