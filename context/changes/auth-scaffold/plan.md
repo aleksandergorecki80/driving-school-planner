@@ -397,14 +397,14 @@ No database migrations needed. All required RLS policies and the `get_instructor
 
 #### Automated
 
-- [x] 4.1 `npm run build` exits 0
-- [x] 4.2 `npm run lint` exits 0
-- [x] 4.3 `npm test` exits 0 (all middleware + RLS tests pass)
+- [x] 4.1 `npm run build` exits 0 — c63face
+- [x] 4.2 `npm run lint` exits 0 — c63face
+- [x] 4.3 `npm test` exits 0 (all middleware + RLS tests pass) — c63face
 
 #### Manual
 
-- [x] 4.4 Unauthenticated `/office` → redirected to `/login?next=%2Foffice`
-- [x] 4.5 Login → redirected to `/office`, page visible
-- [x] 4.6 Logout → `/login`
-- [x] 4.7 `/instructor/<token>` accessible without session (no redirect)
-- [x] 4.8 `/office/any-path` → redirected with correct `next` param
+- [x] 4.4 Unauthenticated `/office` → redirected to `/login?next=%2Foffice` — c63face
+- [x] 4.5 Login → redirected to `/office`, page visible — c63face
+- [x] 4.6 Logout → `/login` — c63face
+- [x] 4.7 `/instructor/<token>` accessible without session (no redirect) — c63face
+- [x] 4.8 `/office/any-path` → redirected with correct `next` param — c63face
