@@ -364,34 +364,34 @@ No database migrations needed. All required RLS policies and the `get_instructor
 
 #### Automated
 
-- [x] 2.1 `npm run build` exits 0
-- [x] 2.2 `npm run lint` exits 0
-- [x] 2.3 `src/app/login/page.tsx` and `src/app/login/LoginForm.tsx` exist
+- [x] 2.1 `npm run build` exits 0 — 71d3436
+- [x] 2.2 `npm run lint` exits 0 — 71d3436
+- [x] 2.3 `src/app/login/page.tsx` and `src/app/login/LoginForm.tsx` exist — 71d3436
 
 #### Manual
 
-- [x] 2.4 `/login` form renders with email and password fields
-- [x] 2.5 Wrong credentials → inline error, no redirect
-- [x] 2.6 Correct credentials → redirects toward `/office` (404 expected at this phase)
-- [x] 2.7 `?next=/office/calendar` honored in post-login redirect (verified via DevTools Network)
+- [x] 2.4 `/login` form renders with email and password fields — 71d3436
+- [x] 2.5 Wrong credentials → inline error, no redirect — 71d3436
+- [x] 2.6 Correct credentials → redirects toward `/office` (404 expected at this phase) — 71d3436
+- [x] 2.7 `?next=/office/calendar` honored in post-login redirect (verified via DevTools Network) — 71d3436
 
 ### Phase 3: Protected Page Shells
 
 #### Automated
 
-- [ ] 3.1 `npm run build` exits 0
-- [ ] 3.2 `npm run lint` exits 0
-- [ ] 3.3 `src/lib/supabase/service.ts` exists
-- [ ] 3.4 `src/app/office/layout.tsx` and `src/app/office/page.tsx` exist
-- [ ] 3.5 `src/app/instructor/[token]/page.tsx` no longer returns `null`
+- [x] 3.1 `npm run build` exits 0
+- [x] 3.2 `npm run lint` exits 0
+- [x] 3.3 `src/lib/supabase/service.ts` exists
+- [x] 3.4 `src/app/office/layout.tsx` and `src/app/office/page.tsx` exist
+- [x] 3.5 `src/app/instructor/[token]/page.tsx` no longer returns `null`
 
 #### Manual
 
-- [ ] 3.6 `/office` shows placeholder text and logout button
-- [ ] 3.7 Logout → `/login`
-- [ ] 3.8 `/instructor/<valid-seed-token>` → "Instructor: {name}" heading
-- [ ] 3.9 `/instructor/00000000-…` → 404
-- [ ] 3.10 `/instructor/not-a-uuid` → 404
+- [x] 3.6 `/office` shows placeholder text and logout button
+- [x] 3.7 Logout → `/login`
+- [x] 3.8 `/instructor/<valid-seed-token>` → "Instructor: {name}" heading
+- [x] 3.9 `/instructor/00000000-…` → 404
+- [x] 3.10 `/instructor/not-a-uuid` → 404
 
 ### Phase 4: Middleware
 
