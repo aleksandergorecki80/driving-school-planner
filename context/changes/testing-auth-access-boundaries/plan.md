@@ -732,20 +732,20 @@ Enabling a pending test requires:
 #### Automated
 
 - [x] 3.1 `npm run test` — Phase 2 tests still pass; `.todo()` tests report as "todo",
-          not as failures; exit code 0
-- [x] 3.2 `npm run build` passes — stub files compile without TypeScript errors
-- [x] 3.3 `npm run lint` passes
+          not as failures; exit code 0 — 7b39c17
+- [x] 3.2 `npm run build` passes — stub files compile without TypeScript errors — 7b39c17
+- [x] 3.3 `npm run lint` passes — 7b39c17
 
 #### Manual
 
 - [x] 3.4 Pending test assertions in `middleware.test.ts` and `page.test.ts` match the
-          Risk Response Guidance in `test-plan.md` §2 rows #1 and #6
-- [x] 3.5 Both stub source files appear in `git status` as new tracked files
+          Risk Response Guidance in `test-plan.md` §2 rows #1 and #6 — 7b39c17
+- [x] 3.5 Both stub source files appear in `git status` as new tracked files — 7b39c17
 
 ### Phase 4: §6.1 Cookbook Update
 
 #### Manual
 
-- [ ] 4.1 §6.1 of `test-plan.md` covers all four points (test type, file location,
+- [x] 4.1 §6.1 of `test-plan.md` covers all four points (test type, file location,
           fixture pattern, run command, reference test)
-- [ ] 4.2 No remaining `TBD` placeholder in §6.1
+- [x] 4.2 No remaining `TBD` placeholder in §6.1

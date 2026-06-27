@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-21 (Phase 1 change opened)
+> Last updated: 2026-06-27 (§6.1 filled in — testing-auth-access-boundaries Phase 4)
 
 ---
 
@@ -114,7 +114,58 @@ relevant rollout phase ships.
 
 ### 6.1 Adding a unit or integration test
 
-TBD — see §3 Phase 1 for auth boundary and access-scoping patterns.
+**Test type**: Vitest with `environment: 'node'`. Use for server-side integration tests —
+RLS functions, data-layer helpers, server actions. Browser/DOM tests are not configured
+yet (see §4 for when e2e is warranted instead).
+
+**File location**: Co-locate the test file beside the source file as
+`<source-file>.test.ts`, per the AGENTS.md co-location rule. Exception: cross-cutting
+data-layer tests that span multiple tables or test database policies live at
+`src/lib/supabase/rls.test.ts`.
+
+**Fixture pattern** (seed + teardown isolation):
+
+```typescript
+import { beforeAll, afterAll } from 'vitest'
+import {
+  createTestServiceRoleClient,
+  createTestAnonClient,
+  seedInstructor,
+  cleanupRows,
+} from '@/lib/supabase/test-client'
+
+const db = createTestServiceRoleClient() // bypasses RLS — setup/teardown/oracle only
+const anon = createTestAnonClient()      // exercises the real data-access path
+
+const cleanup: { table: string; id: string }[] = []
+
+beforeAll(async () => {
+  const instructor = await seedInstructor(db)
+  cleanup.push({ table: 'instructors', id: instructor.id })
+  // seed dependents last so they can be deleted first
+})
+
+afterAll(async () => {
+  await cleanupRows(db, cleanup) // call in reverse insert order: dependents first
+})
+```
+
+Seed helpers: `seedInstructor`, `seedStudent`, `seedLesson`, `cleanupRows` — all
+exported from `src/lib/supabase/test-client.ts`. Use `createTestAnonClient()` for the
+assertions so the call goes through the real data-access path (RLS / SECURITY DEFINER).
+
+**Environment variables**: set in `.env.test` (gitignored). Required vars:
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`.
+Vitest loads them via `loadEnv(mode, cwd, '')` in `vitest.config.ts` — no manual dotenv
+call needed in test files.
+
+**Run command**:
+- `npm run test` — single run (CI and pre-commit)
+- `npm run test:watch` — watch mode during development
+
+**Reference test**: `src/lib/supabase/rls.test.ts` — canonical example showing
+seed/teardown isolation, service-role oracle, and anon-client assertions against the
+`get_instructor_lessons` SECURITY DEFINER function.
 
 ### 6.2 Adding an integration test for a server action
 
