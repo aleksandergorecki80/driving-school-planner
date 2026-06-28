@@ -85,3 +85,6 @@ skills-lock.json
 
 # Bootstrapper temp directory
 .bootstrap-scaffold/
+
+# playwright
+playwright/.auth/
