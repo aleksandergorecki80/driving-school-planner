@@ -33,7 +33,7 @@ Driving schools today coordinate lessons over phone and SMS — every booking re
 | F-02 | auth-scaffold            | (foundation) Office login page functional; authenticated session gates all office routes; instructor URL token validated          | F-01          | FR-006                                | proposed |
 | S-01 | office-books-lesson      | Office filters instructors by category, selects one, picks a date and time, attaches a student, and creates a pending lesson     | F-01, F-02    | US-01, FR-001, FR-002, FR-003, FR-004 | proposed |
 | S-02 | instructor-responds      | Instructor views their lessons via URL token and approves or rejects with a reason; office dashboard polls and shows the new status | S-01, F-02   | US-01, FR-005, FR-006, FR-007, FR-008 | proposed |
-| S-03 | lesson-action-tokens     | Office sends instructor a one-time action link per lesson; clicking approve/reject invalidates the token                           | S-02          | FR-007, FR-008                        | backlog  |
+| S-03 | lesson-action-tokens     | Office sends instructor a one-time action link per lesson; clicking approve/reject invalidates the token                           | S-02          | FR-007, FR-008                        | parked   |
 
 ## Baseline
 
@@ -132,7 +132,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 | F-02       | auth-scaffold            | Wire office Supabase Auth login + middleware + instructor token guard    | no                    | Requires F-01 completed first              |
 | S-01       | office-books-lesson      | Office: category filter → instructor calendar → create pending lesson    | no                    | Requires F-01 and F-02 completed first     |
 | S-02       | instructor-responds      | Instructor: view lessons via token, approve/reject; office polls status  | no                    | Requires S-01 and F-02 completed first     |
-| S-03       | lesson-action-tokens     | One-time per-lesson token for approve/reject action                      | no                    | Requires S-02                              |
+| S-03       | lesson-action-tokens     | One-time per-lesson token for approve/reject action                      | no                    | Parked — post-MVP; requires S-02           |
 
 ## Open Roadmap Questions
 
@@ -149,6 +149,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 - **Native mobile app** — Why parked: PRD §Non-Goals; instructor view is responsive web only.
 - **Instructor self-service availability** — Why parked: PRD §Non-Goals; the office manages all scheduling.
 - **GitHub Actions CI/CD workflow** — Why parked: `.vercel/` is already linked; manual deploys via the Vercel CLI are sufficient for MVP. Auto-deploy on merge is a developer-workflow polish item, not a user-facing feature.
+- **S-03: One-time per-lesson action tokens (lesson-action-tokens)** — Why parked: post-MVP enhancement; S-01 + S-02 complete the core booking loop without it. Requires S-02.
 
 ## Done
 
