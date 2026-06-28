@@ -3,7 +3,7 @@ project: "DrivePlan"
 version: 1
 status: draft
 created: 2026-06-04
-updated: 2026-06-04
+updated: 2026-06-28
 prd_version: 1
 main_goal: speed
 top_blocker: capacity
@@ -31,7 +31,7 @@ Driving schools today coordinate lessons over phone and SMS — every booking re
 | ---- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | ------------- | ------------------------------------- | -------- |
 | F-01 | supabase-data-foundation | (foundation) Supabase client wired; minimal schema and seed data in place                                                        | —             | FR-004, FR-006                        | ready    |
 | F-02 | auth-scaffold            | (foundation) Office login page functional; authenticated session gates all office routes; instructor URL token validated          | F-01          | FR-006                                | proposed |
-| S-01 | office-books-lesson      | Office filters instructors by category, selects one, picks a date and time, attaches a student, and creates a pending lesson     | F-01, F-02    | US-01, FR-001, FR-002, FR-003, FR-004 | proposed |
+| S-01 | office-books-lesson      | Office filters instructors by category, selects one, picks a date and time, attaches a student, and creates a pending lesson     | F-01, F-02    | US-01, FR-001, FR-002, FR-003, FR-004 | done     |
 | S-02 | instructor-responds      | Instructor views their lessons via URL token and approves or rejects with a reason; office dashboard polls and shows the new status | S-01, F-02   | US-01, FR-005, FR-006, FR-007, FR-008 | proposed |
 | S-03 | lesson-action-tokens     | Office sends instructor a one-time action link per lesson; clicking approve/reject invalidates the token                           | S-02          | FR-007, FR-008                        | parked   |
 
@@ -91,7 +91,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 - **Unknowns:**
   - What time-slot granularity should the weekly calendar display (e.g., 30-minute slots, 1-hour slots)? Owner: user. Block: no (30-minute slots are a reasonable default that can be adjusted before launch without structural changes).
 - **Risk:** The weekly calendar is the most UI-intensive component in the MVP; a third-party calendar library could become a time sink for a solo after-hours developer. Mitigation: render the week grid with plain Tailwind CSS rather than a full-featured library, consistent with the `speed` goal. Calendar interaction complexity is also bounded by the PRD (no drag-and-drop, no recurring events).
-- **Status:** proposed
+- **Status:** done
 
 ---
 
@@ -153,4 +153,4 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 
 ## Done
 
-(Empty on first generation. `/10x-archive` appends an entry here — and flips the matching item's `Status` to `done` — when a change whose `Change ID` matches a roadmap item is archived.)
+- **S-01: Office can log in, see a selected instructor's weekly calendar view, filter the instructor list by licence category so only matching instructors appear, select an instructor, pick a date and time slot, attach a student from the category-filtered list, and submit — a lesson with status "pending" is created in the database and visible when the instructor's calendar is next loaded.** — Archived 2026-06-28 → `context/archive/2026-06-28-office-books-lesson/`. Lesson: —.

@@ -1,10 +1,10 @@
 ---
 change_id: office-books-lesson
 title: Office books lesson
-status: implemented
+status: archived
 created: 2026-06-28
 updated: 2026-06-28
-archived_at: null
+archived_at: 2026-06-28T18:09:09Z
 ---
 
 ## Notes
