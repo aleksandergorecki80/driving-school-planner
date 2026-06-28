@@ -3,6 +3,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createLesson } from '@/app/actions/lessons'
 import type { StudentRow } from './types'
+import { Button } from '@/components/ui/button'
 
 interface Props {
   instructor: { id: string; name: string; categories: string[] }
@@ -83,14 +84,16 @@ export default function NewLessonForm({
     <div className="flex flex-col h-full">
       <div className="flex shrink-0 items-center justify-between border-b border-zinc-200 px-4 py-3">
         <h2 className="text-sm font-semibold text-zinc-900">New Lesson</h2>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={onClose}
           aria-label="Close panel"
           className="text-zinc-400 hover:text-zinc-700"
         >
           ✕
-        </button>
+        </Button>
       </div>
 
       <form action={handleAction} className="flex flex-col gap-4 overflow-y-auto p-4">
@@ -149,21 +152,22 @@ export default function NewLessonForm({
         {error && <p className="text-xs text-red-600">{error}</p>}
 
         <div className="flex gap-2">
-          <button
+          <Button
             type="submit"
+            variant="default"
             disabled={isPending || filteredStudents.length === 0}
-            className="flex-1 rounded bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50"
+            className="flex-1"
           >
             {isPending ? 'Booking…' : 'Book lesson'}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="outline"
             onClick={onClose}
             disabled={isPending}
-            className="rounded border border-zinc-300 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
     </div>

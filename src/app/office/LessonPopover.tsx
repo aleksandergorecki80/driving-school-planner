@@ -3,6 +3,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { cancelLesson } from '@/app/actions/lessons'
 import type { LessonRow } from './types'
+import { Button } from '@/components/ui/button'
 
 interface Props {
   instructor: { name: string }
@@ -64,14 +65,16 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
     <div className="flex flex-col h-full">
       <div className="flex shrink-0 items-center justify-between border-b border-zinc-200 px-4 py-3">
         <h2 className="text-sm font-semibold text-zinc-900">Lesson Details</h2>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon-sm"
           onClick={onClose}
           aria-label="Close panel"
           className="text-zinc-400 hover:text-zinc-700"
         >
           ✕
-        </button>
+        </Button>
       </div>
 
       <div className="flex flex-col gap-4 overflow-y-auto p-4">
@@ -109,14 +112,15 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
         {error && <p className="text-xs text-red-600">{error}</p>}
 
         {lesson.status !== 'rejected' && (
-          <button
+          <Button
             type="button"
+            variant="destructive"
             onClick={handleCancel}
             disabled={isPending}
-            className="mt-auto rounded border border-red-300 px-3 py-2 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50"
+            className="mt-auto w-full"
           >
             {isPending ? 'Cancelling…' : 'Cancel lesson'}
-          </button>
+          </Button>
         )}
       </div>
     </div>

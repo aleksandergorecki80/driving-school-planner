@@ -1,5 +1,7 @@
 'use client'
 import type { LessonRow } from './types'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 interface Props {
   lesson: LessonRow
@@ -16,18 +18,22 @@ export default function LessonBlock({ lesson, gridRow, gridColumn, onClick }: Pr
       : 'bg-yellow-200 border-yellow-400 text-yellow-900'
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       onClick={(e) => {
         e.stopPropagation()
         onClick()
       }}
       aria-label={`${studentName} – ${lesson.category}`}
-      className={`m-0.5 overflow-hidden rounded border px-1 py-0.5 text-xs cursor-pointer z-10 text-left w-full ${colorClass}`}
+      className={cn(
+        'm-0.5 h-auto w-full cursor-pointer justify-start overflow-hidden rounded border px-1 py-0.5 text-xs text-left z-10',
+        colorClass,
+      )}
       style={{ gridRow, gridColumn }}
     >
       <div className="truncate font-medium leading-tight">{studentName}</div>
       <div className="truncate leading-tight opacity-75">{lesson.category}</div>
-    </button>
+    </Button>
   )
 }
