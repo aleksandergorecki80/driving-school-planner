@@ -486,29 +486,29 @@ Clean up inserted rows in `afterEach` using the service client (bypasses RLS for
 
 #### Automated
 
-- [x] 5.1 Type check passes: `npm run build`
-- [x] 5.2 Lint passes: `npm run lint`
+- [x] 5.1 Type check passes: `npm run build` — 2af629f
+- [x] 5.2 Lint passes: `npm run lint` — 2af629f
 
 #### Manual
 
-- [ ] 5.3 Clicking empty slot opens slide-in panel with pre-filled date and time
-- [ ] 5.4 Category selection in panel filters student dropdown correctly
-- [ ] 5.5 Submitting valid lesson closes panel and shows yellow block on calendar
-- [ ] 5.6 Submitting to occupied slot shows inline error without closing panel
-- [ ] 5.7 Clicking existing block opens popover with correct lesson details
-- [ ] 5.8 Cancelling lesson removes block from calendar
-- [ ] 5.9 Full golden-path flow completes in under 60 seconds
+- [x] 5.3 Clicking empty slot opens slide-in panel with pre-filled date and time — 2af629f
+- [x] 5.4 Category selection in panel filters student dropdown correctly — 2af629f
+- [x] 5.5 Submitting valid lesson closes panel and shows yellow block on calendar — 2af629f
+- [x] 5.6 Submitting to occupied slot shows inline error without closing panel — 2af629f
+- [x] 5.7 Clicking existing block opens popover with correct lesson details — 2af629f
+- [x] 5.8 Cancelling lesson removes block from calendar — 2af629f
+- [x] 5.9 Full golden-path flow completes in under 60 seconds — 2af629f
 
 ### Phase 6: Tests
 
 #### Automated
 
-- [ ] 6.1 Playwright golden path passes: `npx playwright test e2e/office-books-lesson.spec.ts`
-- [ ] 6.2 Vitest action tests pass: `npx vitest run src/app/actions/lessons.test.ts`
-- [ ] 6.3 Type check passes: `npm run build`
-- [ ] 6.4 Lint passes: `npm run lint`
+- [x] 6.1 Playwright golden path passes: `npx playwright test e2e/office-books-lesson.spec.ts`
+- [x] 6.2 Vitest action tests pass: `npx vitest run src/app/actions/lessons.test.ts`
+- [x] 6.3 Type check passes: `npm run build`
+- [x] 6.4 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 6.5 No regressions in login flow
-- [ ] 6.6 No regressions in instructor token page
+- [x] 6.5 No regressions in login flow
+- [x] 6.6 No regressions in instructor token page

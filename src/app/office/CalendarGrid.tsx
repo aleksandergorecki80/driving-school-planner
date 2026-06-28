@@ -64,6 +64,7 @@ export default function CalendarGrid({ days, lessons, onSlotClick, onLessonClick
             <div
               key={`${colIdx}-${rowIdx}`}
               onClick={() => onSlotClick(slotDate)}
+              aria-label={`${DAY_NAMES[colIdx]} ${SLOT_LABELS[rowIdx]}`}
               className="cursor-pointer border-b border-r border-zinc-100 hover:bg-zinc-50"
               style={{ gridRow: rowIdx + 2, gridColumn: colIdx + 2 }}
             />
