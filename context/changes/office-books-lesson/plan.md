@@ -436,21 +436,21 @@ Clean up inserted rows in `afterEach` using the service client (bypasses RLS for
 
 #### Automated
 
-- [x] 1.1 Migration applies without error: `npx supabase db push`
-- [x] 1.2 Enum includes `cancelled`: `SELECT enum_range(null::lesson_status)`
-- [x] 1.3 Policies `office_insert_lessons` and `office_update_lessons` in `pg_policies`
-- [x] 1.4 Type check passes: `npm run build`
-- [x] 1.5 Lint passes: `npm run lint`
+- [x] 1.1 Migration applies without error: `npx supabase db push` — be6a9bd
+- [x] 1.2 Enum includes `cancelled`: `SELECT enum_range(null::lesson_status)` — be6a9bd
+- [x] 1.3 Policies `office_insert_lessons` and `office_update_lessons` in `pg_policies` — be6a9bd
+- [x] 1.4 Type check passes: `npm run build` — be6a9bd
+- [x] 1.5 Lint passes: `npm run lint` — be6a9bd
 
 ### Phase 2: Server actions — createLesson and cancelLesson
 
 #### Automated
 
-- [ ] 2.1 Type check passes: `npm run build`
-- [ ] 2.2 Lint passes: `npm run lint`
-- [ ] 2.3 Vitest: `createLesson` inserts row and returns `{}`
-- [ ] 2.4 Vitest: `createLesson` returns conflict error for duplicate slot
-- [ ] 2.5 Vitest: `cancelLesson` sets `status` to `'cancelled'`
+- [x] 2.1 Type check passes: `npm run build`
+- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.3 Vitest: `createLesson` inserts row and returns `{}`
+- [x] 2.4 Vitest: `createLesson` returns conflict error for duplicate slot
+- [x] 2.5 Vitest: `cancelLesson` sets `status` to `'cancelled'`
 
 ### Phase 3: Office page shell + instructor sidebar
 
