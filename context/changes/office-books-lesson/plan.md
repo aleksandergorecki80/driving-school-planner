@@ -436,11 +436,11 @@ Clean up inserted rows in `afterEach` using the service client (bypasses RLS for
 
 #### Automated
 
-- [ ] 1.1 Migration applies without error: `npx supabase db push`
-- [ ] 1.2 Enum includes `cancelled`: `SELECT enum_range(null::lesson_status)`
-- [ ] 1.3 Policies `office_insert_lessons` and `office_update_lessons` in `pg_policies`
-- [ ] 1.4 Type check passes: `npm run build`
-- [ ] 1.5 Lint passes: `npm run lint`
+- [x] 1.1 Migration applies without error: `npx supabase db push`
+- [x] 1.2 Enum includes `cancelled`: `SELECT enum_range(null::lesson_status)`
+- [x] 1.3 Policies `office_insert_lessons` and `office_update_lessons` in `pg_policies`
+- [x] 1.4 Type check passes: `npm run build`
+- [x] 1.5 Lint passes: `npm run lint`
 
 ### Phase 2: Server actions — createLesson and cancelLesson
 
