@@ -503,12 +503,12 @@ Clean up inserted rows in `afterEach` using the service client (bypasses RLS for
 
 #### Automated
 
-- [x] 6.1 Playwright golden path passes: `npx playwright test e2e/office-books-lesson.spec.ts`
-- [x] 6.2 Vitest action tests pass: `npx vitest run src/app/actions/lessons.test.ts`
-- [x] 6.3 Type check passes: `npm run build`
-- [x] 6.4 Lint passes: `npm run lint`
+- [x] 6.1 Playwright golden path passes: `npx playwright test e2e/office-books-lesson.spec.ts` — 4f7a5eb
+- [x] 6.2 Vitest action tests pass: `npx vitest run src/app/actions/lessons.test.ts` — 4f7a5eb
+- [x] 6.3 Type check passes: `npm run build` — 4f7a5eb
+- [x] 6.4 Lint passes: `npm run lint` — 4f7a5eb
 
 #### Manual
 
-- [x] 6.5 No regressions in login flow
-- [x] 6.6 No regressions in instructor token page
+- [x] 6.5 No regressions in login flow — 4f7a5eb
+- [x] 6.6 No regressions in instructor token page — 4f7a5eb

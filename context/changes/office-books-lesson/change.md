@@ -1,7 +1,7 @@
 ---
 change_id: office-books-lesson
 title: Office books lesson
-status: impl_reviewed
+status: implemented
 created: 2026-06-28
 updated: 2026-06-28
 archived_at: null
