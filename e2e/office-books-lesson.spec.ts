@@ -18,8 +18,9 @@ test.describe('Office books a lesson', () => {
     // Far-future week — guaranteed to have no existing lessons
     await page.goto('/office?week=2099-01-06')
 
-    // Filter sidebar to category B
-    await page.getByLabel('Category').selectOption('B')
+    // Filter sidebar to category B (shadcn Select — click trigger then pick option)
+    await page.getByLabel('Category').click()
+    await page.getByRole('option', { name: 'B' }).click()
 
     // Select an instructor
     await page.getByRole('button', { name: 'Jan Kowalski' }).click()

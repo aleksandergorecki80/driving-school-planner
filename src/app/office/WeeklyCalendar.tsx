@@ -2,6 +2,7 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { LessonRow } from './types'
 import CalendarGrid from './CalendarGrid'
+import { Button } from '@/components/ui/button'
 
 interface Props {
   instructor: { id: string; name: string }
@@ -55,23 +56,25 @@ export default function WeeklyCalendar({
       <div className="flex shrink-0 items-center gap-2 border-b border-zinc-200 px-4 py-2">
         <span className="text-sm font-semibold text-zinc-800">{instructor.name}</span>
         <div className="ml-auto flex items-center gap-2">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => navigateWeek(-1)}
-            className="rounded px-2 py-1 text-sm text-zinc-600 hover:bg-zinc-100"
           >
             ← Prev
-          </button>
+          </Button>
           <span className="w-44 text-center text-sm text-zinc-700">
             {formatWeekLabel(weekStart)}
           </span>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => navigateWeek(1)}
-            className="rounded px-2 py-1 text-sm text-zinc-600 hover:bg-zinc-100"
           >
             Next →
-          </button>
+          </Button>
         </div>
       </div>
 

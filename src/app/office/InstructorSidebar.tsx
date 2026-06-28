@@ -1,5 +1,14 @@
 'use client'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface Instructor {
   id: string
@@ -41,10 +50,9 @@ export default function InstructorSidebar({ instructors, selectedId, selectedCat
     return qs ? `/office?${qs}` : '/office'
   }
 
-  function handleCategoryChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const value = e.target.value || undefined
+  function handleCategoryChange(value: string | null) {
     // Reset instructor when category changes — the current instructor may not teach this category
-    router.push(buildUrl({ category: value, instructor: undefined }))
+    router.push(buildUrl({ category: value || undefined, instructor: undefined }))
   }
 
   function handleInstructorClick(id: string) {
@@ -57,19 +65,19 @@ export default function InstructorSidebar({ instructors, selectedId, selectedCat
         <label htmlFor="category-filter" className="block mb-1 text-xs text-zinc-500">
           Category
         </label>
-        <select
-          id="category-filter"
-          value={selectedCategory ?? ''}
-          onChange={handleCategoryChange}
-          className="w-full rounded border border-zinc-200 px-2 py-1 text-sm"
-        >
-          <option value="">All categories</option>
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+        <Select value={selectedCategory ?? ''} onValueChange={handleCategoryChange}>
+          <SelectTrigger id="category-filter" className="w-full">
+            <SelectValue placeholder="All categories" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">All categories</SelectItem>
+            {categories.map((cat) => (
+              <SelectItem key={cat} value={cat}>
+                {cat}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <ul className="flex-1">
@@ -78,15 +86,19 @@ export default function InstructorSidebar({ instructors, selectedId, selectedCat
         )}
         {visibleInstructors.map((instructor) => (
           <li key={instructor.id}>
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => handleInstructorClick(instructor.id)}
-              className={`w-full px-4 py-2 text-left text-sm hover:bg-zinc-50 ${
-                selectedId === instructor.id ? 'bg-zinc-100 font-medium text-zinc-900' : 'text-zinc-700'
-              }`}
+              className={cn(
+                'h-auto w-full justify-start rounded-none px-4 py-2 text-left text-sm',
+                selectedId === instructor.id
+                  ? 'bg-zinc-100 font-medium text-zinc-900'
+                  : 'text-zinc-700',
+              )}
             >
               {instructor.name}
-            </button>
+            </Button>
           </li>
         ))}
       </ul>
