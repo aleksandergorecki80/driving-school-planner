@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import type { LessonRow } from './types'
 import InstructorSidebar from './InstructorSidebar'
-import WeeklyCalendar from './WeeklyCalendar'
+import LessonPanel from './LessonPanel'
 
 interface PageProps {
   searchParams: Promise<{
@@ -51,8 +51,16 @@ export default async function OfficePage({ searchParams }: PageProps) {
       .gte('scheduled_at', weekStart.toISOString())
       .lt('scheduled_at', weekEnd.toISOString())
 
-    lessons = data ?? []
+    // Supabase infers students join as array, but PostgREST returns an object for
+    // many-to-one FK (lessons.student_id → students.id). Cast to the correct shape.
+    lessons = (data as LessonRow[] | null) ?? []
   }
+
+  // When deactivated_at is added to students, add .is('deactivated_at', null) here.
+  const { data: students } = await db
+    .from('students')
+    .select('id, name, category')
+    .order('name')
 
   const selectedInstructor = instructors?.find((i) => i.id === instructorId)
 
@@ -69,10 +77,12 @@ export default async function OfficePage({ searchParams }: PageProps) {
       <div className="flex flex-1 flex-col overflow-hidden">
         {instructorId && selectedInstructor ? (
           <Suspense>
-            <WeeklyCalendar
+            <LessonPanel
               instructor={selectedInstructor}
               lessons={lessons}
               weekStart={weekStart.toISOString().slice(0, 10)}
+              availableStudents={students ?? []}
+              activeCategory={category}
             />
           </Suspense>
         ) : (

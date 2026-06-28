@@ -338,6 +338,8 @@ Adds the interactive layer on top of the calendar. A state-managing Client Compo
 
 **Implementation Note**: Pause here after all manual verification passes before proceeding to Phase 6.
 
+**Addendum (impl)**: `instructor` prop type was widened to `{ id, name, categories: string[] }` across LessonPanel/NewLessonForm so the form can derive the category dropdown from the instructor's taught categories (not all student categories). LessonPopover also received `instructor` for display — not in the original contract but aligned with user expectations.
+
 ---
 
 ## Phase 6: Tests
@@ -470,22 +472,22 @@ Clean up inserted rows in `afterEach` using the service client (bypasses RLS for
 
 #### Automated
 
-- [x] 4.1 Type check passes: `npm run build`
-- [x] 4.2 Lint passes: `npm run lint`
+- [x] 4.1 Type check passes: `npm run build` — fe5ad95
+- [x] 4.2 Lint passes: `npm run lint` — fe5ad95
 
 #### Manual
 
-- [x] 4.3 Calendar shows Mon–Sun columns and time labels 07:00–20:30
-- [x] 4.4 Week navigation updates `?week=` and shows the correct date range
-- [x] 4.5 Empty slots show hover highlight
-- [x] 4.6 Existing lessons appear as coloured blocks at the correct grid position
+- [x] 4.3 Calendar shows Mon–Sun columns and time labels 07:00–20:30 — fe5ad95
+- [x] 4.4 Week navigation updates `?week=` and shows the correct date range — fe5ad95
+- [x] 4.5 Empty slots show hover highlight — fe5ad95
+- [x] 4.6 Existing lessons appear as coloured blocks at the correct grid position — fe5ad95
 
 ### Phase 5: Lesson creation panel + cancel popover
 
 #### Automated
 
-- [ ] 5.1 Type check passes: `npm run build`
-- [ ] 5.2 Lint passes: `npm run lint`
+- [x] 5.1 Type check passes: `npm run build`
+- [x] 5.2 Lint passes: `npm run lint`
 
 #### Manual
 

@@ -82,6 +82,7 @@ export async function cancelLesson(lessonId: string): Promise<{ error?: string }
     .from('lessons')
     .update({ status: 'cancelled' })
     .eq('id', lessonId)
+    .in('status', ['pending', 'confirmed'])
     .select('id')
     .single()
 
