@@ -456,15 +456,15 @@ Clean up inserted rows in `afterEach` using the service client (bypasses RLS for
 
 #### Automated
 
-- [ ] 3.1 Type check passes: `npm run build`
-- [ ] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Type check passes: `npm run build`
+- [x] 3.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 3.3 All 5 seeded instructors visible in sidebar on `/office`
-- [ ] 3.4 Category B filter shows only instructors holding category B
-- [ ] 3.5 Clicking an instructor updates `?instructor=` URL param
-- [ ] 3.6 No instructor selected: main area shows a prompt
+- [x] 3.3 All 5 seeded instructors visible in sidebar on `/office`
+- [x] 3.4 Category B filter shows only instructors holding category B
+- [x] 3.5 Clicking an instructor updates `?instructor=` URL param
+- [x] 3.6 No instructor selected: main area shows a prompt
 
 ### Phase 4: Weekly calendar grid + lesson blocks
 

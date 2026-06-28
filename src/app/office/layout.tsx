@@ -9,7 +9,7 @@ export default function OfficeLayout({ children }: { children: React.ReactNode }
           </button>
         </form>
       </header>
-      <main className="p-6">{children}</main>
+      <main>{children}</main>
     </>
   )
 }
