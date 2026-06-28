@@ -456,29 +456,29 @@ Clean up inserted rows in `afterEach` using the service client (bypasses RLS for
 
 #### Automated
 
-- [x] 3.1 Type check passes: `npm run build`
-- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Type check passes: `npm run build` — f976343
+- [x] 3.2 Lint passes: `npm run lint` — f976343
 
 #### Manual
 
-- [x] 3.3 All 5 seeded instructors visible in sidebar on `/office`
-- [x] 3.4 Category B filter shows only instructors holding category B
-- [x] 3.5 Clicking an instructor updates `?instructor=` URL param
-- [x] 3.6 No instructor selected: main area shows a prompt
+- [x] 3.3 All 5 seeded instructors visible in sidebar on `/office` — f976343
+- [x] 3.4 Category B filter shows only instructors holding category B — f976343
+- [x] 3.5 Clicking an instructor updates `?instructor=` URL param — f976343
+- [x] 3.6 No instructor selected: main area shows a prompt — f976343
 
 ### Phase 4: Weekly calendar grid + lesson blocks
 
 #### Automated
 
-- [ ] 4.1 Type check passes: `npm run build`
-- [ ] 4.2 Lint passes: `npm run lint`
+- [x] 4.1 Type check passes: `npm run build`
+- [x] 4.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 4.3 Calendar shows Mon–Sun columns and time labels 07:00–20:30
-- [ ] 4.4 Week navigation updates `?week=` and shows the correct date range
-- [ ] 4.5 Empty slots show hover highlight
-- [ ] 4.6 Existing lessons appear as coloured blocks at the correct grid position
+- [x] 4.3 Calendar shows Mon–Sun columns and time labels 07:00–20:30
+- [x] 4.4 Week navigation updates `?week=` and shows the correct date range
+- [x] 4.5 Empty slots show hover highlight
+- [x] 4.6 Existing lessons appear as coloured blocks at the correct grid position
 
 ### Phase 5: Lesson creation panel + cancel popover
 

@@ -1,6 +1,8 @@
 import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
+import type { LessonRow } from './types'
 import InstructorSidebar from './InstructorSidebar'
+import WeeklyCalendar from './WeeklyCalendar'
 
 interface PageProps {
   searchParams: Promise<{
@@ -8,15 +10,6 @@ interface PageProps {
     week?: string       // YYYY-MM-DD, Monday
     category?: string
   }>
-}
-
-// Supabase returns the students join as an array even for many-to-one FK.
-export type LessonRow = {
-  id: string
-  scheduled_at: string
-  status: 'pending' | 'confirmed' | 'rejected'
-  category: string
-  students: { name: string }[]
 }
 
 // Derive the Monday of the week. weekParam is expected as YYYY-MM-DD (UTC).
@@ -43,12 +36,13 @@ export default async function OfficePage({ searchParams }: PageProps) {
     .select('id, name, categories')
     .order('name')
 
+  // Always compute weekStart so it can be passed to WeeklyCalendar regardless of instructor selection.
+  const weekStart = getWeekStart(weekParam)
+  const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000)
+
   // Fetch lessons for the selected instructor and week
   let lessons: LessonRow[] = []
   if (instructorId) {
-    const weekStart = getWeekStart(weekParam)
-    const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000)
-
     const { data } = await db
       .from('lessons')
       .select('id, scheduled_at, status, category, students(name)')
@@ -59,6 +53,8 @@ export default async function OfficePage({ searchParams }: PageProps) {
 
     lessons = data ?? []
   }
+
+  const selectedInstructor = instructors?.find((i) => i.id === instructorId)
 
   return (
     <div className="flex h-[calc(100vh-56px)] gap-0">
@@ -71,11 +67,14 @@ export default async function OfficePage({ searchParams }: PageProps) {
       </Suspense>
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        {instructorId ? (
-          // WeeklyCalendar lands here in Phase 4; lessons are fetched and ready.
-          <div className="flex flex-1 items-center justify-center text-sm text-zinc-400">
-            Calendar coming in Phase 4
-          </div>
+        {instructorId && selectedInstructor ? (
+          <Suspense>
+            <WeeklyCalendar
+              instructor={selectedInstructor}
+              lessons={lessons}
+              weekStart={weekStart.toISOString().slice(0, 10)}
+            />
+          </Suspense>
         ) : (
           <div className="flex flex-1 items-center justify-center text-sm text-zinc-400">
             Select an instructor to view their schedule
