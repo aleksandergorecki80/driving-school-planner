@@ -21,6 +21,25 @@ export async function createLesson(data: {
 
   const db = await createClient()
 
+  const { data: { user } } = await db.auth.getUser()
+  if (!user) return { error: 'Unauthorized' }
+
+  // Verify instructor and student exist.
+  // When deactivated_at is added to these tables, add .is('deactivated_at', null) here.
+  const { data: instructor } = await db
+    .from('instructors')
+    .select('id')
+    .eq('id', instructorId)
+    .single()
+  if (!instructor) return { error: 'Instructor not found' }
+
+  const { data: student } = await db
+    .from('students')
+    .select('id')
+    .eq('id', studentId)
+    .single()
+  if (!student) return { error: 'Student not found' }
+
   const { data: conflicts, error: checkError } = await db
     .from('lessons')
     .select('id')
@@ -28,6 +47,7 @@ export async function createLesson(data: {
     .in('status', ['pending', 'confirmed'])
     .gt('scheduled_at', windowStart.toISOString())
     .lt('scheduled_at', slotEnd.toISOString())
+    .limit(1)
 
   if (checkError) {
     return { error: checkError.message }
@@ -55,13 +75,22 @@ export async function createLesson(data: {
 export async function cancelLesson(lessonId: string): Promise<{ error?: string }> {
   const db = await createClient()
 
-  const { error } = await db
+  const { data: { user } } = await db.auth.getUser()
+  if (!user) return { error: 'Unauthorized' }
+
+  const { data, error } = await db
     .from('lessons')
     .update({ status: 'cancelled' })
     .eq('id', lessonId)
+    .select('id')
+    .single()
 
   if (error) {
     return { error: error.message }
+  }
+
+  if (!data) {
+    return { error: 'Lesson not found or already cancelled' }
   }
 
   return {}

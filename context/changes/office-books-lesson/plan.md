@@ -446,11 +446,11 @@ Clean up inserted rows in `afterEach` using the service client (bypasses RLS for
 
 #### Automated
 
-- [x] 2.1 Type check passes: `npm run build`
-- [x] 2.2 Lint passes: `npm run lint`
-- [x] 2.3 Vitest: `createLesson` inserts row and returns `{}`
-- [x] 2.4 Vitest: `createLesson` returns conflict error for duplicate slot
-- [x] 2.5 Vitest: `cancelLesson` sets `status` to `'cancelled'`
+- [x] 2.1 Type check passes: `npm run build` — 0ea3250
+- [x] 2.2 Lint passes: `npm run lint` — 0ea3250
+- [x] 2.3 Vitest: `createLesson` inserts row and returns `{}` — 0ea3250
+- [x] 2.4 Vitest: `createLesson` returns conflict error for duplicate slot — 0ea3250
+- [x] 2.5 Vitest: `cancelLesson` sets `status` to `'cancelled'` — 0ea3250
 
 ### Phase 3: Office page shell + instructor sidebar
 
