@@ -3,7 +3,7 @@ project: "DrivePlan"
 version: 1
 status: draft
 created: 2026-06-04
-updated: 2026-06-28
+updated: 2026-07-04
 prd_version: 1
 main_goal: speed
 top_blocker: capacity
@@ -32,8 +32,8 @@ Driving schools today coordinate lessons over phone and SMS — every booking re
 | F-01 | supabase-data-foundation | (foundation) Supabase client wired; minimal schema and seed data in place                                                        | —             | FR-004, FR-006                        | ready    |
 | F-02 | auth-scaffold            | (foundation) Office login page functional; authenticated session gates all office routes; instructor URL token validated          | F-01          | FR-006                                | proposed |
 | S-01 | office-books-lesson      | Office filters instructors by category, selects one, picks a date and time, attaches a student, and creates a pending lesson     | F-01, F-02    | US-01, FR-001, FR-002, FR-003, FR-004 | done     |
-| S-02 | instructor-responds      | Instructor views their lessons via URL token and approves or rejects with a reason; office dashboard polls and shows the new status | S-01, F-02   | US-01, FR-005, FR-006, FR-007, FR-008 | proposed |
-| S-03 | lesson-action-tokens     | Office sends instructor a one-time action link per lesson; clicking approve/reject invalidates the token                           | S-02          | FR-007, FR-008                        | parked   |
+| S-02 | instructor-responds      | Instructor approves or rejects a lesson via a one-time emailed link scoped to that single lesson, optionally picking an AI-suggested rejection reason; office dashboard polls and shows the new status | S-01, F-02   | US-01, FR-001–003, FR-004(mod), FR-005(mod), FR-006–008, FR-009(mod), FR-010–011, FR-012, FR-013 (prd-v2.md) | proposed — redesigned |
+| S-03 | lesson-action-tokens     | *(merged into S-02, see below)*                                                                                                     | S-02          | —                                      | merged into S-02 |
 
 ## Baseline
 
@@ -95,32 +95,38 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 
 ---
 
-### S-02: Instructor responds to a lesson; office sees the updated status via auto-poll
+### S-02: Instructor responds to a lesson via a one-time emailed link; office sees the updated status via auto-poll
 
-- **Outcome:** Instructor opens their unique URL on a mobile browser, sees their pending and confirmed lessons in a mobile-friendly calendar without horizontal scrolling, taps Approve or Reject on a pending lesson (Reject requires a short reason — free text), and the lesson status updates in the database; the office dashboard polls every 30 seconds and displays the new status (pending → confirmed or rejected) and any rejection reason without a manual page reload.
+> **Redesigned 2026-07-04**, before implementation started. The original design below this
+> line described a permanent, non-expiring per-instructor URL token resolving to a list of all
+> that instructor's lessons — a standing security liability if the link ever leaked. It has been
+> replaced by the one-time per-lesson token model described here. Full rationale, Socratic
+> challenge log, and FR-by-FR delta live in `context/foundation/prd-v2.md` and
+> `context/changes/instructor-responds/` (shape-notes.md, plan.md, plan-brief.md).
+
+- **Outcome:** Office creates a lesson → a unique one-time token is generated automatically → the instructor receives an email with a link scoped to exactly that lesson → opening the link shows only that lesson's details (date, time, student) — no list of other lessons → the instructor approves (with a lightweight confirmation step) or rejects (optionally with a reason, freely typed or picked from up to 5 AI-suggested candidates) → the lesson status updates in the database and the token is invalidated → the office dashboard polls every 30 seconds and displays the new status and any rejection reason without a manual page reload. Office can manually regenerate a lesson's token (invalidating the prior one) to resend a lost link.
 - **Change ID:** instructor-responds
-- **PRD refs:** US-01, FR-005 (polling-based status refresh), FR-006 (instructor URL token view), FR-007 (approve), FR-008 (reject with reason)
+- **PRD refs:** `context/foundation/prd-v2.md` — US-01, FR-001–003 (token generation, email delivery, single-lesson view), FR-004 (approve, modified — adds confirmation step), FR-005 (reject, modified — reason now optional), FR-006 (invalidate-on-write ordering), FR-007 (manual token regenerate), FR-008 (confirmation message), FR-009 (cancel invalidates token, modified), FR-010/FR-011 (office login + polling, preserved), FR-012 (AI-suggested rejection reasons, excludes student PII), FR-013 (office-editable instructor email)
 - **Prerequisites:** S-01, F-02
 - **Parallel with:** —
 - **Blockers:** —
-- **Unknowns:**
-  - Should rejection reasons be free text, a fixed option list, or both? PRD accepts either. Owner: user. Block: no (free text is the simpler default; a fixed option list can be added before launch if the office finds free text inconsistent).
-- **Risk:** The instructor view must be usable on a mobile browser without horizontal scrolling (PRD NFR). A weekly grid designed for desktop will not automatically reflow to mobile. This risk is contained to one component (the instructor calendar page) rather than spreading to the office view; design the instructor view as a vertically-scrolling day list for mobile from the start rather than attempting to refit a desktop grid.
-- **Status:** proposed
+- **Unknowns:** — resolved. Rejection reason is optional; instructor may pick from up to 5 AI-suggested candidates or type free text. See `prd-v2.md` Open Questions (closed).
+- **Risk:** The instructor-facing page must remain usable on a mobile browser without horizontal scrolling (carried-over NFR) — smaller in scope now than originally planned, since a single-lesson response page is simpler to make mobile-correct than a full weekly calendar view. Two new external dependencies (email delivery, AI-suggested reasons) must degrade gracefully — neither may block the instructor from submitting a decision (see `prd-v2.md` Constraints & Compatibility).
+- **Status:** proposed — access-model redesign complete (`context/changes/instructor-responds/plan.md`, 8 phases); implementation not started.
 
 ---
 
-### S-03: One-time action tokens per lesson
+### S-03: One-time action tokens per lesson — merged into S-02
 
-- **Outcome:** When office creates a lesson, a one-time link (`/lesson/<token>`) is generated and sent to the instructor; the instructor clicks Approve or Reject — the token is consumed and the link stops working. The instructor's permanent panel (`/instructor/<token>`) remains unaffected.
-- **Change ID:** lesson-action-tokens
-- **PRD refs:** FR-007 (approve), FR-008 (reject with reason)
-- **Prerequisites:** S-02
+- **Outcome:** Superseded. This slice proposed a one-time link per lesson *layered on top of* a permanent instructor panel — but the permanent panel it depended on was never built. As of the 2026-07-04 S-02 rework, the one-time-per-lesson-token mechanism described here is not a future add-on; it **is** S-02's actual MVP design (see `context/foundation/prd-v2.md`). There is no remaining S-03 implementation step — S-02 delivers this directly.
+- **Change ID:** lesson-action-tokens (retired — folded into `instructor-responds`)
+- **PRD refs:** superseded by `prd-v2.md` FR-001–003, FR-006, FR-007
+- **Prerequisites:** —
 - **Parallel with:** —
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** Introduces a second access model for approve/reject alongside the existing instructor panel. Requires a new `lesson_tokens` table and a new `app/lesson/[token]/page.tsx` route.
-- **Status:** backlog
+- **Risk:** —
+- **Status:** merged into S-02
 
 ---
 
@@ -131,8 +137,8 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 | F-01       | supabase-data-foundation | Set up Supabase client, schema (instructors / students / lessons), seeds | yes                   | Run `/10x-plan supabase-data-foundation`   |
 | F-02       | auth-scaffold            | Wire office Supabase Auth login + middleware + instructor token guard    | no                    | Requires F-01 completed first              |
 | S-01       | office-books-lesson      | Office: category filter → instructor calendar → create pending lesson    | no                    | Requires F-01 and F-02 completed first     |
-| S-02       | instructor-responds      | Instructor: view lessons via token, approve/reject; office polls status  | no                    | Requires S-01 and F-02 completed first     |
-| S-03       | lesson-action-tokens     | One-time per-lesson token for approve/reject action                      | no                    | Parked — post-MVP; requires S-02           |
+| S-02       | instructor-responds      | Instructor: one-time emailed link, approve/reject; office polls status   | done — see `plan.md`  | Redesigned 2026-07-04; plan written, implementation not started |
+| S-03       | lesson-action-tokens     | ~~One-time per-lesson token for approve/reject action~~                  | n/a — merged          | Merged into S-02 rework (2026-07-04); no longer tracked separately |
 
 ## Open Roadmap Questions
 
@@ -149,7 +155,6 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 - **Native mobile app** — Why parked: PRD §Non-Goals; instructor view is responsive web only.
 - **Instructor self-service availability** — Why parked: PRD §Non-Goals; the office manages all scheduling.
 - **GitHub Actions CI/CD workflow** — Why parked: `.vercel/` is already linked; manual deploys via the Vercel CLI are sufficient for MVP. Auto-deploy on merge is a developer-workflow polish item, not a user-facing feature.
-- **S-03: One-time per-lesson action tokens (lesson-action-tokens)** — Why parked: post-MVP enhancement; S-01 + S-02 complete the core booking loop without it. Requires S-02.
 
 ## Done
 
