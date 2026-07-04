@@ -70,7 +70,7 @@ orchestrator updates Status as artifacts appear on disk.
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|-----------------|---------------|------------|--------|---------------|
 | 1 | Auth & access boundaries | Bootstrap test runner; prove instructor token scopes to own data only; prove office routes block unauthenticated requests | #1, #6 | integration | impl_reviewed | context/changes/testing-auth-access-boundaries/ |
-| 2 | Booking integrity | Prove double-booking blocked server-side; prove category-coherence enforced at the server action layer | #2, #3 | integration | implementing (Phase 1–2 of 3 done) | context/changes/booking-integrity/ |
+| 2 | Booking integrity | Prove double-booking blocked server-side; prove category-coherence enforced at the server action layer | #2, #3 | integration | implemented | context/changes/booking-integrity/ |
 | 3 | Status loop correctness | Prove poll returns live DB state on each cycle; prove rejection reason persisted and visible to office | #4, #5 | integration + e2e | not started | — |
 | 4 | Quality gates wiring | Lock lint + typecheck + integration + e2e gates in CI; wire post-edit hook locally | cross-cutting | CI gates, post-edit hook | not started | — |
 
@@ -169,7 +169,34 @@ seed/teardown isolation, service-role oracle, and anon-client assertions against
 
 ### 6.2 Adding an integration test for a server action
 
-TBD — see §3 Phase 2 for booking-integrity and category-coherence patterns.
+**Test type**: Vitest with `environment: 'node'` — same runner as §6.1, but targeting a
+`'use server'` action instead of a data-layer helper directly.
+
+**Auth wiring**: Server actions call `createClient()` (`@/lib/supabase/server`), which reads
+the session via `next/headers` `cookies()`. Mock `next/headers` at the top of the test file
+with a mutable `sessionCookies` array shared between the mock's `getAll`/`setAll` and a
+`createServerClient` instance created in `beforeAll`. Sign in as the office user
+(`OFFICE_EMAIL`/`OFFICE_PASSWORD` from `.env.test`) through that `createServerClient` — the
+mock captures the resulting session cookies, so every server-action call in the file sees a
+real authenticated session.
+
+**Fixture pattern**: Seed with `createTestServiceRoleClient()` (bypasses RLS) in a
+`beforeAll` scoped to each `describe` block that needs its own instructor/student
+combination (e.g. a specific `categories` value). Track seeded rows in a per-describe
+cleanup array and sweep them in `afterAll`. For lesson rows created inside a test, push
+their id to a shared `lessonIds` array and clean up in `afterEach` — this isolates each
+test's writes without re-seeding instructors/students per test.
+
+**Dual assertion**: Assert twice per behavior — once on the server action's return value
+(`{}` or `{ error: '...' }`), and once by querying the DB directly with the service-role
+client to confirm the row was (or wasn't) written, and with what field values. Never assert
+only on the return value; a server action can return `{}` while silently failing to persist
+a field.
+
+**Reference test**: `src/app/actions/lessons.test.ts` — see
+`describe('createLesson — category-coherence')` and
+`describe('createLesson — student double-booking')` for this pattern applied to two
+independent server-side guards.
 
 ### 6.3 Adding an e2e test for the booking loop
 

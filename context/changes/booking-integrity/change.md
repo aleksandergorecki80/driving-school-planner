@@ -1,7 +1,7 @@
 ---
 change_id: booking-integrity
 title: Booking integrity — category-coherence + double-booking server-side enforcement
-status: implementing
+status: implemented
 created: 2026-07-04
 updated: 2026-07-04
 archived_at: null

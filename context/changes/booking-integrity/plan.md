@@ -274,10 +274,10 @@ categories, existing lesson rows) that a mock would lie about.
 
 #### Automated
 
-- [ ] 3.1 `npm run build` exits 0
-- [ ] 3.2 `npm run lint` exits 0
+- [x] 3.1 `npm run build` exits 0 — d3169a5
+- [x] 3.2 `npm run lint` exits 0 — d3169a5
 
 #### Manual
 
-- [ ] 3.3 `test-plan.md §6.2` no longer contains "TBD"
-- [ ] 3.4 §6.2 references `src/app/actions/lessons.test.ts` as the canonical example
+- [x] 3.3 `test-plan.md §6.2` no longer contains "TBD" — d3169a5
+- [x] 3.4 §6.2 references `src/app/actions/lessons.test.ts` as the canonical example — d3169a5
