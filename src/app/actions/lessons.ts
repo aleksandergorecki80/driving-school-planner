@@ -60,6 +60,23 @@ export async function createLesson(data: {
     return { error: 'This slot is already booked' }
   }
 
+  const { data: studentConflicts, error: studentCheckError } = await db
+    .from('lessons')
+    .select('id')
+    .eq('student_id', studentId)
+    .in('status', ['pending', 'confirmed'])
+    .gt('scheduled_at', windowStart.toISOString())
+    .lt('scheduled_at', slotEnd.toISOString())
+    .limit(1)
+
+  if (studentCheckError) {
+    return { error: studentCheckError.message }
+  }
+
+  if (studentConflicts && studentConflicts.length > 0) {
+    return { error: 'Student is already booked at this time' }
+  }
+
   const { error: insertError } = await db.from('lessons').insert({
     instructor_id: instructorId,
     student_id: studentId,

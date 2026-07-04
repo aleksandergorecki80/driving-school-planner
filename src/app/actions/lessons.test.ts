@@ -298,6 +298,126 @@ describe('createLesson — category-coherence', () => {
   })
 })
 
+describe('createLesson — student double-booking', () => {
+  let instructorAId: string
+  let instructorBId: string
+  let sharedStudentId: string
+  const fixtureCleanup: { table: string; id: string }[] = []
+
+  beforeAll(async () => {
+    const instructorA = await seedInstructor(svc, {
+      name: `test-instr-dbA-${Date.now()}`,
+      categories: ['B'],
+    })
+    const instructorB = await seedInstructor(svc, {
+      name: `test-instr-dbB-${Date.now()}`,
+      categories: ['B'],
+    })
+    const student = await seedStudent(svc, { name: `test-student-db-${Date.now()}` })
+    instructorAId = instructorA.id
+    instructorBId = instructorB.id
+    sharedStudentId = student.id
+    fixtureCleanup.push(
+      { table: 'instructors', id: instructorAId },
+      { table: 'instructors', id: instructorBId },
+      { table: 'students', id: sharedStudentId },
+    )
+  })
+
+  afterAll(async () => {
+    // Sweep any lesson rows a failing RED-state test may have created without pushing to
+    // lessonIds (the assertion fires before the push, so the row leaks).
+    await svc.from('lessons').delete().eq('student_id', sharedStudentId)
+    await cleanupRows(svc, fixtureCleanup)
+  })
+
+  test('returns { error } when the student already has an overlapping lesson with a different instructor', async () => {
+    const scheduledAt = '2099-04-10T10:00:00.000Z'
+    const first = await createLesson({
+      instructorId: instructorAId,
+      studentId: sharedStudentId,
+      category: 'B',
+      scheduledAt,
+    })
+    expect(first).toEqual({})
+    const { data: row } = await svc
+      .from('lessons')
+      .select('id')
+      .eq('instructor_id', instructorAId)
+      .eq('scheduled_at', scheduledAt)
+      .single()
+    if (row) lessonIds.push(row.id)
+
+    const second = await createLesson({
+      instructorId: instructorBId,
+      studentId: sharedStudentId,
+      category: 'B',
+      scheduledAt,
+    })
+    expect(second.error).toBe('Student is already booked at this time')
+  })
+
+  test('returns { error } when scheduled 30 minutes apart from the existing student lesson (still within 1-hour window)', async () => {
+    const firstAt = '2099-04-11T10:00:00.000Z'
+    const first = await createLesson({
+      instructorId: instructorAId,
+      studentId: sharedStudentId,
+      category: 'B',
+      scheduledAt: firstAt,
+    })
+    expect(first).toEqual({})
+    const { data: row } = await svc
+      .from('lessons')
+      .select('id')
+      .eq('instructor_id', instructorAId)
+      .eq('scheduled_at', firstAt)
+      .single()
+    if (row) lessonIds.push(row.id)
+
+    const second = await createLesson({
+      instructorId: instructorBId,
+      studentId: sharedStudentId,
+      category: 'B',
+      scheduledAt: '2099-04-11T10:30:00.000Z',
+    })
+    expect(second.error).toBe('Student is already booked at this time')
+  })
+
+  test('succeeds when scheduled exactly 1 hour after the existing student lesson (boundary)', async () => {
+    const firstAt = '2099-04-12T10:00:00.000Z'
+    const first = await createLesson({
+      instructorId: instructorAId,
+      studentId: sharedStudentId,
+      category: 'B',
+      scheduledAt: firstAt,
+    })
+    expect(first).toEqual({})
+    const { data: row } = await svc
+      .from('lessons')
+      .select('id')
+      .eq('instructor_id', instructorAId)
+      .eq('scheduled_at', firstAt)
+      .single()
+    if (row) lessonIds.push(row.id)
+
+    const secondAt = '2099-04-12T11:00:00.000Z'
+    const second = await createLesson({
+      instructorId: instructorBId,
+      studentId: sharedStudentId,
+      category: 'B',
+      scheduledAt: secondAt,
+    })
+    expect(second).toEqual({})
+    const { data: row2 } = await svc
+      .from('lessons')
+      .select('id')
+      .eq('instructor_id', instructorBId)
+      .eq('scheduled_at', secondAt)
+      .single()
+    if (row2) lessonIds.push(row2.id)
+  })
+})
+
 describe('cancelLesson', () => {
   test('sets status=cancelled on the target row and returns {}', async () => {
     // Seed a lesson directly so we control its id
