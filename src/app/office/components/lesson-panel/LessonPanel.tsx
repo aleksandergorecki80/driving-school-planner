@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
-import type { LessonRow, StudentRow } from './types'
-import WeeklyCalendar from './WeeklyCalendar'
+import type { LessonRow, StudentRow } from '../types'
+import WeeklyCalendar from '../calendar/WeeklyCalendar'
 import NewLessonForm from './NewLessonForm'
 import LessonPopover from './LessonPopover'
 

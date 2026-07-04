@@ -1,8 +1,8 @@
 import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
-import type { LessonRow } from './types'
-import InstructorSidebar from './InstructorSidebar'
-import LessonPanel from './LessonPanel'
+import type { LessonRow } from './components/types'
+import InstructorSidebar from './components/sidebar/InstructorSidebar'
+import LessonPanel from './components/lesson-panel/LessonPanel'
 
 interface PageProps {
   searchParams: Promise<{
