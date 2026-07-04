@@ -28,10 +28,13 @@ export async function createLesson(data: {
   // When deactivated_at is added to these tables, add .is('deactivated_at', null) here.
   const { data: instructor } = await db
     .from('instructors')
-    .select('id')
+    .select('id, categories')
     .eq('id', instructorId)
     .single()
   if (!instructor) return { error: 'Instructor not found' }
+  if (!instructor.categories.includes(category)) {
+    return { error: 'Instructor does not hold this category' }
+  }
 
   const { data: student } = await db
     .from('students')

@@ -223,6 +223,81 @@ describe('createLesson', () => {
   })
 })
 
+describe('createLesson — category-coherence', () => {
+  let categoryInstructorId: string
+  let categoryStudentId: string
+  const fixtureCleanup: { table: string; id: string }[] = []
+
+  beforeAll(async () => {
+    const instructor = await seedInstructor(svc, {
+      name: `test-instr-cat-${Date.now()}`,
+      categories: ['C'],
+    })
+    const student = await seedStudent(svc, { name: `test-student-cat-${Date.now()}` })
+    categoryInstructorId = instructor.id
+    categoryStudentId = student.id
+    // dependents (lessons) cleaned per-test by file-level afterEach; parents go last so
+    // they are still present while lessons exist
+    fixtureCleanup.push(
+      { table: 'instructors', id: categoryInstructorId },
+      { table: 'students', id: categoryStudentId },
+    )
+  })
+
+  afterAll(async () => {
+    // Sweep any lesson rows that a failing RED-state test may have created without pushing
+    // to lessonIds (the assertion fires before the push, so the row leaks).
+    await svc.from('lessons').delete().eq('instructor_id', categoryInstructorId)
+    await cleanupRows(svc, fixtureCleanup)
+  })
+
+  test('returns { error } when category is not in instructor.categories', async () => {
+    const scheduledAt = '2099-03-10T10:00:00.000Z'
+    const result = await createLesson({
+      instructorId: categoryInstructorId,
+      studentId: categoryStudentId,
+      category: 'B', // instructor only holds 'C'
+      scheduledAt,
+    })
+
+    expect(result.error).toBe('Instructor does not hold this category')
+
+    // Oracle: no row must have been inserted
+    const { data } = await svc
+      .from('lessons')
+      .select('id')
+      .eq('instructor_id', categoryInstructorId)
+      .eq('scheduled_at', scheduledAt)
+    expect(data).toHaveLength(0)
+  })
+
+  test('succeeds when category is in instructor.categories', async () => {
+    const scheduledAt = '2099-03-10T11:00:00.000Z'
+    const result = await createLesson({
+      instructorId: categoryInstructorId,
+      studentId: categoryStudentId,
+      category: 'C',
+      scheduledAt,
+    })
+
+    expect(result).toEqual({})
+
+    const { data, error } = await svc
+      .from('lessons')
+      .select('id, category, status')
+      .eq('instructor_id', categoryInstructorId)
+      .eq('scheduled_at', scheduledAt)
+      .single()
+
+    expect(error).toBeNull()
+    expect(data).not.toBeNull()
+    if (!data) return
+    expect(data.category).toBe('C')
+    expect(data.status).toBe('pending')
+    lessonIds.push(data.id)
+  })
+})
+
 describe('cancelLesson', () => {
   test('sets status=cancelled on the target row and returns {}', async () => {
     // Seed a lesson directly so we control its id
