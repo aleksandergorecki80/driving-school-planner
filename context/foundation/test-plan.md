@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-27 (§6.1 filled in — testing-auth-access-boundaries Phase 4)
+> Last updated: 2026-07-04 (§3 rollout status synced — Phase 1 impl_reviewed, Phase 2 booking-integrity in progress)
 
 ---
 
@@ -69,8 +69,8 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|-----------------|---------------|------------|--------|---------------|
-| 1 | Auth & access boundaries | Bootstrap test runner; prove instructor token scopes to own data only; prove office routes block unauthenticated requests | #1, #6 | integration | change opened | context/changes/testing-auth-access-boundaries/ |
-| 2 | Booking integrity | Prove double-booking blocked server-side; prove category-coherence enforced at the server action layer | #2, #3 | integration | not started | — |
+| 1 | Auth & access boundaries | Bootstrap test runner; prove instructor token scopes to own data only; prove office routes block unauthenticated requests | #1, #6 | integration | impl_reviewed | context/changes/testing-auth-access-boundaries/ |
+| 2 | Booking integrity | Prove double-booking blocked server-side; prove category-coherence enforced at the server action layer | #2, #3 | integration | implementing (Phase 1–2 of 3 done) | context/changes/booking-integrity/ |
 | 3 | Status loop correctness | Prove poll returns live DB state on each cycle; prove rejection reason persisted and visible to office | #4, #5 | integration + e2e | not started | — |
 | 4 | Quality gates wiring | Lock lint + typecheck + integration + e2e gates in CI; wire post-edit hook locally | cross-cutting | CI gates, post-edit hook | not started | — |
 
