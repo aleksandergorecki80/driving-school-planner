@@ -207,6 +207,21 @@ GRANT EXECUTE ON FUNCTION get_lesson_by_token(uuid) TO anon;
 GRANT EXECUTE ON FUNCTION respond_to_lesson(uuid, text, text) TO anon;
 ```
 
+#### 3. Migration — compatibility fix for `get_instructor_lessons` (discovered during implementation)
+
+**File**: `supabase/migrations/20260704213337_fix_get_instructor_lessons_return_type.sql`
+
+**Intent**: Adding `lessons.token` widens the `lessons` composite type from 8 to 9 columns.
+`get_instructor_lessons()` (still live — retired in Phase 2, not this one) declares `RETURNS
+SETOF lessons` but its `RETURN QUERY` only selects the original 8 columns, which broke at
+runtime (`42804`) the moment item 1's migration landed, failing `rls.test.ts`'s still-active
+IDOR tests.
+
+**Contract**: `DROP FUNCTION` + recreate `get_instructor_lessons` with an explicit `RETURNS
+TABLE(...)` matching its original 8 columns (decoupled from `lessons`'s evolving shape, so it
+doesn't leak the new `token` column), then re-`GRANT EXECUTE ... TO anon` (lost on drop). Purely
+a transition-window compatibility fix — Phase 2 deletes this function entirely.
+
 ### Success Criteria:
 
 #### Automated Verification:
@@ -730,9 +745,9 @@ no historical/finalized lesson ever carries a live token.
 
 #### Automated
 
-- [ ] 1.1 New RPC integration tests pass (`get_lesson_by_token`, `respond_to_lesson`)
-- [ ] 1.2 `npm run build` exits 0
-- [ ] 1.3 `npm run lint` exits 0
+- [x] 1.1 New RPC integration tests pass (`get_lesson_by_token`, `respond_to_lesson`) — 6762ccd
+- [x] 1.2 `npm run build` exits 0 — 6762ccd
+- [x] 1.3 `npm run lint` exits 0 — 6762ccd
 
 ### Phase 2: Retire the old instructor-token mechanism
 
