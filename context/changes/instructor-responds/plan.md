@@ -258,12 +258,25 @@ tokens stays untouched.
 **Contract**: Delete only the token-RPC-specific test block(s); the file's remaining structure
 and imports stay as-is unless a block becomes empty, in which case remove the empty `describe`.
 
+#### 3. Update the shared `seedInstructor` test fixture
+
+**File**: `src/lib/supabase/test-client.ts`
+
+**Intent**: `seedInstructor()` currently does
+`.select('id, token, name, categories')` (used by every integration test file in the suite,
+present and future). Once this phase drops `instructors.token`, that `.select()` fails at the
+database level for every caller — not just the tests this phase removes — unless it's updated
+first.
+
+**Contract**: Change `seedInstructor()`'s `.select()` to `'id, name, categories'` and narrow its
+return type to `{ id: string; name: string; categories: string[] }`.
+
 ### Success Criteria:
 
 #### Automated Verification:
 
-- `npm test` exits 0 with no reference to `get_instructor_lessons` remaining anywhere in
-  `src/`
+- `npm test` exits 0 with no reference to `get_instructor_lessons` or `instructors.token`
+  remaining anywhere in `src/`
 - `npm run build` exits 0 (confirms no remaining code references the dropped column/function)
 - `npm run lint` exits 0
 
@@ -373,6 +386,9 @@ message if the token resolves to nothing (do not use Next's generic `notFound()`
 specifies this exact wording as a distinct state, not a 404).
 
 **Contract**: `params: Promise<{ token: string }>`, same async-params pattern as the old page.
+A non-UUID `token` segment makes `get_lesson_by_token` return a Postgres/PostgREST error, not an
+empty result — treat any error from the RPC the same as an empty result (the "link is no longer
+valid" state), not an uncaught exception.
 
 #### 3. Response form (client component)
 
@@ -451,6 +467,12 @@ non-blocking `warning` field instead.
 non-breaking): `'Instructor has no email on file — link was not sent'` when `email` is null,
 or the `sendLessonLink` error message when the send itself fails.
 
+`createLesson`'s current insert (`lessons.ts:80-86`) is a bare `.insert({...})` with no
+`.select()` — it never learns the DB-generated `token` value it needs to build
+`lessonLinkUrl`. Change it to `.insert({...}).select('id, token').single()`, mirroring the
+`.select(...).single()` pattern `cancelLesson` and `regenerateLessonToken` already use, and pass
+the returned `token` into the `/lesson/<token>` URL before calling `sendLessonLink`.
+
 ### Success Criteria:
 
 #### Automated Verification:
@@ -507,15 +529,19 @@ client-side-appropriate timeout; any error path returns `[]`.
 
 #### 3. Wire into the reject flow
 
-**File**: `src/app/lesson/[token]/components/LessonResponseForm.tsx`
+**File**: `src/app/lesson/[token]/components/LessonResponseForm.tsx`,
+`src/app/actions/lessons.ts`
 
 **Intent**: Call the suggestion function (via a server action wrapper) when the reject reason
 section opens; render returned suggestions as quick-fill options above the always-available free
 text field. An empty/slow result renders no suggestions but never disables the free-text/no-reason
 submit path (the graceful-degradation requirement from FR-012).
 
-**Contract**: The suggestion fetch is fire-and-forget relative to form submission — nothing
-about submitting a rejection ever awaits or blocks on it.
+**Contract**: `LessonResponseForm.tsx` is a client component and `suggestRejectionReasons` needs
+server-only AI Gateway config, so it's called through a new `suggestRejectionReasonsAction(input:
+{ scheduledAt: string; category: string }): Promise<string[]>` server action added to
+`src/app/actions/lessons.ts`. The suggestion fetch is fire-and-forget relative to form
+submission — nothing about submitting a rejection ever awaits or blocks on it.
 
 ### Success Criteria:
 
@@ -560,7 +586,8 @@ introduced.
 
 #### 2. Instructor email field
 
-**File**: `src/app/office/components/sidebar/InstructorSidebar.tsx`
+**File**: `src/app/office/components/sidebar/InstructorSidebar.tsx`,
+`src/app/office/page.tsx`
 
 **Intent**: Each instructor row gains a small inline-editable email field (FR-013) — the one
 narrow exception to "no instructor profile management."
@@ -568,6 +595,13 @@ narrow exception to "no instructor profile management."
 **Contract**: New server action `updateInstructorEmail(instructorId: string, email: string): Promise<{ error?: string }>`
 in a new `src/app/actions/instructors.ts` file (separate from `lessons.ts` since it acts on the
 `instructors` table), following the same auth/return-shape conventions as `lessons.ts`.
+
+`office/page.tsx`'s instructors query (`.select('id, name, categories')`) must extend to
+`.select('id, name, categories, email')` and pass `email` through to `InstructorSidebar`;
+`InstructorSidebar`'s `Instructor` interface gains `email: string | null`. The edit itself is one
+`<form action={updateInstructorEmail}>` per instructor row, per `lessons.md`'s no-`FormEvent`
+rule — the same shape as Phase 4's `LessonResponseForm.tsx`, not an ad hoc onChange/onBlur
+handler.
 
 ### Success Criteria:
 
@@ -704,7 +738,7 @@ no historical/finalized lesson ever carries a live token.
 
 #### Automated
 
-- [ ] 2.1 `npm test` exits 0 with no remaining reference to `get_instructor_lessons`
+- [ ] 2.1 `npm test` exits 0 with no remaining reference to `get_instructor_lessons` or `instructors.token`
 - [ ] 2.2 `npm run build` exits 0
 - [ ] 2.3 `npm run lint` exits 0
 
