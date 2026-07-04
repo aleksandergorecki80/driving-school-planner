@@ -265,10 +265,10 @@ categories, existing lesson rows) that a mock would lie about.
 
 #### Automated
 
-- [x] 2.1 Student double-booking describe block committed; `npm test` shows ≥1 failure from it (red)
-- [x] 2.2 `npm test` exits 0 after student-overlap guard added to `lessons.ts`
-- [x] 2.3 `npm run build` exits 0
-- [x] 2.4 `npm run lint` exits 0
+- [x] 2.1 Student double-booking describe block committed; `npm test` shows ≥1 failure from it (red) — f46519f
+- [x] 2.2 `npm test` exits 0 after student-overlap guard added to `lessons.ts` — f46519f
+- [x] 2.3 `npm run build` exits 0 — f46519f
+- [x] 2.4 `npm run lint` exits 0 — f46519f
 
 ### Phase 3: Cookbook update
 
