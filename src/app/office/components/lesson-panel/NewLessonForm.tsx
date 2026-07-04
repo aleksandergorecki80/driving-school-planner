@@ -2,7 +2,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createLesson } from '@/app/actions/lessons'
-import type { StudentRow } from './types'
+import type { StudentRow } from '../types'
 import { Button } from '@/components/ui/button'
 
 interface Props {

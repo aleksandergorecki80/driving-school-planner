@@ -1,6 +1,6 @@
 'use client'
 import { useRouter, useSearchParams } from 'next/navigation'
-import type { LessonRow } from './types'
+import type { LessonRow } from '../types'
 import CalendarGrid from './CalendarGrid'
 import { Button } from '@/components/ui/button'
 

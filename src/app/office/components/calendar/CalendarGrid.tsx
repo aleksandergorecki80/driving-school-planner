@@ -1,5 +1,5 @@
 'use client'
-import type { LessonRow } from './types'
+import type { LessonRow } from '../types'
 import LessonBlock from './LessonBlock'
 
 const SLOT_START_HOUR = 7

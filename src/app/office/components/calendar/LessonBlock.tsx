@@ -1,5 +1,5 @@
 'use client'
-import type { LessonRow } from './types'
+import type { LessonRow } from '../types'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
