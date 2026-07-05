@@ -16,7 +16,7 @@ vi.mock('next/headers', () => ({
   ),
 }))
 
-import { createLesson, cancelLesson } from './lessons'
+import { createLesson, cancelLesson, respondToLesson, regenerateLessonToken } from './lessons'
 import {
   createTestServiceRoleClient,
   seedInstructor,
@@ -419,7 +419,7 @@ describe('createLesson — student double-booking', () => {
 })
 
 describe('cancelLesson', () => {
-  test('sets status=cancelled on the target row and returns {}', async () => {
+  test('sets status=cancelled and nulls the token on the target row', async () => {
     // Seed a lesson directly so we control its id
     const lesson = await svc
       .from('lessons')
@@ -430,11 +430,12 @@ describe('cancelLesson', () => {
         scheduled_at: '2099-02-01T09:00:00.000Z',
         status: 'pending',
       })
-      .select('id')
+      .select('id, token')
       .single()
 
     if (lesson.error) throw new Error(`seed lesson failed: ${lesson.error.message}`)
     if (!lesson.data) throw new Error('seed lesson returned no data')
+    expect(lesson.data.token).not.toBeNull()
 
     const lessonId = lesson.data.id
     lessonIds.push(lessonId)
@@ -442,10 +443,10 @@ describe('cancelLesson', () => {
     const result = await cancelLesson(lessonId)
     expect(result).toEqual({})
 
-    // Verify the status changed
+    // Verify the status changed and the token was invalidated
     const { data: updated, error } = await svc
       .from('lessons')
-      .select('status')
+      .select('status, token')
       .eq('id', lessonId)
       .single()
 
@@ -453,5 +454,141 @@ describe('cancelLesson', () => {
     expect(updated).not.toBeNull()
     if (!updated) return
     expect(updated.status).toBe('cancelled')
+    expect(updated.token).toBeNull()
+  })
+})
+
+describe('respondToLesson', () => {
+  const respondCleanup: { table: string; id: string }[] = []
+
+  afterAll(async () => {
+    await cleanupRows(svc, respondCleanup)
+  })
+
+  async function seedPendingLesson(scheduledAt: string) {
+    const { data, error } = await svc
+      .from('lessons')
+      .insert({
+        instructor_id: instructorId,
+        student_id: studentId,
+        category: 'B',
+        scheduled_at: scheduledAt,
+        status: 'pending',
+      })
+      .select('id, token')
+      .single()
+    if (error) throw new Error(`seed lesson failed: ${error.message}`)
+    if (!data) throw new Error('seed lesson returned no data')
+    respondCleanup.push({ table: 'lessons', id: data.id })
+    return data as { id: string; token: string }
+  }
+
+  test('confirms a pending lesson via its token and nulls the token', async () => {
+    const lesson = await seedPendingLesson('2099-06-01T10:00:00.000Z')
+
+    const result = await respondToLesson(lesson.token, 'confirmed')
+    expect(result).toEqual({})
+
+    const { data } = await svc
+      .from('lessons')
+      .select('status, token')
+      .eq('id', lesson.id)
+      .single()
+    expect(data?.status).toBe('confirmed')
+    expect(data?.token).toBeNull()
+  })
+
+  test('rejects a pending lesson, with and without a reason', async () => {
+    const withReason = await seedPendingLesson('2099-06-02T10:00:00.000Z')
+    const withoutReason = await seedPendingLesson('2099-06-02T11:00:00.000Z')
+
+    const resultA = await respondToLesson(withReason.token, 'rejected', 'Instructor unavailable')
+    expect(resultA).toEqual({})
+    const { data: rowA } = await svc
+      .from('lessons')
+      .select('status, rejection_reason')
+      .eq('id', withReason.id)
+      .single()
+    expect(rowA?.status).toBe('rejected')
+    expect(rowA?.rejection_reason).toBe('Instructor unavailable')
+
+    const resultB = await respondToLesson(withoutReason.token, 'rejected')
+    expect(resultB).toEqual({})
+    const { data: rowB } = await svc
+      .from('lessons')
+      .select('status, rejection_reason')
+      .eq('id', withoutReason.id)
+      .single()
+    expect(rowB?.status).toBe('rejected')
+    expect(rowB?.rejection_reason).toBeNull()
+  })
+
+  test('returns an error for an unknown or already-consumed token', async () => {
+    const unknown = await respondToLesson('00000000-0000-0000-0000-000000000000', 'confirmed')
+    expect(unknown.error).toBe('Link is no longer valid')
+
+    const lesson = await seedPendingLesson('2099-06-03T10:00:00.000Z')
+    const first = await respondToLesson(lesson.token, 'confirmed')
+    expect(first).toEqual({})
+
+    const second = await respondToLesson(lesson.token, 'confirmed')
+    expect(second.error).toBe('Link is no longer valid')
+  })
+})
+
+describe('regenerateLessonToken', () => {
+  const regenCleanup: { table: string; id: string }[] = []
+
+  afterAll(async () => {
+    await cleanupRows(svc, regenCleanup)
+  })
+
+  test('issues a new token for a pending lesson, invalidating the old one', async () => {
+    const { data: lesson, error } = await svc
+      .from('lessons')
+      .insert({
+        instructor_id: instructorId,
+        student_id: studentId,
+        category: 'B',
+        scheduled_at: '2099-06-04T10:00:00.000Z',
+        status: 'pending',
+      })
+      .select('id, token')
+      .single()
+    if (error) throw new Error(`seed lesson failed: ${error.message}`)
+    if (!lesson) throw new Error('seed lesson returned no data')
+    regenCleanup.push({ table: 'lessons', id: lesson.id })
+
+    const result = await regenerateLessonToken(lesson.id)
+    expect(result.error).toBeUndefined()
+    expect(result.token).toBeDefined()
+    expect(result.token).not.toBe(lesson.token)
+
+    const { data: row } = await svc
+      .from('lessons')
+      .select('token')
+      .eq('id', lesson.id)
+      .single()
+    expect(row?.token).toBe(result.token)
+  })
+
+  test('rejects a lesson that is not pending', async () => {
+    const { data: lesson, error } = await svc
+      .from('lessons')
+      .insert({
+        instructor_id: instructorId,
+        student_id: studentId,
+        category: 'B',
+        scheduled_at: '2099-06-05T10:00:00.000Z',
+        status: 'cancelled',
+      })
+      .select('id')
+      .single()
+    if (error) throw new Error(`seed lesson failed: ${error.message}`)
+    if (!lesson) throw new Error('seed lesson returned no data')
+    regenCleanup.push({ table: 'lessons', id: lesson.id })
+
+    const result = await regenerateLessonToken(lesson.id)
+    expect(result.error).toBe('Lesson not found or not pending')
   })
 })
