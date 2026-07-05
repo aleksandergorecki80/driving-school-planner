@@ -2,12 +2,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { sendLessonLink } from '@/lib/email/sendLessonLink'
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL
-if (!appUrl) {
-  throw new Error('Missing NEXT_PUBLIC_APP_URL — check .env.local')
-}
-const validAppUrl = appUrl
-
 export async function createLesson(data: {
   instructorId: string
   studentId: string
@@ -104,7 +98,12 @@ export async function createLesson(data: {
     return { warning: 'Instructor has no email on file — link was not sent' }
   }
 
-  const lessonLinkUrl = `${validAppUrl}/lesson/${inserted?.token}`
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL
+  if (!appUrl) {
+    return { warning: 'NEXT_PUBLIC_APP_URL is not configured — link was not sent' }
+  }
+
+  const lessonLinkUrl = `${appUrl}/lesson/${inserted?.token}`
   const { error: sendError } = await sendLessonLink(instructor.email, lessonLinkUrl)
   if (sendError) {
     return { warning: sendError }

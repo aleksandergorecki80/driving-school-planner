@@ -2,12 +2,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { sendLessonLink } from '@/lib/email/sendLessonLink'
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL
-if (!appUrl) {
-  throw new Error('Missing NEXT_PUBLIC_APP_URL — check .env.local')
-}
-const validAppUrl = appUrl
-
 // lessons.instructor_id → instructors.id is many-to-one; PostgREST embeds as an object,
 // not an array (the untyped Supabase client can't infer this on its own — see LessonRow).
 type LessonWithInstructorEmail = { id: string; instructors: { email: string | null } | null }
@@ -44,7 +38,12 @@ export async function regenerateLessonToken(
     return { token: newToken, warning: 'Instructor has no email on file — link was not sent' }
   }
 
-  const lessonLinkUrl = `${validAppUrl}/lesson/${newToken}`
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL
+  if (!appUrl) {
+    return { token: newToken, warning: 'NEXT_PUBLIC_APP_URL is not configured — link was not sent' }
+  }
+
+  const lessonLinkUrl = `${appUrl}/lesson/${newToken}`
   const { error: sendError } = await sendLessonLink(email, lessonLinkUrl)
   if (sendError) {
     return { token: newToken, warning: sendError }
