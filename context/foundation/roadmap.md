@@ -32,7 +32,7 @@ Driving schools today coordinate lessons over phone and SMS — every booking re
 | F-01 | supabase-data-foundation | (foundation) Supabase client wired; minimal schema and seed data in place                                                        | —             | FR-004, FR-006                        | ready    |
 | F-02 | auth-scaffold            | (foundation) Office login page functional; authenticated session gates all office routes; instructor URL token validated          | F-01          | FR-006                                | proposed |
 | S-01 | office-books-lesson      | Office filters instructors by category, selects one, picks a date and time, attaches a student, and creates a pending lesson     | F-01, F-02    | US-01, FR-001, FR-002, FR-003, FR-004 | done     |
-| S-02 | instructor-responds      | Instructor approves or rejects a lesson via a one-time emailed link scoped to that single lesson, optionally picking an AI-suggested rejection reason; office dashboard polls and shows the new status | S-01, F-02   | US-01, FR-001–003, FR-004(mod), FR-005(mod), FR-006–008, FR-009(mod), FR-010–011, FR-012, FR-013 (prd-v2.md) | proposed — redesigned |
+| S-02 | instructor-responds      | Instructor approves or rejects a lesson via a one-time emailed link scoped to that single lesson, optionally picking an AI-suggested rejection reason; office dashboard polls and shows the new status | S-01, F-02   | US-01, FR-001–003, FR-004(mod), FR-005(mod), FR-006–008, FR-009(mod), FR-010–011, FR-012, FR-013 (prd-v2.md) | in progress (5/8 phases) |
 | S-03 | lesson-action-tokens     | *(merged into S-02, see below)*                                                                                                     | S-02          | —                                      | merged into S-02 |
 
 ## Baseline
@@ -112,7 +112,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 - **Blockers:** —
 - **Unknowns:** — resolved. Rejection reason is optional; instructor may pick from up to 5 AI-suggested candidates or type free text. See `prd-v2.md` Open Questions (closed).
 - **Risk:** The instructor-facing page must remain usable on a mobile browser without horizontal scrolling (carried-over NFR) — smaller in scope now than originally planned, since a single-lesson response page is simpler to make mobile-correct than a full weekly calendar view. Two new external dependencies (email delivery, AI-suggested reasons) must degrade gracefully — neither may block the instructor from submitting a decision (see `prd-v2.md` Constraints & Compatibility).
-- **Status:** proposed — access-model redesign complete (`context/changes/instructor-responds/plan.md`, 8 phases); implementation not started.
+- **Status:** in progress — Phases 1-5 of 8 shipped and impl-reviewed (schema/RPC foundation, old-mechanism retirement, server actions, `/lesson/[token]` page, email integration). Remaining: Phase 6 (AI-suggested rejection reasons), Phase 7 (office UI — resend link + instructor email field), Phase 8 (docs sync).
 
 ---
 
