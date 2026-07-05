@@ -753,9 +753,9 @@ no historical/finalized lesson ever carries a live token.
 
 #### Automated
 
-- [ ] 2.1 `npm test` exits 0 with no remaining reference to `get_instructor_lessons` or `instructors.token`
-- [ ] 2.2 `npm run build` exits 0
-- [ ] 2.3 `npm run lint` exits 0
+- [x] 2.1 `npm test` exits 0 with no remaining reference to `get_instructor_lessons` or `instructors.token` — 80a9c6a
+- [x] 2.2 `npm run build` exits 0 — 80a9c6a
+- [x] 2.3 `npm run lint` exits 0 — 80a9c6a
 
 ### Phase 3: Server actions — respond, cancel-invalidates-token, regenerate
 

@@ -38,10 +38,10 @@ export async function seedInstructor(
       name: overrides.name ?? `test-instructor-${crypto.randomUUID()}`,
       categories: overrides.categories ?? ['B'],
     })
-    .select('id, token, name, categories')
+    .select('id, name, categories')
     .single()
   if (error) throw new Error(`seedInstructor failed: ${error.message}`)
-  return data as { id: string; token: string; name: string; categories: string[] }
+  return data as { id: string; name: string; categories: string[] }
 }
 
 export async function seedStudent(
