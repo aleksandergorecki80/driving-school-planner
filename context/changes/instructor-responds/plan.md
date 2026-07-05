@@ -761,9 +761,9 @@ no historical/finalized lesson ever carries a live token.
 
 #### Automated
 
-- [ ] 3.1 `respondToLesson`/`cancelLesson`/`regenerateLessonToken` tests pass
-- [ ] 3.2 `npm run build` exits 0
-- [ ] 3.3 `npm run lint` exits 0
+- [x] 3.1 `respondToLesson`/`cancelLesson`/`regenerateLessonToken` tests pass — df6f2fc
+- [x] 3.2 `npm run build` exits 0 — df6f2fc
+- [x] 3.3 `npm run lint` exits 0 — df6f2fc
 
 ### Phase 4: Instructor page at /lesson/[token]
 
