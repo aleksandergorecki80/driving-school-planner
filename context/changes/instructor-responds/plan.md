@@ -477,6 +477,16 @@ email, on creation and on manual regeneration.
 address) added to `.env.example` with explanatory comments, mirroring the
 `SUPABASE_SERVICE_ROLE_KEY` entry's "server-only, never expose to the browser" note.
 
+Also added (discovered during implementation): `NEXT_PUBLIC_APP_URL` — the base URL used to
+build the emailed `/lesson/<token>` link. No phase before this one needed an absolute URL (the
+page itself is reached via a relative Next.js route); `sendLessonLink`'s email body is the first
+place an absolute link is required.
+
+Also discovered: `.env.example` was never actually tracked by git — `.gitignore`'s `.env*` rule
+had no exception for it, so every prior phase's ".env.example updated" claim only ever touched a
+local, uncommitted file. Fixed by adding `!.env.example` to `.gitignore` and committing the file
+for the first time as part of this phase.
+
 #### 2. Send-link utility
 
 **File**: `src/lib/email/sendLessonLink.ts`
@@ -802,13 +812,13 @@ no historical/finalized lesson ever carries a live token.
 
 #### Automated
 
-- [ ] 5.1 Mocked-Resend tests pass (send success, no-email warning, send-failure warning, regenerate resend)
-- [ ] 5.2 `npm run build` exits 0
-- [ ] 5.3 `npm run lint` exits 0
+- [x] 5.1 Mocked-Resend tests pass (send success, no-email warning, send-failure warning, regenerate resend) — abd59f5
+- [x] 5.2 `npm run build` exits 0 — abd59f5
+- [x] 5.3 `npm run lint` exits 0 — abd59f5
 
 #### Manual
 
-- [ ] 5.4 Real email delivery confirmed via test Resend account
+- [x] 5.4 Real email delivery confirmed via test Resend account — abd59f5
 
 ### Phase 6: AI-suggested rejection reasons
 

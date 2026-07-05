@@ -1,5 +1,10 @@
+import type { Metadata } from 'next'
 import { createAnonClient } from '@/lib/supabase/anon'
 import LessonResponseForm from './components/LessonResponseForm'
+
+export const metadata: Metadata = {
+  title: 'Lesson Response — DrivePlan',
+}
 
 interface Props {
   params: Promise<{ token: string }>

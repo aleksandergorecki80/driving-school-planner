@@ -30,18 +30,19 @@ type ServiceClient = ReturnType<typeof createTestServiceRoleClient>
 
 export async function seedInstructor(
   client: ServiceClient,
-  overrides: { name?: string; categories?: string[] } = {},
+  overrides: { name?: string; categories?: string[]; email?: string | null } = {},
 ) {
   const { data, error } = await client
     .from('instructors')
     .insert({
       name: overrides.name ?? `test-instructor-${crypto.randomUUID()}`,
       categories: overrides.categories ?? ['B'],
+      email: overrides.email ?? null,
     })
-    .select('id, name, categories')
+    .select('id, name, categories, email')
     .single()
   if (error) throw new Error(`seedInstructor failed: ${error.message}`)
-  return data as { id: string; name: string; categories: string[] }
+  return data as { id: string; name: string; categories: string[]; email: string | null }
 }
 
 export async function seedStudent(

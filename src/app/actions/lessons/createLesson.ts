@@ -1,12 +1,19 @@
 'use server'
 import { createClient } from '@/lib/supabase/server'
+import { sendLessonLink } from '@/lib/email/sendLessonLink'
+
+const appUrl = process.env.NEXT_PUBLIC_APP_URL
+if (!appUrl) {
+  throw new Error('Missing NEXT_PUBLIC_APP_URL — check .env.local')
+}
+const validAppUrl = appUrl
 
 export async function createLesson(data: {
   instructorId: string
   studentId: string
   category: string
   scheduledAt: string
-}): Promise<{ error?: string }> {
+}): Promise<{ error?: string; warning?: string }> {
   const { instructorId, studentId, category, scheduledAt } = data
 
   const slotStart = new Date(scheduledAt)
@@ -28,7 +35,7 @@ export async function createLesson(data: {
   // When deactivated_at is added to these tables, add .is('deactivated_at', null) here.
   const { data: instructor } = await db
     .from('instructors')
-    .select('id, categories')
+    .select('id, categories, email')
     .eq('id', instructorId)
     .single()
   if (!instructor) return { error: 'Instructor not found' }
@@ -77,16 +84,30 @@ export async function createLesson(data: {
     return { error: 'Student is already booked at this time' }
   }
 
-  const { error: insertError } = await db.from('lessons').insert({
-    instructor_id: instructorId,
-    student_id: studentId,
-    category,
-    scheduled_at: scheduledAt,
-    status: 'pending',
-  })
+  const { data: inserted, error: insertError } = await db
+    .from('lessons')
+    .insert({
+      instructor_id: instructorId,
+      student_id: studentId,
+      category,
+      scheduled_at: scheduledAt,
+      status: 'pending',
+    })
+    .select('token')
+    .single()
 
   if (insertError) {
     return { error: insertError.message }
+  }
+
+  if (!instructor.email) {
+    return { warning: 'Instructor has no email on file — link was not sent' }
+  }
+
+  const lessonLinkUrl = `${validAppUrl}/lesson/${inserted?.token}`
+  const { error: sendError } = await sendLessonLink(instructor.email, lessonLinkUrl)
+  if (sendError) {
+    return { warning: sendError }
   }
 
   return {}

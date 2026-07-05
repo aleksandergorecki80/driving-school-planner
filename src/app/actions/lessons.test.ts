@@ -1,4 +1,4 @@
-import { vi, describe, test, expect, beforeAll, afterEach, afterAll } from 'vitest'
+import { vi, describe, test, expect, beforeAll, beforeEach, afterEach, afterAll } from 'vitest'
 import { createServerClient } from '@supabase/ssr'
 
 // Mutable cookie store — populated in beforeAll by signing in as the office user,
@@ -14,6 +14,12 @@ vi.mock('next/headers', () => ({
       },
     }),
   ),
+}))
+
+const { sendLessonLinkMock } = vi.hoisted(() => ({ sendLessonLinkMock: vi.fn() }))
+
+vi.mock('@/lib/email/sendLessonLink', () => ({
+  sendLessonLink: sendLessonLinkMock,
 }))
 
 import { createLesson, cancelLesson, respondToLesson, regenerateLessonToken } from './lessons'
@@ -71,8 +77,13 @@ beforeAll(async () => {
     throw new Error(`Office sign-in failed: ${signInError.message}`)
   }
 
-  // Seed an instructor and student for the tests
-  const instructor = await seedInstructor(svc, { name: `test-instr-lessons-${Date.now()}` })
+  // Seed an instructor and student for the tests. Email is set so the email side effect
+  // (Phase 5) defaults to succeeding for tests unrelated to email behavior — see the
+  // `sendLessonLinkMock` default in the top-level `beforeEach` below.
+  const instructor = await seedInstructor(svc, {
+    name: `test-instr-lessons-${Date.now()}`,
+    email: `test-instr-lessons-${Date.now()}@example.com`,
+  })
   const student = await seedStudent(svc, { name: `test-student-lessons-${Date.now()}` })
   instructorId = instructor.id
   studentId = student.id
@@ -80,6 +91,11 @@ beforeAll(async () => {
     { table: 'instructors', id: instructorId },
     { table: 'students', id: studentId },
   )
+})
+
+beforeEach(() => {
+  sendLessonLinkMock.mockReset()
+  sendLessonLinkMock.mockResolvedValue({})
 })
 
 afterEach(async () => {
@@ -223,6 +239,78 @@ describe('createLesson', () => {
   })
 })
 
+describe('createLesson — email side effect', () => {
+  const instructorCleanup: { table: string; id: string }[] = []
+
+  afterAll(async () => {
+    // Instructors must be cleaned up after the outer per-test afterEach has already
+    // deleted any lesson rows referencing them (FK constraint).
+    await cleanupRows(svc, instructorCleanup)
+  })
+
+  test('sends the lesson link email when the instructor has an email on file', async () => {
+    const scheduledAt = '2099-08-01T10:00:00.000Z'
+    const result = await createLesson({ instructorId, studentId, category: 'B', scheduledAt })
+    expect(result).toEqual({})
+
+    const { data: row } = await svc
+      .from('lessons')
+      .select('id')
+      .eq('instructor_id', instructorId)
+      .eq('scheduled_at', scheduledAt)
+      .single()
+    if (row) lessonIds.push(row.id)
+
+    expect(sendLessonLinkMock).toHaveBeenCalledTimes(1)
+    const [to, lessonLinkUrl] = sendLessonLinkMock.mock.calls[0]
+    expect(to).toMatch(/@example\.com$/)
+    expect(lessonLinkUrl).toMatch(/\/lesson\/[0-9a-f-]{36}$/)
+  })
+
+  test('succeeds with a warning (not an error) when the instructor has no email', async () => {
+    const emaillessInstructor = await seedInstructor(svc, {
+      name: `test-instr-no-email-${Date.now()}`,
+    })
+    const scheduledAt = '2099-08-02T10:00:00.000Z'
+
+    const result = await createLesson({
+      instructorId: emaillessInstructor.id,
+      studentId,
+      category: 'B',
+      scheduledAt,
+    })
+    expect(result).toEqual({ warning: 'Instructor has no email on file — link was not sent' })
+    expect(sendLessonLinkMock).not.toHaveBeenCalled()
+
+    const { data: row } = await svc
+      .from('lessons')
+      .select('id, status')
+      .eq('instructor_id', emaillessInstructor.id)
+      .eq('scheduled_at', scheduledAt)
+      .single()
+    expect(row?.status).toBe('pending')
+    if (row) lessonIds.push(row.id)
+    instructorCleanup.push({ table: 'instructors', id: emaillessInstructor.id })
+  })
+
+  test('succeeds with a warning (not an error) when the email send fails', async () => {
+    sendLessonLinkMock.mockResolvedValueOnce({ error: 'Resend is down' })
+    const scheduledAt = '2099-08-03T10:00:00.000Z'
+
+    const result = await createLesson({ instructorId, studentId, category: 'B', scheduledAt })
+    expect(result).toEqual({ warning: 'Resend is down' })
+
+    const { data: row } = await svc
+      .from('lessons')
+      .select('id, status')
+      .eq('instructor_id', instructorId)
+      .eq('scheduled_at', scheduledAt)
+      .single()
+    expect(row?.status).toBe('pending')
+    if (row) lessonIds.push(row.id)
+  })
+})
+
 describe('createLesson — category-coherence', () => {
   let categoryInstructorId: string
   let categoryStudentId: string
@@ -232,6 +320,7 @@ describe('createLesson — category-coherence', () => {
     const instructor = await seedInstructor(svc, {
       name: `test-instr-cat-${Date.now()}`,
       categories: ['C'],
+      email: `test-instr-cat-${Date.now()}@example.com`,
     })
     const student = await seedStudent(svc, { name: `test-student-cat-${Date.now()}` })
     categoryInstructorId = instructor.id
@@ -308,10 +397,12 @@ describe('createLesson — student double-booking', () => {
     const instructorA = await seedInstructor(svc, {
       name: `test-instr-dbA-${Date.now()}`,
       categories: ['B'],
+      email: `test-instr-dbA-${Date.now()}@example.com`,
     })
     const instructorB = await seedInstructor(svc, {
       name: `test-instr-dbB-${Date.now()}`,
       categories: ['B'],
+      email: `test-instr-dbB-${Date.now()}@example.com`,
     })
     const student = await seedStudent(svc, { name: `test-student-db-${Date.now()}` })
     instructorAId = instructorA.id
@@ -590,5 +681,30 @@ describe('regenerateLessonToken', () => {
 
     const result = await regenerateLessonToken(lesson.id)
     expect(result.error).toBe('Lesson not found or not pending')
+  })
+
+  test('sends a new lesson-link email with the new token', async () => {
+    const { data: lesson, error } = await svc
+      .from('lessons')
+      .insert({
+        instructor_id: instructorId,
+        student_id: studentId,
+        category: 'B',
+        scheduled_at: '2099-06-06T10:00:00.000Z',
+        status: 'pending',
+      })
+      .select('id')
+      .single()
+    if (error) throw new Error(`seed lesson failed: ${error.message}`)
+    if (!lesson) throw new Error('seed lesson returned no data')
+    regenCleanup.push({ table: 'lessons', id: lesson.id })
+
+    const result = await regenerateLessonToken(lesson.id)
+    expect(result.error).toBeUndefined()
+
+    expect(sendLessonLinkMock).toHaveBeenCalledTimes(1)
+    const [to, lessonLinkUrl] = sendLessonLinkMock.mock.calls[0]
+    expect(to).toMatch(/@example\.com$/)
+    expect(lessonLinkUrl).toContain(`/lesson/${result.token}`)
   })
 })
