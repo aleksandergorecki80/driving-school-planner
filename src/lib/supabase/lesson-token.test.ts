@@ -61,7 +61,12 @@ describe('lesson token RPCs — get_lesson_by_token / respond_to_lesson', () => 
 
     expect(error).toBeNull()
     expect(data).toHaveLength(1)
-    expect(data?.[0].id).toBe(lesson.id)
+    // Phase 4 narrowed this RPC's return columns to what the instructor page displays
+    // (category, scheduled_at, student_name) — id is no longer part of the contract, so
+    // identity is checked via the unique scheduled_at instead.
+    expect(new Date(data?.[0].scheduled_at).getTime()).toBe(
+      new Date('2099-05-01T10:00:00.000Z').getTime(),
+    )
   })
 
   it('get_lesson_by_token returns nothing for an unknown token', async () => {

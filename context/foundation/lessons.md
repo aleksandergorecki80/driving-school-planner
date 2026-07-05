@@ -29,3 +29,10 @@
 - **Problem**: Attempting to hard-delete an instructor or student who has lesson rows raises a FK constraint error at runtime; the deactivation flow breaks silently or crashes.
 - **Rule**: Users/instructors/students are never hard-deleted. Deactivation uses `deactivated_at TIMESTAMPTZ DEFAULT NULL` (NULL = active, timestamp = deactivated). All queries on active records must filter `WHERE deactivated_at IS NULL`. No ON DELETE CASCADE or RESTRICT issues — FK references remain valid.
 - **Applies to**: plan, plan-review, implement, impl-review
+
+## One server action per file
+
+- **Context**: Any `'use server'` file under `src/app/actions/**` — server actions callable from client components.
+- **Problem**: Multiple unrelated server actions piling up in one file (e.g. `lessons.ts` growing to hold `createLesson`, `cancelLesson`, `respondToLesson`, `regenerateLessonToken`) makes it harder to see each action's contract at a glance and to reason about what a given client component actually depends on.
+- **Rule**: Each server action (endpoint) gets its own file, one exported function per file. Group related actions under a folder (e.g. `src/app/actions/lessons/`) with an `index.ts` barrel that re-exports them, so existing `from '@/app/actions/<group>'` import sites keep working unchanged.
+- **Applies to**: implement, impl-review — any new or refactored `'use server'` file.

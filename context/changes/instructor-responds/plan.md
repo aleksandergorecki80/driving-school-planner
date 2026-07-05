@@ -383,6 +383,26 @@ actions, with the two-step confirm interaction for both approve and reject.
 
 ### Changes Required:
 
+#### 0. Migration — `get_lesson_by_token` must return the student's name (discovered during implementation)
+
+**File**: `supabase/migrations/20260705113354_get_lesson_by_token_include_student_name.sql`
+
+**Intent**: Phase 1's `get_lesson_by_token` returns only `lessons` columns. The page needs to
+show the student's name (Desired End State: "date/time/student/category"), but there is no anon
+grant on `students` for a separate lookup — the established pattern is one `SECURITY DEFINER`
+function per access need, not a permissive RLS policy.
+
+**Contract**: `DROP FUNCTION` + recreate `get_lesson_by_token` with `RETURNS TABLE(category text,
+scheduled_at timestamptz, student_name text)`, joining `students` on `lessons.student_id`. Drops
+the previously-returned `id`/`status`/`rejection_reason`/etc. columns — the page never needed
+them (the token itself already scopes access to exactly one lesson; status is implicit since a
+resolvable token only ever belongs to a pending lesson, per the partial unique index).
+
+Dropping `id` from the return set broke Phase 1's own `lesson-token.test.ts`, which asserted
+identity via `data[0].id`. Fixed by asserting identity via `scheduled_at` (compared as `Date`
+instants, not raw strings — Postgres/PostgREST returns a different ISO offset format than what
+was inserted) instead, since that column is still returned and unique per test.
+
 #### 1. Remove the old route
 
 **File**: `src/app/instructor/[token]/page.tsx`, `src/app/instructor/[token]/page.test.ts`
@@ -769,14 +789,14 @@ no historical/finalized lesson ever carries a live token.
 
 #### Automated
 
-- [ ] 4.1 New `/lesson/[token]` page tests pass
-- [ ] 4.2 `npm run build` exits 0
-- [ ] 4.3 `npm run lint` exits 0
+- [x] 4.1 New `/lesson/[token]` page tests pass — 17f2c3b
+- [x] 4.2 `npm run build` exits 0 — 17f2c3b
+- [x] 4.3 `npm run lint` exits 0 — 17f2c3b
 
 #### Manual
 
-- [ ] 4.4 Mobile-width viewport check — no horizontal scroll/pinch-zoom
-- [ ] 4.5 Two-step confirm interaction feels deliberate
+- [x] 4.4 Mobile-width viewport check — no horizontal scroll/pinch-zoom — 17f2c3b
+- [x] 4.5 Two-step confirm interaction feels deliberate — 17f2c3b
 
 ### Phase 5: Email integration (Resend)
 
