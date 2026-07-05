@@ -98,6 +98,29 @@ describe('lesson token RPCs — get_lesson_by_token / respond_to_lesson', () => 
     expect(row?.token).toBeNull()
   })
 
+  it('respond_to_lesson never persists a reason when confirming, even if one is passed', async () => {
+    // respond_to_lesson is GRANT EXECUTE ... TO anon — directly callable outside the app's UI,
+    // which never sends a reason on confirm. The RPC itself must enforce this invariant.
+    const lesson = await seedPendingLessonWithToken('2099-05-04T10:00:00.000Z')
+
+    const { data, error } = await anon.rpc('respond_to_lesson', {
+      p_token: lesson.token,
+      p_decision: 'confirmed',
+      p_reason: 'should be ignored',
+    })
+
+    expect(error).toBeNull()
+    expect(data?.[0].ok).toBe(true)
+
+    const { data: row } = await db
+      .from('lessons')
+      .select('status, rejection_reason')
+      .eq('id', lesson.id)
+      .single()
+    expect(row?.status).toBe('confirmed')
+    expect(row?.rejection_reason).toBeNull()
+  })
+
   it('respond_to_lesson rejects reuse of an already-consumed token', async () => {
     const lesson = await seedPendingLessonWithToken('2099-05-03T10:00:00.000Z')
 
