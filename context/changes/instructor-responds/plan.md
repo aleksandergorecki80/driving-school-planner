@@ -789,14 +789,14 @@ no historical/finalized lesson ever carries a live token.
 
 #### Automated
 
-- [x] 4.1 New `/lesson/[token]` page tests pass — 498ac70
-- [x] 4.2 `npm run build` exits 0 — 498ac70
-- [x] 4.3 `npm run lint` exits 0 — 498ac70
+- [x] 4.1 New `/lesson/[token]` page tests pass — 17f2c3b
+- [x] 4.2 `npm run build` exits 0 — 17f2c3b
+- [x] 4.3 `npm run lint` exits 0 — 17f2c3b
 
 #### Manual
 
-- [x] 4.4 Mobile-width viewport check — no horizontal scroll/pinch-zoom — 498ac70
-- [x] 4.5 Two-step confirm interaction feels deliberate — 498ac70
+- [x] 4.4 Mobile-width viewport check — no horizontal scroll/pinch-zoom — 17f2c3b
+- [x] 4.5 Two-step confirm interaction feels deliberate — 17f2c3b
 
 ### Phase 5: Email integration (Resend)
 
