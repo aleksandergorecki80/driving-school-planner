@@ -10,12 +10,15 @@ interface Props {
   onClick: () => void
 }
 
+const STATUS_COLORS: Record<LessonRow['status'], string> = {
+  pending: 'bg-yellow-200 border-yellow-400 text-yellow-900',
+  confirmed: 'bg-green-200 border-green-400 text-green-900',
+  rejected: 'bg-red-200 border-red-400 text-red-900',
+}
+
 export default function LessonBlock({ lesson, gridRow, gridColumn, onClick }: Props) {
   const studentName = lesson.students?.name ?? 'Unknown'
-  const colorClass =
-    lesson.status === 'confirmed'
-      ? 'bg-green-200 border-green-400 text-green-900'
-      : 'bg-yellow-200 border-yellow-400 text-yellow-900'
+  const colorClass = STATUS_COLORS[lesson.status]
 
   return (
     <Button
