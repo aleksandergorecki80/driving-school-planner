@@ -36,3 +36,10 @@
 - **Problem**: Multiple unrelated server actions piling up in one file (e.g. `lessons.ts` growing to hold `createLesson`, `cancelLesson`, `respondToLesson`, `regenerateLessonToken`) makes it harder to see each action's contract at a glance and to reason about what a given client component actually depends on.
 - **Rule**: Each server action (endpoint) gets its own file, one exported function per file. Group related actions under a folder (e.g. `src/app/actions/lessons/`) with an `index.ts` barrel that re-exports them, so existing `from '@/app/actions/<group>'` import sites keep working unchanged.
 - **Applies to**: implement, impl-review — any new or refactored `'use server'` file.
+
+## Env var guards in files behind a barrel must be lazy, never module-level
+
+- **Context**: Any file exporting a `'use server'` action (or anything else) that sits behind an `index.ts` barrel re-exporting multiple sibling files — e.g. `src/app/actions/lessons/*`.
+- **Problem**: A production incident (2026-07-05) — `sendLessonLink.ts` and `createLesson.ts` had module-level `if (!envVar) throw ...` guards. Because the barrel re-exports every sibling file together, importing *any* single action (e.g. `cancelLesson`, which needs no email config at all) forces the whole module graph to evaluate, including `sendLessonLink.ts`'s guard. On Vercel, where `RESEND_API_KEY`/`EMAIL_FROM`/`NEXT_PUBLIC_APP_URL` weren't yet set, this crashed `/office` entirely with a generic 500 — a page that never touches email.
+- **Rule**: Never put a throwing env-var guard at module scope in a file that a barrel re-exports. Check the env var *inside* the function body and return a graceful `{ error }`/`{ warning }` instead of throwing — the module itself must always be safely importable regardless of which env vars are set. (Files that are never barreled — e.g. `src/lib/supabase/service.ts`, `anon.ts` — can keep the module-level throw-on-missing-var pattern; the risk is specific to shared barrels.)
+- **Applies to**: implement, impl-review — any file added under a barreled directory (`src/app/actions/**/index.ts` siblings).
