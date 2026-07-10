@@ -753,4 +753,34 @@ describe('suggestRejectionReasonsAction', () => {
 
     expect(result).toEqual([])
   })
+
+  test('returns [] without calling the AI when scheduledAt is not a valid date', async () => {
+    const result = await suggestRejectionReasonsAction({
+      scheduledAt: 'not-a-date',
+      category: 'B',
+    })
+
+    expect(result).toEqual([])
+    expect(suggestRejectionReasonsMock).not.toHaveBeenCalled()
+  })
+
+  test('returns [] without calling the AI when category is empty', async () => {
+    const result = await suggestRejectionReasonsAction({
+      scheduledAt: '2099-06-08T10:00:00.000Z',
+      category: '',
+    })
+
+    expect(result).toEqual([])
+    expect(suggestRejectionReasonsMock).not.toHaveBeenCalled()
+  })
+
+  test('returns [] without calling the AI when category exceeds a reasonable length', async () => {
+    const result = await suggestRejectionReasonsAction({
+      scheduledAt: '2099-06-08T10:00:00.000Z',
+      category: 'B'.repeat(50),
+    })
+
+    expect(result).toEqual([])
+    expect(suggestRejectionReasonsMock).not.toHaveBeenCalled()
+  })
 })

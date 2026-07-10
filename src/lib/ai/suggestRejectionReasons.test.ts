@@ -1,21 +1,29 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-const { generateObjectMock } = vi.hoisted(() => ({ generateObjectMock: vi.fn() }))
+const { generateTextMock } = vi.hoisted(() => ({ generateTextMock: vi.fn() }))
 
 vi.mock('ai', () => ({
-  generateObject: generateObjectMock,
+  generateText: generateTextMock,
+  Output: { object: vi.fn((opts: unknown) => opts) },
+}))
+
+const { captureExceptionMock } = vi.hoisted(() => ({ captureExceptionMock: vi.fn() }))
+
+vi.mock('@sentry/nextjs', () => ({
+  captureException: captureExceptionMock,
 }))
 
 import { suggestRejectionReasons } from './suggestRejectionReasons'
 
 describe('suggestRejectionReasons', () => {
   beforeEach(() => {
-    generateObjectMock.mockReset()
+    generateTextMock.mockReset()
+    captureExceptionMock.mockReset()
   })
 
   it('returns up to 5 reasons on a successful call', async () => {
-    generateObjectMock.mockResolvedValue({
-      object: { reasons: ['Instructor unavailable', 'Vehicle in maintenance'] },
+    generateTextMock.mockResolvedValue({
+      output: { reasons: ['Instructor unavailable', 'Vehicle in maintenance'] },
     })
 
     const result = await suggestRejectionReasons({
@@ -27,20 +35,20 @@ describe('suggestRejectionReasons', () => {
   })
 
   it('never passes student-identifying input to the model call', async () => {
-    generateObjectMock.mockResolvedValue({ object: { reasons: [] } })
+    generateTextMock.mockResolvedValue({ output: { reasons: [] } })
 
     await suggestRejectionReasons({
       scheduledAt: '2099-01-15T10:00:00.000Z',
       category: 'B',
     })
 
-    const callArgs = generateObjectMock.mock.calls[0][0]
+    const callArgs = generateTextMock.mock.calls[0][0]
     const serialized = JSON.stringify(callArgs)
     expect(serialized).not.toMatch(/student/i)
   })
 
   it('returns [] without throwing when the model call fails', async () => {
-    generateObjectMock.mockRejectedValue(new Error('gateway timeout'))
+    generateTextMock.mockRejectedValue(new Error('gateway timeout'))
 
     const result = await suggestRejectionReasons({
       scheduledAt: '2099-01-15T10:00:00.000Z',
@@ -53,7 +61,7 @@ describe('suggestRejectionReasons', () => {
   it('logs the underlying error on failure so it is visible in server logs', async () => {
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     const failure = new Error('gateway timeout')
-    generateObjectMock.mockRejectedValue(failure)
+    generateTextMock.mockRejectedValue(failure)
 
     await suggestRejectionReasons({
       scheduledAt: '2099-01-15T10:00:00.000Z',
@@ -62,5 +70,18 @@ describe('suggestRejectionReasons', () => {
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(String), failure)
     consoleErrorSpy.mockRestore()
+  })
+
+  it('reports the underlying error to Sentry on failure', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const failure = new Error('gateway timeout')
+    generateTextMock.mockRejectedValue(failure)
+
+    await suggestRejectionReasons({
+      scheduledAt: '2099-01-15T10:00:00.000Z',
+      category: 'B',
+    })
+
+    expect(captureExceptionMock).toHaveBeenCalledWith(failure)
   })
 })

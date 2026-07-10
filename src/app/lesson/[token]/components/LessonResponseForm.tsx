@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { respondToLesson, suggestRejectionReasonsAction } from '@/app/actions/lessons'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -19,6 +19,7 @@ export default function LessonResponseForm({ token, scheduledAt, category }: Pro
   const [done, setDone] = useState(false)
   const [reason, setReason] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
+  const suggestionRequestId = useRef(0)
 
   function openRejectStep() {
     setStep('confirming-reject')
@@ -26,9 +27,14 @@ export default function LessonResponseForm({ token, scheduledAt, category }: Pro
     setSuggestions([])
     // Fire-and-forget: never awaited by the submit path below, so a slow/failed
     // suggestion call can never block or disable rejecting via free text (FR-012).
+    const requestId = ++suggestionRequestId.current
     suggestRejectionReasonsAction({ scheduledAt, category })
-      .then(setSuggestions)
-      .catch(() => setSuggestions([]))
+      .then((result) => {
+        if (requestId === suggestionRequestId.current) setSuggestions(result)
+      })
+      .catch(() => {
+        if (requestId === suggestionRequestId.current) setSuggestions([])
+      })
   }
 
   async function submit(decision: 'confirmed' | 'rejected', reason?: string) {
