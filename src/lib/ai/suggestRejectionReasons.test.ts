@@ -49,4 +49,18 @@ describe('suggestRejectionReasons', () => {
 
     expect(result).toEqual([])
   })
+
+  it('logs the underlying error on failure so it is visible in server logs', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const failure = new Error('gateway timeout')
+    generateObjectMock.mockRejectedValue(failure)
+
+    await suggestRejectionReasons({
+      scheduledAt: '2099-01-15T10:00:00.000Z',
+      category: 'B',
+    })
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(String), failure)
+    consoleErrorSpy.mockRestore()
+  })
 })
