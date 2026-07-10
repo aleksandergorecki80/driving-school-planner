@@ -112,7 +112,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 - **Blockers:** —
 - **Unknowns:** — resolved. Rejection reason is optional; instructor may pick from up to 5 AI-suggested candidates or type free text. See `prd-v2.md` Open Questions (closed).
 - **Risk:** The instructor-facing page must remain usable on a mobile browser without horizontal scrolling (carried-over NFR) — smaller in scope now than originally planned, since a single-lesson response page is simpler to make mobile-correct than a full weekly calendar view. Two new external dependencies (email delivery, AI-suggested reasons) must degrade gracefully — neither may block the instructor from submitting a decision (see `prd-v2.md` Constraints & Compatibility).
-- **Status:** in progress — Phases 1-5 of 8 shipped and impl-reviewed (schema/RPC foundation, old-mechanism retirement, server actions, `/lesson/[token]` page, email integration). Remaining: Phase 6 (AI-suggested rejection reasons), Phase 7 (office UI — resend link + instructor email field), Phase 8 (docs sync).
+- **Status:** in progress — Phases 1-6 of 9 shipped and impl-reviewed (schema/RPC foundation, old-mechanism retirement, server actions, `/lesson/[token]` page, email integration, AI-suggested rejection reasons). Remaining: Phase 7 (office UI — resend link + instructor email field), **Phase 8 (office polling — confirmed gap, added 2026-07-10: the "office dashboard polls every 30 seconds" outcome claimed below was never actually implemented in any phase; `src/lib/supabase/client.ts` was built for this in `supabase-data-foundation` but has zero consumers)**, Phase 9 (docs sync).
 
 ---
 
@@ -137,7 +137,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 | F-01       | supabase-data-foundation | Set up Supabase client, schema (instructors / students / lessons), seeds | yes                   | Run `/10x-plan supabase-data-foundation`   |
 | F-02       | auth-scaffold            | Wire office Supabase Auth login + middleware + instructor token guard    | no                    | Requires F-01 completed first              |
 | S-01       | office-books-lesson      | Office: category filter → instructor calendar → create pending lesson    | no                    | Requires F-01 and F-02 completed first     |
-| S-02       | instructor-responds      | Instructor: one-time emailed link, approve/reject; office polls status   | done — see `plan.md`  | Redesigned 2026-07-04; plan written, implementation not started |
+| S-02       | instructor-responds      | Instructor: one-time emailed link, approve/reject; office polls status   | done — see `plan.md`  | Redesigned 2026-07-04; in progress (6/9 phases). Office polling confirmed unimplemented (2026-07-10) — added as Phase 8, see `plan.md`. |
 | S-03       | lesson-action-tokens     | ~~One-time per-lesson token for approve/reject action~~                  | n/a — merged          | Merged into S-02 rework (2026-07-04); no longer tracked separately |
 
 ## Open Roadmap Questions

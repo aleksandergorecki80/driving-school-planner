@@ -71,7 +71,7 @@ orchestrator updates Status as artifacts appear on disk.
 |---|------------|-----------------|---------------|------------|--------|---------------|
 | 1 | Auth & access boundaries | Bootstrap test runner; prove instructor token scopes to own data only; prove office routes block unauthenticated requests | #1, #6 | integration | impl_reviewed | context/changes/testing-auth-access-boundaries/ |
 | 2 | Booking integrity | Prove double-booking blocked server-side; prove category-coherence enforced at the server action layer | #2, #3 | integration | implemented | context/changes/booking-integrity/ |
-| 3 | Status loop correctness | Prove poll returns live DB state on each cycle; prove rejection reason persisted and visible to office | #4, #5 | integration + e2e | not started | — |
+| 3 | Status loop correctness | Prove poll returns live DB state on each cycle; prove rejection reason persisted and visible to office | #4, #5 | integration + e2e | not started — polling mechanism itself confirmed unimplemented 2026-07-10, now tracked as `instructor-responds` Phase 8 | context/changes/instructor-responds/ |
 | 4 | Quality gates wiring | Lock lint + typecheck + integration + e2e gates in CI; wire post-edit hook locally | cross-cutting | CI gates, post-edit hook | not started | — |
 
 ---
