@@ -65,7 +65,11 @@ export default async function LessonPage({ params }: Props) {
         </p>
       </div>
 
-      <LessonResponseForm token={token} />
+      <LessonResponseForm
+        token={token}
+        scheduledAt={lesson.scheduled_at}
+        category={lesson.category}
+      />
     </main>
   )
 }

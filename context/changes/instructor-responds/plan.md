@@ -824,14 +824,14 @@ no historical/finalized lesson ever carries a live token.
 
 #### Automated
 
-- [ ] 6.1 Mocked-AI tests pass (success, failure/timeout returns `[]`, submit path unaffected either way)
-- [ ] 6.2 `npm run build` exits 0
-- [ ] 6.3 `npm run lint` exits 0
+- [x] 6.1 Mocked-AI tests pass (success, failure/timeout returns `[]`, submit path unaffected either way) — b246d6a
+- [x] 6.2 `npm run build` exits 0 — b246d6a
+- [x] 6.3 `npm run lint` exits 0 — b246d6a
 
 #### Manual
 
-- [ ] 6.4 Real suggestion call verified on a live lesson link
-- [ ] 6.5 Simulated AI failure still allows rejection via free text
+- [x] 6.4 Real suggestion call verified on a live lesson link — b246d6a
+- [x] 6.5 Simulated AI failure still allows rejection via free text — b246d6a
 
 ### Phase 7: Office UI — resend link + instructor email field
 
