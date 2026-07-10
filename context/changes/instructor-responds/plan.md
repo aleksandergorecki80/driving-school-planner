@@ -677,7 +677,64 @@ handler.
 
 ---
 
-## Phase 8: Documentation sync
+## Phase 8: Office polling (30s auto-refresh)
+
+### Overview
+
+**Added 2026-07-10, discovered as a gap during a Phase 6 follow-up conversation.** FR-005
+(original `prd.md`) and FR-011 (`prd-v2.md`, "preserved") both require lesson status changes to
+become visible to the office "on the next poll cycle" without a manual reload — this is part of
+the north-star outcome roadmap.md's S-02 section already claims ("the office dashboard polls
+every 30 seconds and displays the new status"). No phase before this one ever implemented it: a
+repo-wide search found zero `setInterval`/polling/SWR/React-Query usage anywhere, and
+`src/lib/supabase/client.ts` — a browser Supabase client factory built specifically "for the
+30-second polling in S-02" per `supabase-data-foundation`'s own plan — has no consumers. This
+phase closes that gap so S-02 actually delivers what it has claimed to deliver since Phase 1.
+
+### Changes Required:
+
+#### 1. Client-side auto-refresh on `/office`
+
+**File**: `src/app/office/components/AutoRefresh.tsx` (new), `src/app/office/page.tsx`
+
+**Intent**: Re-fetch the office view's lesson/instructor data every 30 seconds without a manual
+reload, consistent with the roadmap's explicit choice of polling over Supabase Realtime (parked
+as a non-goal — "polling every 30 seconds is indistinguishable in practice for a small school").
+
+**Contract**: `AutoRefresh` is a small `'use client'` component with no visible UI — mounted once
+in `office/page.tsx` (a Server Component, unchanged otherwise) — that calls Next's `router.refresh()`
+every 30 seconds via `useEffect` + `setInterval`, cleaning up the interval on unmount. Because
+`office/page.tsx` re-runs its Supabase queries on every `router.refresh()` (it's an `async`
+Server Component with no `revalidate`/cache config), this is sufficient to surface DB writes —
+including an instructor's approve/reject via `/lesson/[token]` — without introducing a new
+dependency (no SWR/React Query) or a second, lighter-weight polling endpoint. The pre-built
+browser Supabase client (`src/lib/supabase/client.ts`) is not used by this approach; it remains
+unused after this phase unless a future lighter-weight (no-full-refresh) variant is chosen
+instead — flagging this as a deliberate implementation choice, not an oversight, since a full
+`router.refresh()` is the simplest option that requires no new infrastructure.
+
+### Success Criteria:
+
+#### Automated Verification:
+
+- Integration test proves the underlying mechanism: writing a lesson status change directly via
+  the service-role client, then independently re-querying `/office`'s data path, reflects the new
+  status (addresses test-plan.md Risk #4 — "the poll fires every 30 seconds" ≠ "each poll returns
+  fresh DB state"; the oracle must be an independent DB read, not the poll's own prior response)
+- `npm test` exits 0
+- `npm run build` exits 0
+- `npm run lint` exits 0
+
+#### Manual Verification:
+
+- With `/office` open in one browser tab and a lesson link open in another, approve or reject the
+  lesson and confirm the office view updates within ~30 seconds with no manual reload
+- Confirm the polling interval is cleared when navigating away from `/office` (no leaked timers —
+  check via browser dev tools or a quick manual unmount check)
+
+---
+
+## Phase 9: Documentation sync
 
 ### Overview
 
@@ -698,7 +755,8 @@ project's existing status vocabulary) now that it has shipped in this reworked f
 **File**: `context/foundation/test-plan.md`
 
 **Intent**: Update the Phase 3 ("Status loop correctness") row — this change directly unblocks
-it (Risk #4/#5 both depend on S-02 existing). Link to this change folder.
+it (Risk #4/#5 both depend on S-02 existing, including the polling mechanism landed in Phase 8).
+Link to this change folder.
 
 #### 3. Change status
 
@@ -736,6 +794,8 @@ it (Risk #4/#5 both depend on S-02 existing). Link to this change folder.
 - Phase 4: page-level tests for `/lesson/[token]`.
 - Phases 5–6: same DB-integration approach, with the `resend` and `ai` modules mocked.
 - Phase 7: server-action-level test for `updateInstructorEmail`.
+- Phase 8: integration test proving polling's underlying refresh mechanism returns fresh DB
+  state, not a cached/stale snapshot.
 
 ### Manual Testing Steps:
 
@@ -856,13 +916,27 @@ no historical/finalized lesson ever carries a live token.
 - [ ] 7.4 Resend-link button issues a working new link and invalidates the old one
 - [ ] 7.5 Editing instructor email routes the next notification correctly
 
-### Phase 8: Documentation sync
+### Phase 8: Office polling (30s auto-refresh)
 
 #### Automated
 
-- [ ] 8.1 `npm run build` exits 0
-- [ ] 8.2 `npm run lint` exits 0
+- [ ] 8.1 Integration test proves the refresh mechanism returns fresh DB state, not stale/cached
+- [ ] 8.2 `npm test` exits 0
+- [ ] 8.3 `npm run build` exits 0
+- [ ] 8.4 `npm run lint` exits 0
 
 #### Manual
 
-- [ ] 8.3 `roadmap.md` and `test-plan.md` reflect current state
+- [ ] 8.5 Office view updates within ~30s of an instructor's approve/reject, no manual reload
+- [ ] 8.6 Polling interval is cleared on navigating away from `/office` (no leaked timer)
+
+### Phase 9: Documentation sync
+
+#### Automated
+
+- [ ] 9.1 `npm run build` exits 0
+- [ ] 9.2 `npm run lint` exits 0
+
+#### Manual
+
+- [ ] 9.3 `roadmap.md` and `test-plan.md` reflect current state
