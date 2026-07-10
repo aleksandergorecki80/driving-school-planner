@@ -22,7 +22,21 @@ vi.mock('@/lib/email/sendLessonLink', () => ({
   sendLessonLink: sendLessonLinkMock,
 }))
 
-import { createLesson, cancelLesson, respondToLesson, regenerateLessonToken } from './lessons'
+const { suggestRejectionReasonsMock } = vi.hoisted(() => ({
+  suggestRejectionReasonsMock: vi.fn(),
+}))
+
+vi.mock('@/lib/ai/suggestRejectionReasons', () => ({
+  suggestRejectionReasons: suggestRejectionReasonsMock,
+}))
+
+import {
+  createLesson,
+  cancelLesson,
+  respondToLesson,
+  regenerateLessonToken,
+  suggestRejectionReasonsAction,
+} from './lessons'
 import {
   createTestServiceRoleClient,
   seedInstructor,
@@ -706,5 +720,37 @@ describe('regenerateLessonToken', () => {
     const [to, lessonLinkUrl] = sendLessonLinkMock.mock.calls[0]
     expect(to).toMatch(/@example\.com$/)
     expect(lessonLinkUrl).toContain(`/lesson/${result.token}`)
+  })
+})
+
+describe('suggestRejectionReasonsAction', () => {
+  beforeEach(() => {
+    suggestRejectionReasonsMock.mockReset()
+  })
+
+  test('returns the reasons resolved by suggestRejectionReasons', async () => {
+    suggestRejectionReasonsMock.mockResolvedValue(['Instructor unavailable', 'Weather conditions'])
+
+    const result = await suggestRejectionReasonsAction({
+      scheduledAt: '2099-06-07T10:00:00.000Z',
+      category: 'B',
+    })
+
+    expect(result).toEqual(['Instructor unavailable', 'Weather conditions'])
+    expect(suggestRejectionReasonsMock).toHaveBeenCalledWith({
+      scheduledAt: '2099-06-07T10:00:00.000Z',
+      category: 'B',
+    })
+  })
+
+  test('returns [] when suggestRejectionReasons degrades gracefully', async () => {
+    suggestRejectionReasonsMock.mockResolvedValue([])
+
+    const result = await suggestRejectionReasonsAction({
+      scheduledAt: '2099-06-08T10:00:00.000Z',
+      category: 'B',
+    })
+
+    expect(result).toEqual([])
   })
 })

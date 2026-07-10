@@ -1,20 +1,35 @@
 'use client'
 import { useState } from 'react'
-import { respondToLesson } from '@/app/actions/lessons'
+import { respondToLesson, suggestRejectionReasonsAction } from '@/app/actions/lessons'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 
 interface Props {
   token: string
+  scheduledAt: string
+  category: string
 }
 
 type Step = 'idle' | 'confirming-approve' | 'confirming-reject'
 
-export default function LessonResponseForm({ token }: Props) {
+export default function LessonResponseForm({ token, scheduledAt, category }: Props) {
   const [step, setStep] = useState<Step>('idle')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
+  const [reason, setReason] = useState('')
+  const [suggestions, setSuggestions] = useState<string[]>([])
+
+  function openRejectStep() {
+    setStep('confirming-reject')
+    setReason('')
+    setSuggestions([])
+    // Fire-and-forget: never awaited by the submit path below, so a slow/failed
+    // suggestion call can never block or disable rejecting via free text (FR-012).
+    suggestRejectionReasonsAction({ scheduledAt, category })
+      .then(setSuggestions)
+      .catch(() => setSuggestions([]))
+  }
 
   async function submit(decision: 'confirmed' | 'rejected', reason?: string) {
     setIsSubmitting(true)
@@ -54,7 +69,7 @@ export default function LessonResponseForm({ token }: Props) {
           <Button
             type="button"
             variant="destructive"
-            onClick={() => setStep('confirming-reject')}
+            onClick={openRejectStep}
             className="flex-1"
           >
             Reject
@@ -89,9 +104,28 @@ export default function LessonResponseForm({ token }: Props) {
       {step === 'confirming-reject' && (
         <form action={handleRejectSubmit} className="flex flex-col gap-2">
           <p className="text-sm text-zinc-700">Are you sure you want to reject this lesson?</p>
+          {suggestions.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {suggestions.map((suggestion) => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  onClick={() => setReason(suggestion)}
+                  className="rounded-full border border-zinc-300 px-3 py-1 text-xs text-zinc-700 hover:bg-zinc-100"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          )}
           <label className="flex flex-col gap-1">
             <span className="text-xs text-zinc-500">Reason (optional)</span>
-            <Textarea name="reason" rows={3} />
+            <Textarea
+              name="reason"
+              rows={3}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+            />
           </label>
           <div className="flex gap-2">
             <Button type="submit" variant="destructive" disabled={isSubmitting} className="flex-1">
