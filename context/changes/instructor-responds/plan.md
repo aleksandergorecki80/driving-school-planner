@@ -546,6 +546,16 @@ the returned `token` into the `/lesson/<token>` URL before calling `sendLessonLi
 Add the second external integration: on-demand, contextual candidate rejection reasons, with
 mandatory graceful degradation per FR-012.
 
+**Addendum (2026-07-10, added post-implementation):** mid-implementation the architecture
+pivoted from the Vercel AI Gateway (described below) to calling OpenAI directly via
+`@ai-sdk/openai`, at explicit user request (they wanted to use a `platform.openai.com` API key
+rather than a gateway key). The shipped code reads `OPENAI_API_KEY` (not `AI_GATEWAY_API_KEY`)
+and `AI_SUGGESTION_MODEL` is a bare model id with no `provider/` prefix (e.g. `gpt-5.4-nano`,
+not `openai/gpt-5.4-nano`). `@ai-sdk/openai` was added as a direct dependency alongside `ai` and
+`zod`. The "Contract" text below (gateway model string, `openai/gpt-4o-mini` example) reflects
+the original design and is superseded by this addendum — see
+`src/lib/ai/suggestRejectionReasons.ts` for the actual implementation.
+
 ### Changes Required:
 
 #### 1. Dependencies + env var

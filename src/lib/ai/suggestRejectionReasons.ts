@@ -1,5 +1,6 @@
-import { generateObject } from 'ai'
+import { generateText, Output } from 'ai'
 import { openai } from '@ai-sdk/openai'
+import * as Sentry from '@sentry/nextjs'
 import { z } from 'zod'
 
 const SuggestionSchema = z.object({
@@ -13,9 +14,9 @@ export async function suggestRejectionReasons(input: {
   try {
     const modelId = process.env.AI_SUGGESTION_MODEL ?? 'gpt-5.4-nano'
 
-    const { object } = await generateObject({
+    const { output } = await generateText({
       model: openai(modelId),
-      schema: SuggestionSchema,
+      output: Output.object({ schema: SuggestionSchema }),
       prompt:
         'Suggest up to 5 short, professional reasons an instructor might give for rejecting a ' +
         `driving lesson scheduled for ${input.scheduledAt} in category "${input.category}". ` +
@@ -23,11 +24,12 @@ export async function suggestRejectionReasons(input: {
       abortSignal: AbortSignal.timeout(10_000),
     })
 
-    return object.reasons
+    return output.reasons
   } catch (err) {
     // Swallowed by design (FR-012 graceful degradation) — logged so a real outage
-    // (bad key, wrong model id, timeout) is still visible in server logs.
+    // (bad key, wrong model id, timeout) is still visible in server logs and Sentry.
     console.error('suggestRejectionReasons failed:', err)
+    Sentry.captureException(err)
     return []
   }
 }
