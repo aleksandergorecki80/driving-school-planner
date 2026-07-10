@@ -20,11 +20,14 @@ export async function suggestRejectionReasons(input: {
         'Suggest up to 5 short, professional reasons an instructor might give for rejecting a ' +
         `driving lesson scheduled for ${input.scheduledAt} in category "${input.category}". ` +
         'Keep each reason generic and free of any personal or identifying details.',
-      abortSignal: AbortSignal.timeout(5_000),
+      abortSignal: AbortSignal.timeout(10_000),
     })
 
     return object.reasons
-  } catch {
+  } catch (err) {
+    // Swallowed by design (FR-012 graceful degradation) — logged so a real outage
+    // (bad key, wrong model id, timeout) is still visible in server logs.
+    console.error('suggestRejectionReasons failed:', err)
     return []
   }
 }
