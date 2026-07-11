@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import type { LessonRow } from './components/types'
+import AutoRefresh from './components/AutoRefresh'
 import InstructorSidebar from './components/sidebar/InstructorSidebar'
 import LessonPanel from './components/lesson-panel/LessonPanel'
 
@@ -66,6 +67,7 @@ export default async function OfficePage({ searchParams }: PageProps) {
 
   return (
     <div className="flex h-[calc(100vh-56px)] gap-0">
+      <AutoRefresh />
       <Suspense>
         <InstructorSidebar
           instructors={instructors ?? []}
