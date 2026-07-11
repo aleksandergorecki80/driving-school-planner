@@ -3,7 +3,7 @@ change_id: instructor-responds
 title: Instructor responds to a lesson via one-time per-lesson email link (S-02 rework)
 status: impl_reviewed
 created: 2026-07-04
-updated: 2026-07-10
+updated: 2026-07-11
 archived_at: null
 ---
 

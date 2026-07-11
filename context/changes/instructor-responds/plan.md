@@ -920,15 +920,15 @@ no historical/finalized lesson ever carries a live token.
 
 #### Automated
 
-- [ ] 8.1 Integration test proves the refresh mechanism returns fresh DB state, not stale/cached
-- [ ] 8.2 `npm test` exits 0
-- [ ] 8.3 `npm run build` exits 0
-- [ ] 8.4 `npm run lint` exits 0
+- [x] 8.1 Integration test proves the refresh mechanism returns fresh DB state, not stale/cached — 3bda982
+- [x] 8.2 `npm test` exits 0 — 3bda982
+- [x] 8.3 `npm run build` exits 0 — 3bda982
+- [x] 8.4 `npm run lint` exits 0 — 3bda982
 
 #### Manual
 
-- [ ] 8.5 Office view updates within ~30s of an instructor's approve/reject, no manual reload
-- [ ] 8.6 Polling interval is cleared on navigating away from `/office` (no leaked timer)
+- [x] 8.5 Office view updates within ~30s of an instructor's approve/reject, no manual reload — 3bda982
+- [x] 8.6 Polling interval is cleared on navigating away from `/office` (no leaked timer) — 3bda982
 
 ### Phase 9: Documentation sync
 
