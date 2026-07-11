@@ -60,10 +60,13 @@ describe('Risk #4 — office view reflects live DB state, not a cached snapshot'
   })
 
   const svc = createTestServiceRoleClient()
-  const cleanup: { table: string; id: string }[] = []
+  const lessonCleanup: { table: string; id: string }[] = []
+  const suiteCleanup: { table: string; id: string }[] = []
 
   afterAll(async () => {
-    await cleanupRows(svc, cleanup)
+    // Lesson rows must be deleted before their instructor/student parents (FK constraint).
+    await cleanupRows(svc, lessonCleanup)
+    await cleanupRows(svc, suiteCleanup)
   })
 
   test('a status change written directly to the DB is reflected on the very next request', async (context) => {
@@ -73,13 +76,13 @@ describe('Risk #4 — office view reflects live DB state, not a cached snapshot'
 
     const instructor = await seedInstructor(svc, { name: `test-office-poll-${Date.now()}` })
     const student = await seedStudent(svc, { name: `test-office-poll-student-${Date.now()}` })
-    cleanup.push({ table: 'instructors', id: instructor.id }, { table: 'students', id: student.id })
+    suiteCleanup.push({ table: 'instructors', id: instructor.id }, { table: 'students', id: student.id })
 
     const lesson = await seedLesson(svc, instructor.id, student.id, {
       scheduled_at: SCHEDULED_AT,
       status: 'pending',
     })
-    cleanup.push({ table: 'lessons', id: lesson.id })
+    lessonCleanup.push({ table: 'lessons', id: lesson.id })
 
     const url = `${BASE_URL}/office?instructor=${instructor.id}&week=${WEEK_START}`
     const headers = { cookie: sessionCookieHeader }
