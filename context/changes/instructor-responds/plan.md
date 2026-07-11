@@ -965,9 +965,9 @@ no historical/finalized lesson ever carries a live token.
 
 #### Automated
 
-- [ ] 9.1 `npm run build` exits 0
-- [ ] 9.2 `npm run lint` exits 0
+- [x] 9.1 `npm run build` exits 0 — ee8b6c6
+- [x] 9.2 `npm run lint` exits 0 — ee8b6c6
 
 #### Manual
 
-- [ ] 9.3 `roadmap.md` and `test-plan.md` reflect current state
+- [x] 9.3 `roadmap.md` and `test-plan.md` reflect current state — ee8b6c6
