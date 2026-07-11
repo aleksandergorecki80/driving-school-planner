@@ -1,7 +1,7 @@
 'use client'
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { cancelLesson } from '@/app/actions/lessons'
+import { cancelLesson, regenerateLessonToken } from '@/app/actions/lessons'
 import type { LessonRow } from '../types'
 import { Button } from '@/components/ui/button'
 
@@ -44,6 +44,7 @@ function formatScheduledAt(scheduledAt: string): string {
 export default function LessonPopover({ instructor, lesson, onClose }: Props) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
+  const [isResending, startResendTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
   const studentName = lesson.students?.name ?? 'Unknown'
@@ -54,6 +55,21 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
       const result = await cancelLesson(lesson.id)
       if (result.error) {
         setError(result.error)
+      } else {
+        router.refresh()
+        onClose()
+      }
+    })
+  }
+
+  function handleResend() {
+    startResendTransition(async () => {
+      setError(null)
+      const result = await regenerateLessonToken(lesson.id)
+      if (result.error) {
+        setError(result.error)
+      } else if (result.warning) {
+        setError(result.warning)
       } else {
         router.refresh()
         onClose()
@@ -111,13 +127,25 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
 
         {error && <p className="text-xs text-red-600">{error}</p>}
 
+        {lesson.status === 'pending' && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleResend}
+            disabled={isResending}
+            className="mt-auto w-full"
+          >
+            {isResending ? 'Resending…' : 'Resend link'}
+          </Button>
+        )}
+
         {lesson.status !== 'rejected' && (
           <Button
             type="button"
             variant="destructive"
             onClick={handleCancel}
             disabled={isPending}
-            className="mt-auto w-full"
+            className={lesson.status === 'pending' ? 'w-full' : 'mt-auto w-full'}
           >
             {isPending ? 'Cancelling…' : 'Cancel lesson'}
           </Button>

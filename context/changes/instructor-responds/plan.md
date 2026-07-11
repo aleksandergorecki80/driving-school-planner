@@ -626,6 +626,18 @@ submission — nothing about submitting a rejection ever awaits or blocks on it.
 Surface the two remaining office-facing capabilities: manually resending a lesson's link
 (FR-007) and viewing/editing an instructor's email address (FR-013).
 
+**Addendum (2026-07-11, added mid-implementation):** the phase is being landed in two slices at
+the user's request. Slice A (item 1, resend-link button) ships first, on its own branch/commit,
+since it's unambiguous and has no open questions. Slice B (item 2, instructor email) is on hold —
+the user clarified that the office must be able to send a lesson-link email to a **one-off
+override address**, distinct from `instructors.email`, and must **not** be able to overwrite the
+instructor's stored default email through this UI. This contradicts item 2's contract below as
+originally written (a directly editable `instructors.email` field via `updateInstructorEmail`)
+and needs re-scoping before implementation resumes — see the open questions the user is still
+deciding: (1) where the override address is entered (resend action, lesson creation, or both),
+(2) whether `instructors.email` stays editable from the office at all, (3) whether the override
+is persisted anywhere or used one-shot or a new email.
+
 ### Changes Required:
 
 #### 1. Resend-link button
@@ -913,7 +925,7 @@ no historical/finalized lesson ever carries a live token.
 
 #### Manual
 
-- [ ] 7.4 Resend-link button issues a working new link and invalidates the old one
+- [x] 7.4 Resend-link button issues a working new link and invalidates the old one
 - [ ] 7.5 Editing instructor email routes the next notification correctly
 
 ### Phase 8: Office polling (30s auto-refresh)
