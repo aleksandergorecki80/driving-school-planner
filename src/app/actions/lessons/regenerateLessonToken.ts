@@ -8,6 +8,7 @@ type LessonWithInstructorEmail = { id: string; instructors: { email: string | nu
 
 export async function regenerateLessonToken(
   lessonId: string,
+  overrideEmail?: string,
 ): Promise<{ error?: string; token?: string; warning?: string }> {
   const db = await createClient()
 
@@ -33,8 +34,8 @@ export async function regenerateLessonToken(
     return { error: 'Lesson not found or not pending' }
   }
 
-  const email = row.instructors?.email
-  if (!email) {
+  const recipientEmail = overrideEmail?.trim() || row.instructors?.email
+  if (!recipientEmail) {
     return { token: newToken, warning: 'Instructor has no email on file — link was not sent' }
   }
 
@@ -44,7 +45,7 @@ export async function regenerateLessonToken(
   }
 
   const lessonLinkUrl = `${appUrl}/lesson/${newToken}`
-  const { error: sendError } = await sendLessonLink(email, lessonLinkUrl)
+  const { error: sendError } = await sendLessonLink(recipientEmail, lessonLinkUrl)
   if (sendError) {
     return { token: newToken, warning: sendError }
   }

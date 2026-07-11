@@ -6,7 +6,7 @@ import type { StudentRow } from '../types'
 import { Button } from '@/components/ui/button'
 
 interface Props {
-  instructor: { id: string; name: string; categories: string[] }
+  instructor: { id: string; name: string; categories: string[]; email: string | null }
   slot: Date
   students: StudentRow[]
   activeCategory?: string
@@ -46,6 +46,7 @@ export default function NewLessonForm({
   const initialCategory =
     activeCategory && categories.includes(activeCategory) ? activeCategory : (categories[0] ?? '')
   const [selectedCategory, setSelectedCategory] = useState(initialCategory)
+  const [useOverrideEmail, setUseOverrideEmail] = useState(false)
 
   const filteredStudents = students.filter((s) => s.category === selectedCategory)
 
@@ -63,6 +64,12 @@ export default function NewLessonForm({
       return
     }
 
+    const overrideEmailValue = formData.get('overrideEmail')
+    const overrideEmail =
+      useOverrideEmail && typeof overrideEmailValue === 'string' && overrideEmailValue.trim()
+        ? overrideEmailValue.trim()
+        : undefined
+
     startTransition(async () => {
       setError(null)
       const result = await createLesson({
@@ -70,6 +77,7 @@ export default function NewLessonForm({
         studentId,
         category,
         scheduledAt: slot.toISOString(),
+        overrideEmail,
       })
       if (result.error) {
         setError(result.error)
@@ -147,6 +155,31 @@ export default function NewLessonForm({
               ))
             )}
           </select>
+        </div>
+
+        <div>
+          <p className="text-xs text-zinc-500">Link will be sent to</p>
+          <p className="text-sm font-medium text-zinc-900">
+            {instructor.email ?? 'No email on file'}
+          </p>
+          <label className="mt-1 flex items-center gap-1.5 text-xs text-zinc-600">
+            <input
+              type="checkbox"
+              checked={useOverrideEmail}
+              onChange={(e) => setUseOverrideEmail(e.target.checked)}
+              disabled={isPending}
+            />
+            Send to a different email for this lesson only
+          </label>
+          {useOverrideEmail && (
+            <input
+              type="email"
+              name="overrideEmail"
+              placeholder="one-off@example.com"
+              disabled={isPending}
+              className="mt-1.5 w-full rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm disabled:opacity-50"
+            />
+          )}
         </div>
 
         {error && <p className="text-xs text-red-600">{error}</p>}

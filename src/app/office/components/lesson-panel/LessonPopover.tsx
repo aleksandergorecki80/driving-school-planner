@@ -6,7 +6,7 @@ import type { LessonRow } from '../types'
 import { Button } from '@/components/ui/button'
 
 interface Props {
-  instructor: { name: string }
+  instructor: { name: string; email: string | null }
   lesson: LessonRow
   onClose: () => void
 }
@@ -46,6 +46,8 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
   const [isPending, startTransition] = useTransition()
   const [isResending, startResendTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+  const [useOverrideEmail, setUseOverrideEmail] = useState(false)
+  const [overrideEmail, setOverrideEmail] = useState('')
 
   const studentName = lesson.students?.name ?? 'Unknown'
 
@@ -63,9 +65,13 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
   }
 
   function handleResend() {
+    const trimmedOverride = useOverrideEmail ? overrideEmail.trim() : ''
     startResendTransition(async () => {
       setError(null)
-      const result = await regenerateLessonToken(lesson.id)
+      const result = await regenerateLessonToken(
+        lesson.id,
+        trimmedOverride || undefined,
+      )
       if (result.error) {
         setError(result.error)
       } else if (result.warning) {
@@ -124,6 +130,34 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
             {STATUS_LABELS[lesson.status]}
           </span>
         </div>
+
+        {lesson.status === 'pending' && (
+          <div>
+            <p className="text-xs text-zinc-500">Link will be sent to</p>
+            <p className="text-sm font-medium text-zinc-900">
+              {instructor.email ?? 'No email on file'}
+            </p>
+            <label className="mt-1 flex items-center gap-1.5 text-xs text-zinc-600">
+              <input
+                type="checkbox"
+                checked={useOverrideEmail}
+                onChange={(e) => setUseOverrideEmail(e.target.checked)}
+                disabled={isResending}
+              />
+              Send to a different email for this resend only
+            </label>
+            {useOverrideEmail && (
+              <input
+                type="email"
+                value={overrideEmail}
+                onChange={(e) => setOverrideEmail(e.target.value)}
+                placeholder="one-off@example.com"
+                disabled={isResending}
+                className="mt-1.5 w-full rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm disabled:opacity-50"
+              />
+            )}
+          </div>
+        )}
 
         {error && <p className="text-xs text-red-600">{error}</p>}
 

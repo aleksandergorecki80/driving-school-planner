@@ -619,28 +619,31 @@ submission — nothing about submitting a rejection ever awaits or blocks on it.
 
 ---
 
-## Phase 7: Office UI — resend link + instructor email field
+## Phase 7: Office UI — resend link + send-to-a-different-email override
 
 ### Overview
 
 Surface the two remaining office-facing capabilities: manually resending a lesson's link
-(FR-007) and viewing/editing an instructor's email address (FR-013).
+(FR-007) and letting the office redirect a single send to an address other than the instructor's
+stored default (FR-013, reworked — see addendum).
 
-**Addendum (2026-07-11, added mid-implementation):** the phase is being landed in two slices at
-the user's request. Slice A (item 1, resend-link button) ships first, on its own branch/commit,
-since it's unambiguous and has no open questions. Slice B (item 2, instructor email) is on hold —
-the user clarified that the office must be able to send a lesson-link email to a **one-off
-override address**, distinct from `instructors.email`, and must **not** be able to overwrite the
-instructor's stored default email through this UI. This contradicts item 2's contract below as
-originally written (a directly editable `instructors.email` field via `updateInstructorEmail`)
-and needs re-scoping before implementation resumes — see the open questions the user is still
-deciding: (1) where the override address is entered (resend action, lesson creation, or both),
-(2) whether `instructors.email` stays editable from the office at all, (3) whether the override
-is persisted anywhere or used one-shot or a new email.
+**Addendum (2026-07-11, resolved):** originally FR-013 was scoped as an office-editable
+`instructors.email` field. Mid-implementation the user reworked this: `instructors.email` must
+stay **non-editable** from the office UI and **nothing about the override is ever persisted**.
+Instead, both places that send a lesson-link email — lesson creation (`createLesson`) and resend
+(`regenerateLessonToken`) — show the instructor's original stored email and let the office opt
+into sending *this one email* to a different address instead. The override is one-shot: used only
+for that single `sendLessonLink` call, never written to `instructors.email` or anywhere else. This
+replaces item 2 below (and its `updateInstructorEmail`/`InstructorSidebar` contract) entirely — no
+new instructor-facing server action, no sidebar changes.
+
+Item 1 (resend-link button) already shipped as Slice A, own branch/commit
+(`feat/instructor-responds-p7-resend-button`) — this addendum only affects item 2, now
+retitled "send-to-a-different-email override," landing as Slice B.
 
 ### Changes Required:
 
-#### 1. Resend-link button
+#### 1. Resend-link button — DONE (Slice A)
 
 **File**: `src/app/office/components/lesson-panel/LessonPopover.tsx`
 
@@ -651,41 +654,56 @@ is persisted anywhere or used one-shot or a new email.
 `error` state, `router.refresh()`, disabled+relabeled while pending) — no new UI pattern
 introduced.
 
-#### 2. Instructor email field
+#### 2. Send-to-a-different-email override (Slice B)
 
-**File**: `src/app/office/components/sidebar/InstructorSidebar.tsx`,
-`src/app/office/page.tsx`
+**Files**: `src/app/actions/lessons/createLesson.ts`, `src/app/actions/lessons/regenerateLessonToken.ts`,
+`src/app/office/components/lesson-panel/NewLessonForm.tsx`,
+`src/app/office/components/lesson-panel/LessonPopover.tsx`, `src/app/office/page.tsx`,
+`src/app/office/components/lesson-panel/LessonPanel.tsx`
 
-**Intent**: Each instructor row gains a small inline-editable email field (FR-013) — the one
-narrow exception to "no instructor profile management."
+**Intent**: Both actions gain an optional one-shot `overrideEmail` parameter used only for that
+call's `sendLessonLink` send. `instructors.email` in the database is never modified by this
+feature.
 
-**Contract**: New server action `updateInstructorEmail(instructorId: string, email: string): Promise<{ error?: string }>`
-in a new `src/app/actions/instructors.ts` file (separate from `lessons.ts` since it acts on the
-`instructors` table), following the same auth/return-shape conventions as `lessons.ts`.
-
-`office/page.tsx`'s instructors query (`.select('id, name, categories')`) must extend to
-`.select('id, name, categories, email')` and pass `email` through to `InstructorSidebar`;
-`InstructorSidebar`'s `Instructor` interface gains `email: string | null`. The edit itself is one
-`<form action={updateInstructorEmail}>` per instructor row, per `lessons.md`'s no-`FormEvent`
-rule — the same shape as Phase 4's `LessonResponseForm.tsx`, not an ad hoc onChange/onBlur
-handler.
+**Contract**:
+- `createLesson(data: { instructorId, studentId, category, scheduledAt, overrideEmail?: string })`
+  — recipient is `data.overrideEmail?.trim() || instructor.email`; the existing "no email on
+  file" warning only fires when *neither* is present.
+- `regenerateLessonToken(lessonId: string, overrideEmail?: string)` — same recipient-resolution
+  rule against the instructor row looked up inside the function; existing warning behavior
+  unchanged otherwise.
+- `office/page.tsx`'s instructors query extends to `.select('id, name, categories, email')`; the
+  widened `{ id, name, categories, email }` shape flows through `LessonPanel`'s `instructor` prop
+  into both `NewLessonForm` and `LessonPopover` (structural typing — no changes needed to
+  `InstructorSidebar` or `WeeklyCalendar`, which don't read `email`).
+- `NewLessonForm.tsx`: displays the instructor's stored email (or "No email on file") read-only,
+  with a checkbox that reveals a one-shot `overrideEmail` text input in the same `<form
+  action={handleAction}>` (per `lessons.md`'s no-`FormEvent` rule already in use here) — checked +
+  filled means `createLesson` is called with `overrideEmail` set, otherwise `undefined`.
+- `LessonPopover.tsx`: same read-only email display + override checkbox/input next to the
+  "Resend link" button from Slice A; `handleResend` passes the override (if any) to
+  `regenerateLessonToken`.
 
 ### Success Criteria:
 
 #### Automated Verification:
 
-- Test for `updateInstructorEmail` (new `src/app/actions/instructors.test.ts`): updates the
-  email, verified via independent service-role re-query; rejects when unauthenticated
+- Extended tests in `src/app/actions/lessons.test.ts` (mocked `sendLessonLink`, per the
+  established Phase 5 pattern): `createLesson` sends to `overrideEmail` when provided even though
+  the instructor has a different stored email; `createLesson` still falls back to the stored
+  email when no override is given; `createLesson` still warns when neither is present;
+  `regenerateLessonToken` sends to `overrideEmail` when provided; independent service-role
+  re-query confirms `instructors.email` is unchanged by any of these calls
 - `npm test` exits 0
 - `npm run build` exits 0
 - `npm run lint` exits 0
 
 #### Manual Verification:
 
-- Resend a link from the office UI and confirm a new email arrives with a different token than
-  the original
-- Edit an instructor's email in the sidebar and confirm the next lesson-creation email goes to
-  the new address
+- Create a lesson with the override checkbox filled in and confirm the email arrives at the
+  override address, not the instructor's stored one
+- Resend a link with the override filled in and confirm the same; confirm the instructor's stored
+  email (visible read-only in the panel) is unchanged in both cases
 
 ---
 
@@ -805,7 +823,8 @@ Link to this change folder.
   auth-wiring + dual-assertion-oracle pattern.
 - Phase 4: page-level tests for `/lesson/[token]`.
 - Phases 5–6: same DB-integration approach, with the `resend` and `ai` modules mocked.
-- Phase 7: server-action-level test for `updateInstructorEmail`.
+- Phase 7: extended `createLesson`/`regenerateLessonToken` tests for the one-shot
+  send-to-a-different-email override (see Phase 7 addendum).
 - Phase 8: integration test proving polling's underlying refresh mechanism returns fresh DB
   state, not a cached/stale snapshot.
 
@@ -915,18 +934,18 @@ no historical/finalized lesson ever carries a live token.
 - [x] 6.4 Real suggestion call verified on a live lesson link — b246d6a
 - [x] 6.5 Simulated AI failure still allows rejection via free text — b246d6a
 
-### Phase 7: Office UI — resend link + instructor email field
+### Phase 7: Office UI — resend link + send-to-a-different-email override
 
 #### Automated
 
-- [ ] 7.1 `updateInstructorEmail` test passes
-- [ ] 7.2 `npm run build` exits 0
-- [ ] 7.3 `npm run lint` exits 0
+- [x] 7.1 `createLesson`/`regenerateLessonToken` override-email tests pass, `instructors.email` confirmed unchanged
+- [x] 7.2 `npm run build` exits 0
+- [x] 7.3 `npm run lint` exits 0
 
 #### Manual
 
 - [x] 7.4 Resend-link button issues a working new link and invalidates the old one
-- [ ] 7.5 Editing instructor email routes the next notification correctly
+- [x] 7.5 Creating and resending with the override filled in send to the override address; instructor's stored email confirmed unchanged
 
 ### Phase 8: Office polling (30s auto-refresh)
 

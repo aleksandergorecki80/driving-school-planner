@@ -34,7 +34,7 @@ export default async function OfficePage({ searchParams }: PageProps) {
   // so the category dropdown always shows the full set of categories.
   const { data: instructors } = await db
     .from('instructors')
-    .select('id, name, categories')
+    .select('id, name, categories, email')
     .order('name')
 
   // Always compute weekStart so it can be passed to WeeklyCalendar regardless of instructor selection.
