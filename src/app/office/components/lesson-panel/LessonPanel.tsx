@@ -6,7 +6,7 @@ import NewLessonForm from './NewLessonForm'
 import LessonPopover from './LessonPopover'
 
 interface Props {
-  instructor: { id: string; name: string; categories: string[] }
+  instructor: { id: string; name: string; categories: string[]; email: string | null }
   lessons: LessonRow[]
   weekStart: string // YYYY-MM-DD (UTC Monday)
   availableStudents: StudentRow[]

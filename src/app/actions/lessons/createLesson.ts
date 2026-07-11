@@ -7,8 +7,9 @@ export async function createLesson(data: {
   studentId: string
   category: string
   scheduledAt: string
+  overrideEmail?: string
 }): Promise<{ error?: string; warning?: string }> {
-  const { instructorId, studentId, category, scheduledAt } = data
+  const { instructorId, studentId, category, scheduledAt, overrideEmail } = data
 
   const slotStart = new Date(scheduledAt)
   if (isNaN(slotStart.getTime())) {
@@ -94,7 +95,8 @@ export async function createLesson(data: {
     return { error: insertError.message }
   }
 
-  if (!instructor.email) {
+  const recipientEmail = overrideEmail?.trim() || instructor.email
+  if (!recipientEmail) {
     return { warning: 'Instructor has no email on file — link was not sent' }
   }
 
@@ -104,7 +106,7 @@ export async function createLesson(data: {
   }
 
   const lessonLinkUrl = `${appUrl}/lesson/${inserted?.token}`
-  const { error: sendError } = await sendLessonLink(instructor.email, lessonLinkUrl)
+  const { error: sendError } = await sendLessonLink(recipientEmail, lessonLinkUrl)
   if (sendError) {
     return { warning: sendError }
   }

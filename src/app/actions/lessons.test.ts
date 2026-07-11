@@ -323,6 +323,39 @@ describe('createLesson — email side effect', () => {
     expect(row?.status).toBe('pending')
     if (row) lessonIds.push(row.id)
   })
+
+  test('sends to overrideEmail instead of the instructor\'s stored email, without changing the stored email', async () => {
+    const scheduledAt = '2099-08-04T10:00:00.000Z'
+    const overrideEmail = 'one-off-override@example.com'
+
+    const result = await createLesson({
+      instructorId,
+      studentId,
+      category: 'B',
+      scheduledAt,
+      overrideEmail,
+    })
+    expect(result).toEqual({})
+
+    const { data: row } = await svc
+      .from('lessons')
+      .select('id')
+      .eq('instructor_id', instructorId)
+      .eq('scheduled_at', scheduledAt)
+      .single()
+    if (row) lessonIds.push(row.id)
+
+    expect(sendLessonLinkMock).toHaveBeenCalledTimes(1)
+    const [to] = sendLessonLinkMock.mock.calls[0]
+    expect(to).toBe(overrideEmail)
+
+    const { data: instructorRow } = await svc
+      .from('instructors')
+      .select('email')
+      .eq('id', instructorId)
+      .single()
+    expect(instructorRow?.email).not.toBe(overrideEmail)
+  })
 })
 
 describe('createLesson — category-coherence', () => {
@@ -720,6 +753,38 @@ describe('regenerateLessonToken', () => {
     const [to, lessonLinkUrl] = sendLessonLinkMock.mock.calls[0]
     expect(to).toMatch(/@example\.com$/)
     expect(lessonLinkUrl).toContain(`/lesson/${result.token}`)
+  })
+
+  test('sends to overrideEmail instead of the instructor\'s stored email, without changing the stored email', async () => {
+    const { data: lesson, error } = await svc
+      .from('lessons')
+      .insert({
+        instructor_id: instructorId,
+        student_id: studentId,
+        category: 'B',
+        scheduled_at: '2099-06-08T10:00:00.000Z',
+        status: 'pending',
+      })
+      .select('id')
+      .single()
+    if (error) throw new Error(`seed lesson failed: ${error.message}`)
+    if (!lesson) throw new Error('seed lesson returned no data')
+    regenCleanup.push({ table: 'lessons', id: lesson.id })
+
+    const overrideEmail = 'one-off-regen-override@example.com'
+    const result = await regenerateLessonToken(lesson.id, overrideEmail)
+    expect(result.error).toBeUndefined()
+
+    expect(sendLessonLinkMock).toHaveBeenCalledTimes(1)
+    const [to] = sendLessonLinkMock.mock.calls[0]
+    expect(to).toBe(overrideEmail)
+
+    const { data: instructorRow } = await svc
+      .from('instructors')
+      .select('email')
+      .eq('id', instructorId)
+      .single()
+    expect(instructorRow?.email).not.toBe(overrideEmail)
   })
 })
 
