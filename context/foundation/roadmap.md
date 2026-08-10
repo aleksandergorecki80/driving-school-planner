@@ -3,7 +3,7 @@ project: "DrivePlan"
 version: 1
 status: draft
 created: 2026-06-04
-updated: 2026-07-04
+updated: 2026-08-10
 prd_version: 1
 main_goal: speed
 top_blocker: capacity
@@ -142,6 +142,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 | TD-01      | lesson-category-invariant | Enforce student↔lesson category coherence server-side (Lesson aggregate + `EXCLUDE` constraints + tighten RLS) | yes | 🔴 Data-integrity bug: `createLesson.ts` never fetches `students.category`; only the form dropdown guards the rule, so a direct server-action call writes an incoherent lesson. Also fixes student double-booking (no DB guard today) and root cause `RLS office_insert_lessons WITH CHECK (true)`. Source: `context/domain/02-invariant-aggregate-refactor.md` (found 2026-08-02, module-4 DDD). Blocked by Open Question on licence categories (below). |
 | TD-02      | supabase-acl             | Introduce Anti-Corruption Layer for Supabase (ports + adapter in `src/lib/supabase/`) | no | 🟡 Architectural debt (not urgent): Supabase SDK + raw PostgREST shape leak through ~16 files; the "embed as object" workaround is duplicated 3× (`types.ts`, `regenerateLessonToken.ts`, `office/page.tsx`). Also remove dead service-role-key code. Success criterion: `grep '@supabase' src/` returns only `src/lib/supabase/` (+ `proxy.ts`). Source: `context/domain/03-anti-corruption-layer.md` (found 2026-08-02, module-4 DDD). |
 | DOC-01     | sync-prd-fr013           | Update `prd-v2.md` FR-013 to match the shipped rework                     | yes | 🟢 Doc hygiene: `prd-v2.md:89,141` still describes FR-013 as an editable `instructors.email` field, but it was reworked 2026-07-11 to a non-persisted one-shot `overrideEmail` (already documented in `roadmap.md:140` and `context/changes/instructor-responds/change.md`). The PRD is stale, not the code. Source: `context/domain/01-domain-distillation.md` §KROK 5 #6 (found 2026-08-02, module-4 DDD). |
+| TD-03      | shadcn-design-refresh    | Align UI with shadcn/ui blocks + wire up dark mode                        | yes (in progress — `/10x-plan` started) | 🟡 Design-system debt: shadcn/ui is installed and configured (`components.json`, full light/dark token set in `globals.css`) but only 6 of 67 primitives are pulled in, and 3 of those (`Badge`, `Drawer`, `Popover`) are installed and never imported — every real screen (`/login`, `/office`, `/lesson/[token]`) hand-rolls Tailwind div soup for things the design system already solves. Dark mode has complete `:root`/`.dark` color tokens but zero toggle mechanism (no `next-themes`, no provider, no toggle UI). Source: `context/changes/shadcn-design-refresh/research.md` (found 2026-08-10, user-triggered design audit). |
 
 ## Open Roadmap Questions
 
