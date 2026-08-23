@@ -488,23 +488,23 @@ retroactively labeled.
 
 #### Automated
 
-- [x] 1.1 Typecheck passes: `npm run typecheck`
-- [x] 1.2 Lint passes: `npm run lint`
+- [x] 1.1 Typecheck passes: `npm run typecheck` — 26f0f65
+- [x] 1.2 Lint passes: `npm run lint` — 26f0f65
 
 #### Manual
 
-- [x] 1.3 `OPENAI_API_KEY=<real key> git diff | npm run review:ci` (no `.env.local`) produces the same JSON shape as `npm run review:working`
-- [x] 1.4 `nvm use` picks up the version from `.nvmrc` without error
+- [x] 1.3 `OPENAI_API_KEY=<real key> git diff | npm run review:ci` (no `.env.local`) produces the same JSON shape as `npm run review:working` — 26f0f65
+- [x] 1.4 `nvm use` picks up the version from `.nvmrc` without error — 26f0f65
 
 ### Phase 2: Composite action (`ai-reviewer`)
 
 #### Automated
 
-- [ ] 2.1 `actionlint .github/actions/ai-reviewer/action.yml` passes (incl. embedded shellcheck)
+- [x] 2.1 `actionlint .github/actions/ai-reviewer/action.yml` passes (incl. embedded shellcheck)
 
 #### Manual
 
-- [ ] 2.2 Verified together with Phase 3/4's end-to-end run (not independently runnable)
+- [x] 2.2 Verified together with Phase 3/4's end-to-end run (not independently runnable)
 
 ### Phase 3: Workflow (`ai-review.yml`)
 
