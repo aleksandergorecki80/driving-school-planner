@@ -230,24 +230,24 @@ Purely additive — no existing files, data, or behavior change. `tools/code-rev
 
 #### Automated
 
-- [x] 1.1 `promptfoo` in devDependencies, `package-lock.json` updated
-- [x] 1.2 Type checking passes
-- [x] 1.3 Linting passes
+- [x] 1.1 `promptfoo` in devDependencies, `package-lock.json` updated — c3e0e52
+- [x] 1.2 Type checking passes — c3e0e52
+- [x] 1.3 Linting passes — c3e0e52
 
 #### Manual
 
-- [x] 1.4 `provider.ts` imports cleanly
+- [x] 1.4 `provider.ts` imports cleanly — c3e0e52
 
 ### Phase 2: Fixture diff and assertion scripts
 
 #### Automated
 
-- [ ] 2.1 Both assertion files are valid, loadable CommonJS
-- [ ] 2.2 Linting passes
+- [x] 2.1 Both assertion files are valid, loadable CommonJS
+- [x] 2.2 Linting passes
 
 #### Manual
 
-- [ ] 2.3 Fixture diff reads as a plausible real PR diff
+- [x] 2.3 Fixture diff reads as a plausible real PR diff
 
 ### Phase 3: promptfooconfig.yaml, npm scripts, and verification
 
