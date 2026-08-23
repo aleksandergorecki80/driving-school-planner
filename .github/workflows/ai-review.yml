@@ -33,7 +33,7 @@ jobs:
           EVENT_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
-            json=$(gh pr view "$DISPATCH_PR_NUMBER" --json number,title,body,headRefOid)
+            json=$(gh pr view "$DISPATCH_PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json number,title,body,headRefOid)
             number=$(jq -r '.number' <<< "$json")
             title=$(jq -r '.title' <<< "$json")
             body=$(jq -r '.body' <<< "$json")
