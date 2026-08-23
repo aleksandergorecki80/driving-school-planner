@@ -365,7 +365,11 @@ the agent.
 
 **Contract**: `actions/setup-node@820762786026740c76f36085b0efc47a31fe5020` (pinned
 SHA for `v7.0.0`), `with: { node-version-file: '.nvmrc', cache: 'npm' }`, followed by
-`npm ci`.
+`npm install` (not `npm ci` — discovered during Phase 4 rollout that
+`package-lock.json`, generated locally on macOS/Node 24.10.0, doesn't resolve some
+optional WASM-fallback transitive packages — e.g. `@emnapi/runtime` — the same way
+the CI runner's Linux/Node 24.19.0 does, which `npm ci`'s strict lockfile-match
+fails on. `npm install` tolerates the drift and resolves what's missing itself).
 
 #### 5. Invoke composite action
 
@@ -465,7 +469,7 @@ agent-error (harmless, but avoidable).
 
 The agent already bounds itself with a 60s `AbortSignal.timeout` (`review.ts:27`);
 no additional timeout handling is needed at the workflow level. `actions/setup-node`'s
-`cache: 'npm'` keeps `npm ci` fast on repeat runs.
+`cache: 'npm'` keeps `npm install` fast on repeat runs.
 
 ## Migration Notes
 
