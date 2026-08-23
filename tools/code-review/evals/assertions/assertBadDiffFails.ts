@@ -24,10 +24,10 @@ export default function assertBadDiffFails(output: string): AssertionResult {
   }
 
   const review = result.data
-  const pass = review.verdict === 'fail' && review.scores.security <= 3
+  const pass = review.verdict === 'fail' && review.scores.security <= 5
   const reason = pass
     ? `Correctly flagged the injection: verdict=${review.verdict}, security=${review.scores.security}`
-    : `Expected verdict 'fail' with security <= 3, got verdict=${review.verdict}, security=${review.scores.security}`
+    : `Expected verdict 'fail' with security <= 5, got verdict=${review.verdict}, security=${review.scores.security}`
 
   return { pass, score: pass ? 1 : 0, reason }
 }

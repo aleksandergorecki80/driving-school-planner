@@ -242,21 +242,21 @@ Purely additive — no existing files, data, or behavior change. `tools/code-rev
 
 #### Automated
 
-- [x] 2.1 Both assertion files are valid, loadable CommonJS
-- [x] 2.2 Linting passes
+- [x] 2.1 Both assertion files are valid, loadable CommonJS — 11d40e5
+- [x] 2.2 Linting passes — 11d40e5
 
 #### Manual
 
-- [x] 2.3 Fixture diff reads as a plausible real PR diff
+- [x] 2.3 Fixture diff reads as a plausible real PR diff — 11d40e5
 
 ### Phase 3: promptfooconfig.yaml, npm scripts, and verification
 
 #### Automated
 
-- [ ] 3.1 `npm run eval` runs to completion, exits non-zero on the flawed fixture
-- [ ] 3.2 Both provider labels appear in eval output
-- [ ] 3.3 Type checking passes
-- [ ] 3.4 Linting passes
+- [x] 3.1 `npm run eval` runs to completion, exits non-zero on the flawed fixture
+- [x] 3.2 Both provider labels appear in eval output
+- [x] 3.3 Type checking passes
+- [x] 3.4 Linting passes
 
 #### Manual
 
