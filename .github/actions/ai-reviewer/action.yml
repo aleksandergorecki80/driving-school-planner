@@ -136,9 +136,9 @@ runs:
           --jq '[.[] | select(.body | contains("<!-- ai-cr-comment -->"))][0].id // empty')
 
         if [ -n "$existing_id" ]; then
-          gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing_id}" -f "body=@/tmp/ai-cr-comment.md"
+          gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing_id}" -F "body=@/tmp/ai-cr-comment.md"
         else
-          gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" -f "body=@/tmp/ai-cr-comment.md"
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" -F "body=@/tmp/ai-cr-comment.md"
         fi
 
     - name: Gate on verdict
