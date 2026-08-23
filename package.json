@@ -50,6 +50,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "lefthook": "^2.1.9",
+    "promptfoo": "^0.122.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vercel": "^54.7.1",
