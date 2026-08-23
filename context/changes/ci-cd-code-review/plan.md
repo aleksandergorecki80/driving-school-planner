@@ -510,11 +510,11 @@ retroactively labeled.
 
 #### Automated
 
-- [x] 3.1 `actionlint .github/workflows/ai-review.yml` passes
+- [x] 3.1 `actionlint .github/workflows/ai-review.yml` passes — 73d607c
 
 #### Manual
 
-- [x] 3.2 Verified end-to-end together with Phase 4
+- [x] 3.2 Verified end-to-end together with Phase 4 — 73d607c
 
 ### Phase 4: Rollout & manual verification
 
