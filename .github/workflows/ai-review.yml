@@ -1,0 +1,83 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull request number to review'
+        required: true
+        type: number
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    if: github.event.action != 'labeled' || github.event.label.name == 'ai-cr:review'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve PR context
+        id: pr
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_PR_NUMBER: ${{ inputs.pr_number }}
+          EVENT_PR_NUMBER: ${{ github.event.pull_request.number }}
+          EVENT_PR_TITLE: ${{ github.event.pull_request.title }}
+          EVENT_PR_BODY: ${{ github.event.pull_request.body }}
+          EVENT_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            json=$(gh pr view "$DISPATCH_PR_NUMBER" --json number,title,body,headRefOid)
+            number=$(jq -r '.number' <<< "$json")
+            title=$(jq -r '.title' <<< "$json")
+            body=$(jq -r '.body' <<< "$json")
+            head_sha=$(jq -r '.headRefOid' <<< "$json")
+          else
+            number="$EVENT_PR_NUMBER"
+            title="$EVENT_PR_TITLE"
+            body="$EVENT_PR_BODY"
+            head_sha="$EVENT_PR_HEAD_SHA"
+          fi
+
+          delim="ghadelim_${RANDOM}_${RANDOM}"
+          {
+            echo "number=$number"
+            echo "head_sha=$head_sha"
+            echo "title<<$delim"
+            echo "$title"
+            echo "$delim"
+            echo "body<<$delim"
+            echo "$body"
+            echo "$delim"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Checkout PR head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.pr.outputs.head_sha }}
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run AI code review
+        uses: ./.github/actions/ai-reviewer
+        with:
+          pr-number: ${{ steps.pr.outputs.number }}
+          pr-title: ${{ steps.pr.outputs.title }}
+          pr-body: ${{ steps.pr.outputs.body }}
+          github-token: ${{ github.token }}
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          consumed-review-label: ${{ github.event.action == 'labeled' && github.event.label.name == 'ai-cr:review' }}

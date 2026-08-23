@@ -500,21 +500,21 @@ retroactively labeled.
 
 #### Automated
 
-- [x] 2.1 `actionlint .github/actions/ai-reviewer/action.yml` passes (incl. embedded shellcheck)
+- [x] 2.1 `actionlint .github/actions/ai-reviewer/action.yml` passes (incl. embedded shellcheck) — 78e79f1
 
 #### Manual
 
-- [x] 2.2 Verified together with Phase 3/4's end-to-end run (not independently runnable)
+- [x] 2.2 Verified together with Phase 3/4's end-to-end run (not independently runnable) — 78e79f1
 
 ### Phase 3: Workflow (`ai-review.yml`)
 
 #### Automated
 
-- [ ] 3.1 `actionlint .github/workflows/ai-review.yml` passes
+- [x] 3.1 `actionlint .github/workflows/ai-review.yml` passes
 
 #### Manual
 
-- [ ] 3.2 Verified end-to-end together with Phase 4
+- [x] 3.2 Verified end-to-end together with Phase 4
 
 ### Phase 4: Rollout & manual verification
 
