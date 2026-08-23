@@ -1,0 +1,32 @@
+diff --git a/src/app/actions/lessons/searchLessonsByNote.ts b/src/app/actions/lessons/searchLessonsByNote.ts
+new file mode 100644
+index 0000000..1a2b3c4
+--- /dev/null
++++ b/src/app/actions/lessons/searchLessonsByNote.ts
+@@ -0,0 +1,16 @@
++'use server'
++import { createClient } from '@/lib/supabase/server'
++
++export async function searchLessonsByNote(searchTerm: string) {
++  const db = await createClient()
++
++  const { data, error } = await db
++    .from('lessons')
++    .select('id, scheduled_at, status, notes')
++    .or(`notes.ilike.%${searchTerm}%,status.eq.${searchTerm}`)
++
++  if (error) {
++    return { error: error.message }
++  }
++
++  return { data: data ?? [] }
++}
+diff --git a/src/app/actions/lessons/index.ts b/src/app/actions/lessons/index.ts
+index 4d5e6f7..8a9b0c1 100644
+--- a/src/app/actions/lessons/index.ts
++++ b/src/app/actions/lessons/index.ts
+@@ -3,3 +3,4 @@ export { cancelLesson } from './cancelLesson'
+ export { respondToLesson } from './respondToLesson'
+ export { regenerateLessonToken } from './regenerateLessonToken'
+ export { suggestRejectionReasonsAction } from './suggestRejectionReasonsAction'
++export { searchLessonsByNote } from './searchLessonsByNote'

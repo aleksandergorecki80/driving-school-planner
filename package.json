@@ -17,7 +17,9 @@
     "review:working": "git diff | npx tsx --env-file=.env.local tools/code-review/review.ts",
     "review:staged": "git diff --staged | npx tsx --env-file=.env.local tools/code-review/review.ts",
     "review:head": "git diff HEAD~1 | npx tsx --env-file=.env.local tools/code-review/review.ts",
-    "review:branch": "git diff main...HEAD | npx tsx --env-file=.env.local tools/code-review/review.ts"
+    "review:branch": "git diff main...HEAD | npx tsx --env-file=.env.local tools/code-review/review.ts",
+    "eval": "node --env-file=.env.local node_modules/.bin/promptfoo eval --config tools/code-review/evals/promptfooconfig.yaml",
+    "eval:ci": "promptfoo eval --config tools/code-review/evals/promptfooconfig.yaml"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.11",
@@ -50,6 +52,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "lefthook": "^2.1.9",
+    "promptfoo": "^0.122.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vercel": "^54.7.1",
