@@ -2,7 +2,7 @@
 
 ## Context
 
-- **Project / context**: 10xDevs Module 5 (AI Internal Builders), first useful-version exploration. Signals drawn from the author's own dev workflow across course repos (`driving-school-planner`, `tldraw`) and `~/.claude`. Real target later: Ottobock team.
+- **Project / context**: 10xDevs Module 5 (AI Internal Builders), first useful-version exploration. Signals drawn from the author's own dev workflow across course repos (`driving-school-planner`, `tldraw`) and `~/.claude`. Real target later: my team at work.
 - **Data constraint**: mock / local / read-only / non-sensitive — first version runs on prepared JSON/CSV exports, not live company data.
 - **Date**: 2026-08-10
 
@@ -54,6 +54,6 @@ Chosen over A and B because it is the most canonical *complement* per the lesson
 
 ## Next Direction If Valuable
 
-Candidate C is narrow, has a clear first version, and runs on mock data → per the lesson, go **straight to building**: `/10x-new` → `/10x-research` → `/10x-plan` → `/10x-implement` (it maps onto the M5L2 "team agent" build). `/10x-mom-test` is optional here because the author is also the user of the tool; it becomes worthwhile if this is taken to the Ottobock team, where the manager/team should be interviewed first.
+Candidate C is narrow, has a clear first version, and runs on mock data → per the lesson, go **straight to building**: `/10x-new` → `/10x-research` → `/10x-plan` → `/10x-implement` (it maps onto the M5L2 "team agent" build). `/10x-mom-test` is optional here because the author is also the user of the tool; it becomes worthwhile if this is taken to a real team at work, where the manager/team should be interviewed first.
 
 **Open item before the first *real* (non-mock) version:** confirm platform — GitHub vs GitLab (the raw signals mixed "board on GitHub" with "MR" = GitLab terminology). Irrelevant while on mock exports.
