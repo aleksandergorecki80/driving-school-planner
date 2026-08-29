@@ -527,9 +527,9 @@ constraints, a new function, and a policy removal.
 
 #### Automated
 
-- [ ] 2.1 `npm run test -- src/domain/lesson/Lesson.test.ts` passes (all four cases)
-- [ ] 2.2 Type checking passes: `npm run typecheck`
-- [ ] 2.3 Linting passes: `npm run lint`
+- [x] 2.1 `npm run test -- src/domain/lesson/Lesson.test.ts` passes (all four cases)
+- [x] 2.2 Type checking passes: `npm run typecheck`
+- [x] 2.3 Linting passes: `npm run lint`
 
 ### Phase 3: `LessonRepository`, `createLesson.ts` rewrite, and the missing I2 test cases
 
