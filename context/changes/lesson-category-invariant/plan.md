@@ -535,15 +535,15 @@ constraints, a new function, and a policy removal.
 
 #### Automated
 
-- [ ] 3.1 New I2 test cases committed and failing against pre-rewrite `createLesson.ts` (red)
-- [ ] 3.2 `npm run test -- src/app/actions/lessons.test.ts` passes in full after the rewrite (green)
-- [ ] 3.3 `office_insert_lessons` policy no longer present after this phase's migration
-- [ ] 3.4 Type checking passes: `npm run typecheck`
-- [ ] 3.5 Linting passes: `npm run lint`
+- [x] 3.1 New I2 test cases committed and failing against pre-rewrite `createLesson.ts` (red)
+- [x] 3.2 `npm run test -- src/app/actions/lessons.test.ts` passes in full after the rewrite (green)
+- [x] 3.3 `office_insert_lessons` policy no longer present after this phase's migration
+- [x] 3.4 Type checking passes: `npm run typecheck`
+- [x] 3.5 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 3.6 Booking a coherent lesson through `NewLessonForm` still succeeds end-to-end
+- [x] 3.6 Booking a coherent lesson through `NewLessonForm` still succeeds end-to-end — verified live via `agent-browser`: logged in as office, booked Anna Nowak / Adam Wójcik / category B at a real future slot, no error, lesson appeared on the calendar. Test-data cleaned up afterward.
 
 ### Phase 4: Cleanup and E2E verification
 

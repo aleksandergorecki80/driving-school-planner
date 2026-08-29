@@ -361,6 +361,7 @@ describe('createLesson — email side effect', () => {
 describe('createLesson — category-coherence', () => {
   let categoryInstructorId: string
   let categoryStudentId: string
+  let mismatchedCategoryStudentId: string
   const fixtureCleanup: { table: string; id: string }[] = []
 
   beforeAll(async () => {
@@ -369,14 +370,22 @@ describe('createLesson — category-coherence', () => {
       categories: ['C'],
       email: `test-instr-cat-${Date.now()}@example.com`,
     })
-    const student = await seedStudent(svc, { name: `test-student-cat-${Date.now()}` })
+    // Category explicitly 'C' (matches the instructor) — the positive test below depends on
+    // this now that the student side of the rule (I2) is enforced, not just the instructor side.
+    const student = await seedStudent(svc, { name: `test-student-cat-${Date.now()}`, category: 'C' })
+    const mismatchedStudent = await seedStudent(svc, {
+      name: `test-student-cat-mismatch-${Date.now()}`,
+      category: 'B',
+    })
     categoryInstructorId = instructor.id
     categoryStudentId = student.id
+    mismatchedCategoryStudentId = mismatchedStudent.id
     // dependents (lessons) cleaned per-test by file-level afterEach; parents go last so
     // they are still present while lessons exist
     fixtureCleanup.push(
       { table: 'instructors', id: categoryInstructorId },
       { table: 'students', id: categoryStudentId },
+      { table: 'students', id: mismatchedCategoryStudentId },
     )
   })
 
@@ -431,6 +440,45 @@ describe('createLesson — category-coherence', () => {
     expect(data.category).toBe('C')
     expect(data.status).toBe('pending')
     lessonIds.push(data.id)
+  })
+
+  test('returns { error } when category is not in student.category (I2)', async () => {
+    const scheduledAt = '2099-03-10T12:00:00.000Z'
+    const result = await createLesson({
+      instructorId: categoryInstructorId,
+      studentId: mismatchedCategoryStudentId, // holds 'B', category below is 'C'
+      category: 'C',
+      scheduledAt,
+    })
+
+    expect(result.error).toBe('Student is not enrolled in this category')
+
+    // Oracle: no row must have been inserted
+    const { data } = await svc
+      .from('lessons')
+      .select('id')
+      .eq('instructor_id', categoryInstructorId)
+      .eq('scheduled_at', scheduledAt)
+    expect(data).toHaveLength(0)
+  })
+
+  test('returns the instructor-mismatch error (not the student one) when both mismatch', async () => {
+    const scheduledAt = '2099-03-10T13:00:00.000Z'
+    const result = await createLesson({
+      instructorId: categoryInstructorId, // holds 'C'
+      studentId: mismatchedCategoryStudentId, // holds 'B'
+      category: 'D', // matches neither
+      scheduledAt,
+    })
+
+    expect(result.error).toBe('Instructor does not hold this category')
+
+    const { data } = await svc
+      .from('lessons')
+      .select('id')
+      .eq('instructor_id', categoryInstructorId)
+      .eq('scheduled_at', scheduledAt)
+    expect(data).toHaveLength(0)
   })
 })
 
