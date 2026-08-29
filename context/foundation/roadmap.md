@@ -30,7 +30,7 @@ Driving schools today coordinate lessons over phone and SMS — every booking re
 | ID   | Change ID                | Outcome (user can …)                                                                                                              | Prerequisites | PRD refs                              | Status   |
 | ---- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | ------------- | ------------------------------------- | -------- |
 | F-01 | supabase-data-foundation | (foundation) Supabase client wired; minimal schema and seed data in place                                                        | —             | FR-004, FR-006                        | ready    |
-| F-02 | auth-scaffold            | (foundation) Office login page functional; authenticated session gates all office routes; instructor URL token validated          | F-01          | FR-006                                | proposed |
+| F-02 | auth-scaffold            | (foundation) Office login page functional; authenticated session gates all office routes; instructor URL token validated          | F-01          | FR-006                                | done |
 | S-01 | office-books-lesson      | Office filters instructors by category, selects one, picks a date and time, attaches a student, and creates a pending lesson     | F-01, F-02    | US-01, FR-001, FR-002, FR-003, FR-004 | done     |
 | S-02 | instructor-responds      | Instructor approves or rejects a lesson via a one-time emailed link scoped to that single lesson, optionally picking an AI-suggested rejection reason; office dashboard polls and shows the new status | S-01, F-02   | US-01, FR-001–003, FR-004(mod), FR-005(mod), FR-006–008, FR-009(mod), FR-010–011, FR-012, FR-013 (prd-v2.md) | done |
 | S-03 | lesson-action-tokens     | *(merged into S-02, see below)*                                                                                                     | S-02          | —                                      | merged into S-02 |
@@ -65,7 +65,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 
 ### F-02: Access control scaffold
 
-- **Outcome:** (foundation) Login page at `/login` renders and issues a Supabase Auth session cookie for the office account; `middleware.ts` rejects unauthenticated requests to all office routes; instructor routes validate the `token` URL parameter against the `instructors` table and reject unknown tokens.
+- **Outcome:** (foundation) Login page at `/login` renders and issues a Supabase Auth session cookie for the office account; route protection rejects unauthenticated requests to all office routes; instructor routes validate the `token` URL parameter against the `instructors` table and reject unknown tokens.
 - **Change ID:** auth-scaffold
 - **PRD refs:** FR-006 (instructor URL token gate), Access Control section (office: Supabase Auth email+password; instructor: URL token, no login required)
 - **Unlocks:** S-01 (office dashboard requires an authenticated session), S-02 (instructor page requires a valid URL token)
@@ -74,7 +74,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Two distinct access models (session cookie for office, URL token for instructors) in the same middleware file increase the surface area for misconfiguration — for example, an instructor token accidentally granting access to office routes. Sequenced before any user-facing slice so auth boundaries are established and testable before protected pages are built on top of them.
-- **Status:** proposed
+- **Status:** done — implemented via `auth-scaffold` (`change.md` status: implemented, 2026-06-27); GitHub issue #2 closed 2026-08-29 after this roadmap entry was found stale (was still "proposed" despite the code shipping months earlier and S-01/S-02 depending on it since). Route protection lives in `src/proxy.ts`, not `middleware.ts` — this Next.js version renamed the convention; functionally the same gate. Covered by `src/middleware.test.ts`.
 
 ---
 
@@ -135,7 +135,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 | Roadmap ID | Change ID                | Suggested issue title                                                    | Ready for `/10x-plan` | Notes                                      |
 | ---------- | ------------------------ | ------------------------------------------------------------------------ | --------------------- | ------------------------------------------ |
 | F-01       | supabase-data-foundation | Set up Supabase client, schema (instructors / students / lessons), seeds | yes                   | Run `/10x-plan supabase-data-foundation`   |
-| F-02       | auth-scaffold            | Wire office Supabase Auth login + middleware + instructor token guard    | no                    | Requires F-01 completed first              |
+| F-02       | auth-scaffold            | Wire office Supabase Auth login + middleware + instructor token guard    | done — see `change.md`  | Shipped 2026-06-27; roadmap entry and GitHub issue #2 were left stale until closed 2026-08-29 |
 | S-01       | office-books-lesson      | Office: category filter → instructor calendar → create pending lesson    | no                    | Requires F-01 and F-02 completed first     |
 | S-02       | instructor-responds      | Instructor: one-time emailed link, approve/reject; office polls status   | done — see `plan.md`  | Redesigned 2026-07-04; all 9 phases shipped 2026-07-11. Office polling confirmed unimplemented (2026-07-10) and closed as Phase 8. FR-013 reworked mid-implementation to a non-persisted, one-shot send-override instead of an editable `instructors.email` field. |
 | S-03       | lesson-action-tokens     | ~~One-time per-lesson token for approve/reject action~~                  | n/a — merged          | Merged into S-02 rework (2026-07-04); no longer tracked separately |
