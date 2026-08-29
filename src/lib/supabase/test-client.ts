@@ -4,11 +4,14 @@ import { createClient } from '@supabase/supabase-js'
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const officeEmail = process.env.OFFICE_EMAIL
+const officePassword = process.env.OFFICE_PASSWORD
 
-if (!url || !anonKey || !serviceKey) {
+if (!url || !anonKey || !serviceKey || !officeEmail || !officePassword) {
   throw new Error(
     'Missing test env vars. Copy .env.test (fill in NEXT_PUBLIC_SUPABASE_URL, ' +
-      'NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY) and re-run.',
+      'NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, OFFICE_EMAIL, ' +
+      'OFFICE_PASSWORD) and re-run.',
   )
 }
 
@@ -17,6 +20,8 @@ if (!url || !anonKey || !serviceKey) {
 const validUrl = url
 const validAnonKey = anonKey
 const validServiceKey = serviceKey
+const validOfficeEmail = officeEmail
+const validOfficePassword = officePassword
 
 export function createTestServiceRoleClient() {
   return createClient(validUrl, validServiceKey)
@@ -24,6 +29,21 @@ export function createTestServiceRoleClient() {
 
 export function createTestAnonClient() {
   return createClient(validUrl, validAnonKey)
+}
+
+// Plain signed-in client for tests that call an RPC directly (no Next.js request in play,
+// so the @supabase/ssr + next/headers cookie-mock dance used for server-action tests is
+// unnecessary overhead here).
+export async function createTestAuthenticatedClient() {
+  const client = createClient(validUrl, validAnonKey)
+  const { error } = await client.auth.signInWithPassword({
+    email: validOfficeEmail,
+    password: validOfficePassword,
+  })
+  if (error) {
+    throw new Error(`createTestAuthenticatedClient sign-in failed: ${error.message}`)
+  }
+  return client
 }
 
 type ServiceClient = ReturnType<typeof createTestServiceRoleClient>
