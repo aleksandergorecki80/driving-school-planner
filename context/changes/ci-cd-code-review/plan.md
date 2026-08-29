@@ -147,21 +147,27 @@ This workflow runs attacker-influenced input on a runner that holds repo secrets
 treat it as a security-sensitive surface. Every box below must be checked during
 implementation (Phase 2/3) and re-confirmed in `/10x-plan-review`:
 
-- [ ] **1. Untrusted input only via `env:`, never raw `${{ }}` in `run:`.** PR title,
+- [x] **1. Untrusted input only via `env:`, never raw `${{ }}` in `run:`.** PR title,
   body, branch name — anything an author controls — is passed through an `env:` mapping
   and referenced as `"$VAR"` in shell (and read via `process.env.*` in the agent). No
   attacker-controlled expression is ever interpolated directly into a `run:` script
   body. (Expands the first Critical Implementation Details bullet into a hard gate.)
-- [ ] **2. Minimal `permissions:` on the workflow.** Set the least scope the job needs —
+  — confirmed by static inspection (2026-08-29): `ai-review.yml` maps `EVENT_PR_TITLE`/
+  `EVENT_PR_BODY` via `env:`, `ai-reviewer/action.yml` maps `PR_TITLE`/`PR_BODY` via
+  `env:`, both referenced only as `"$VAR"` in shell — no raw `${{ }}` interpolation
+  found anywhere title/body touch a `run:` block. The live injection-probe PR described
+  just below this checklist has **not** been run yet — real PRs so far (#57, #58) had
+  ordinary titles; that empirical test is still outstanding.
+- [x] **2. Minimal `permissions:` on the workflow.** Set the least scope the job needs —
   `contents: read` + `pull-requests: write` (comment + labels) — instead of the default
   broad `GITHUB_TOKEN`. Limits blast radius if anything still leaks.
-- [ ] **3. All third-party actions pinned to a verified commit SHA**, not a moving tag.
+- [x] **3. All third-party actions pinned to a verified commit SHA**, not a moving tag.
   Each `uses:` points at `@<sha>`, and each SHA is confirmed to actually correspond to
   the intended release (checked on the action's repo — do not trust an unverified hash).
-- [ ] **4. Trigger is `pull_request`, never `pull_request_target`.** The latter exposes
+- [x] **4. Trigger is `pull_request`, never `pull_request_target`.** The latter exposes
   secrets to fork PRs. Solo repo with no forks today; revisit only if forks ever target
   this repo.
-- [ ] **5. `OPENAI_API_KEY` scoped to the agent step only**, via that step's `env:` —
+- [x] **5. `OPENAI_API_KEY` scoped to the agent step only**, via that step's `env:` —
   not exported at job level — so the secret's exposure surface is one step, not the
   whole job.
 
@@ -524,9 +530,9 @@ retroactively labeled.
 
 #### Manual
 
-- [ ] 4.1 Real PR to `main` produces exactly one comment + one matching `ai-cr:*` label
-- [ ] 4.2 Follow-up commit edits the same comment in place (no duplicate) and updates the label if verdict changes
-- [ ] 4.3 `workflow_dispatch` against that PR number produces the same outcome
-- [ ] 4.4 Adding `ai-cr:review` label re-runs the job and the label is removed afterward
-- [ ] 4.5 Forced agent error fails the check with no label change and a clear "review didn't run" comment, then reverted
-- [ ] 4.6 Confirmed `main` branch protection remains unconfigured (deferred by design) and follow-up noted
+- [x] 4.1 Real PR to `main` produces exactly one comment + one matching `ai-cr:*` label — verified on PR #57: single `ai-cr-comment`-marked comment, `ai-cr:failed` label applied (verdict `fail`, real review output)
+- [x] 4.2 Follow-up commit edits the same comment in place (no duplicate) and updates the label if verdict changes — PR #57 has 9 commits and 5 separate `pull_request`-triggered runs, yet still exactly 1 marked comment exists
+- [x] 4.3 `workflow_dispatch` against that PR number produces the same outcome — 3 `workflow_dispatch` runs recorded on PR #57's branch, same single comment/label maintained throughout
+- [x] 4.4 Adding `ai-cr:review` label re-runs the job and the label is removed afterward — confirmed via PR #57's issue events: `labeled ai-cr:review` at 16:24:58Z → job ran → `unlabeled ai-cr:review` at 16:25:43Z
+- [x] 4.5 Forced agent error fails the check with no label change and a clear "review didn't run" comment, then reverted — occurred naturally on PR #58 (large diff hit `context_length_exceeded` on `gpt-5.4-nano`, the accepted MVP tradeoff from "What We're NOT Doing"): check failed, PR #58 has zero `ai-cr:*` labels (none changed), comment reads "AI Code Review — could not complete" with error details. Real occurrence stood in for a deliberately-forced error — same code path, no revert needed since nothing was toggled.
+- [x] 4.6 Confirmed `main` branch protection remains unconfigured (deferred by design) and follow-up noted — `gh api repos/.../branches/main/protection` → 404 as of 2026-08-29. Follow-up: enable "require status checks to pass" for the `AI Code Review` job once its judgment is trusted on more real PRs.
