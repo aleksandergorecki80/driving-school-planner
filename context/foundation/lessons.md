@@ -50,3 +50,17 @@
 - **Problem**: After committing and telling the user the branch is ready for a merge request, continuing straight on to other work (e.g. syncing `main`, starting the next phase's gate, running further checks) crowds out the user's chance to actually review/push/merge that branch before more happens. The commit being "ready for MR" is a natural pause point, not a checkpoint to blow through.
 - **Rule**: The moment a branch + commit is made and ready for a merge request, stop working and tell the user it's ready — then wait for their reaction (push confirmation, "gotowe zmergowane", a correction, or a new instruction) before starting anything else, including syncing `main` or moving to the next unit of work.
 - **Applies to**: implement, plan-review, impl-review — any skill or workflow step that ends in a commit.
+
+## Always use shadcn/ui components when building UI
+
+- **Context**: Any new interactive UI in `src/app/**` — forms, buttons, inputs, selects, dialogs. The project installed shadcn/ui (`5dcb446`) and already has `Button`, `Select`, `Popover`, `Drawer`, `Badge` in `src/components/ui/`.
+- **Problem**: Writing raw HTML elements (`<button>`, `<textarea>`, etc.) with hand-rolled Tailwind classes instead of the installed shadcn components produces visual/behavioral drift from the rest of the app and duplicates styling work the component library already solves (variants, focus states, disabled states, accessibility).
+- **Rule**: Before writing a raw HTML interactive element, check `src/components/ui/` for an existing shadcn component and use it. If the needed component isn't installed yet (e.g. `Textarea`), add it via `npx shadcn add <component>` (or hand-author it matching the existing components' pattern if offline) rather than reaching for a plain HTML element.
+- **Applies to**: implement, impl-review — every `.tsx` file that renders interactive UI.
+
+## Update roadmap.md and the GitHub board after finishing work
+
+- **Context**: Finishing a change, phase, or slice of work that has a corresponding entry in `context/foundation/roadmap.md` and/or a mirrored GitHub issue.
+- **Problem**: `roadmap.md` and GitHub issues drift out of sync with actual implementation state when they aren't updated the moment work finishes — later planning/review skills then reason from stale status.
+- **Rule**: After finishing work on a tracked change, update the relevant `roadmap.md` slice's status AND its corresponding GitHub issue(s) (edit description/status, comment, or close as appropriate) before considering the work done.
+- **Applies to**: implement, impl-review, archive — any skill that closes out a unit of work.
