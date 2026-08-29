@@ -260,4 +260,4 @@ Purely additive — no existing files, data, or behavior change. `tools/code-rev
 
 #### Manual
 
-- [ ] 3.5 Eval results manually inspected and confirmed discriminating, not passing by construction
+- [x] 3.5 Eval results manually inspected and confirmed discriminating, not passing by construction — re-ran `npm run eval` twice against the real fixture (2026-08-29): both providers correctly scored `verdict: fail`, `security <= 5` on the injection diff, 2/2 assertions pass, exit 0. Sanity-checked the reverse case with a temporary clean fixture (small utility + test, no injection) swapped into the config: both providers scored it well (`correctness: 8`, no fail verdict) and `assertBadDiffFails` correctly reported 0/2 passed — proving the assertion reads real model output rather than passing unconditionally. Config/fixture reverted after the check; working tree left clean.
