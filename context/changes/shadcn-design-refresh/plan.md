@@ -166,7 +166,7 @@ Replace the fully hand-rolled `LoginForm`/`login/page.tsx` with the shadcn `logi
 - `npm run lint` exits 0
 - `npm run typecheck` exits 0
 - `e2e/seed.spec.ts` passes unmodified (`getByRole('textbox', {name:'Email'})`/`'Password'`/`getByRole('button', {name:'Log in'})` still resolve)
-- `e2e/office-books-lesson.spec.ts`'s `beforeEach` login flow passes unmodified
+- `e2e/office-books-lesson.spec.ts`'s `beforeEach` login flow passes unmodified (test itself still fails afterward at the pre-existing, unrelated line-23 seed-data blocker documented in Phase 3/4)
 
 #### Manual Verification:
 
@@ -439,17 +439,17 @@ Not applicable — no data model or schema changes.
 
 #### Automated
 
-- [ ] 2.1 `npm run build` exits 0
-- [ ] 2.2 `npm run lint` exits 0
-- [ ] 2.3 `npm run typecheck` exits 0
-- [ ] 2.4 `e2e/seed.spec.ts` passes unmodified
-- [ ] 2.5 `e2e/office-books-lesson.spec.ts` login flow passes unmodified
+- [x] 2.1 `npm run build` exits 0
+- [x] 2.2 `npm run lint` exits 0
+- [x] 2.3 `npm run typecheck` exits 0
+- [x] 2.4 `e2e/seed.spec.ts` passes unmodified
+- [x] 2.5 `e2e/office-books-lesson.spec.ts` login flow (`beforeEach`) passes unmodified; `npm run test` (66/66) passes
 
 #### Manual
 
-- [ ] 2.6 `/login` matches login-03 layout
-- [ ] 2.7 Dark mode toggle persists across navigation
-- [ ] 2.8 Invalid credentials still show error via `role="alert"`
+- [x] 2.6 `/login` matches login-03 layout
+- [x] 2.7 Dark mode toggle persists across navigation
+- [x] 2.8 Invalid credentials still show error via `role="alert"`
 
 ### Phase 3: Office shell — sidebar block + header
 
@@ -472,16 +472,16 @@ Not applicable — no data model or schema changes.
 
 #### Automated
 
-- [x] 4.1 `npm run build` exits 0
-- [x] 4.2 `npm run lint` exits 0
-- [x] 4.3 `npm run typecheck` exits 0
-- [x] 4.4 Calendar unaffected by the pre-existing seed-data blocker documented in Phase 3 (verified visually via screenshot instead); `npm run test` (66/66) passes — caught and fixed a real regression in `src/app/office/page.test.ts` asserting the old hardcoded `bg-yellow-200`/`bg-green-200` status classes, updated to the new `lesson-status.ts` canonical `bg-amber-100`/`bg-emerald-100`
+- [x] 4.1 `npm run build` exits 0 — 7d4a74d
+- [x] 4.2 `npm run lint` exits 0 — 7d4a74d
+- [x] 4.3 `npm run typecheck` exits 0 — 7d4a74d
+- [x] 4.4 Calendar unaffected by the pre-existing seed-data blocker documented in Phase 3 (verified visually via screenshot instead); `npm run test` (66/66) passes — caught and fixed a real regression in `src/app/office/page.test.ts` asserting the old hardcoded `bg-yellow-200`/`bg-green-200` status classes, updated to the new `lesson-status.ts` canonical `bg-amber-100`/`bg-emerald-100` — 7d4a74d
 
 #### Manual
 
-- [x] 4.5 Calendar renders correctly in light and dark mode
-- [x] 4.6 Lesson block status colors distinguishable in both themes
-- [x] 4.7 Week navigation uses icon chevrons
+- [x] 4.5 Calendar renders correctly in light and dark mode — 7d4a74d
+- [x] 4.6 Lesson block status colors distinguishable in both themes — 7d4a74d
+- [x] 4.7 Week navigation uses icon chevrons — 7d4a74d
 
 ### Phase 5: Lesson detail panel — Drawer, shared components, Cancel confirmation
 
