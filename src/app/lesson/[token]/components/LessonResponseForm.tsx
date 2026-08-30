@@ -113,14 +113,15 @@ export default function LessonResponseForm({ token, scheduledAt, category }: Pro
           {suggestions.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {suggestions.map((suggestion) => (
-                <button
+                <Button
                   key={suggestion}
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={() => setReason(suggestion)}
-                  className="rounded-full border border-zinc-300 px-3 py-1 text-xs text-zinc-700 hover:bg-zinc-100"
                 >
                   {suggestion}
-                </button>
+                </Button>
               ))}
             </div>
           )}

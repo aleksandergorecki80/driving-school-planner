@@ -1,54 +1,40 @@
 'use client'
 import { useActionState } from 'react'
 import { loginAction } from '@/app/actions/auth'
+import { Button } from '@/components/ui/button'
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
 
 export function LoginForm({ next }: { next: string }) {
   const [errorMessage, dispatch, isPending] = useActionState(loginAction, null)
 
   return (
-    <form action={dispatch} className="flex flex-col gap-4">
+    <form action={dispatch}>
       <input type="hidden" name="next" value={next} />
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="email" className="text-sm font-medium text-zinc-700">
-          Email
-        </label>
-        <input
-          id="email"
-          type="text"
-          name="email"
-          autoFocus
-          required
-          className="rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900"
-        />
-      </div>
+      <FieldGroup>
+        <Field>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <Input id="email" type="text" name="email" autoFocus required />
+        </Field>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="password" className="text-sm font-medium text-zinc-700">
-          Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          required
-          className="rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900"
-        />
-      </div>
+        <Field>
+          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <Input id="password" type="password" name="password" required />
+        </Field>
 
-      {errorMessage && (
-        <p role="alert" className="text-sm text-red-600">
-          {errorMessage}
-        </p>
-      )}
+        {errorMessage && (
+          <p role="alert" className="text-sm text-destructive">
+            {errorMessage}
+          </p>
+        )}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-50"
-      >
-        {isPending ? 'Logging in…' : 'Log in'}
-      </button>
+        <Field>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? 'Logging in…' : 'Log in'}
+          </Button>
+        </Field>
+      </FieldGroup>
     </form>
   )
 }

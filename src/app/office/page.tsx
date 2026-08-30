@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
+import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import type { LessonRow } from './components/types'
 import AutoRefresh from './components/AutoRefresh'
 import InstructorSidebar from './components/sidebar/InstructorSidebar'
@@ -66,7 +67,7 @@ export default async function OfficePage({ searchParams }: PageProps) {
   const selectedInstructor = instructors?.find((i) => i.id === instructorId)
 
   return (
-    <div className="flex h-[calc(100vh-56px)] gap-0">
+    <>
       <AutoRefresh />
       <Suspense>
         <InstructorSidebar
@@ -76,23 +77,30 @@ export default async function OfficePage({ searchParams }: PageProps) {
         />
       </Suspense>
 
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {instructorId && selectedInstructor ? (
-          <Suspense>
-            <LessonPanel
-              instructor={selectedInstructor}
-              lessons={lessons}
-              weekStart={weekStart.toISOString().slice(0, 10)}
-              availableStudents={students ?? []}
-              activeCategory={category}
-            />
-          </Suspense>
-        ) : (
-          <div className="flex flex-1 items-center justify-center text-sm text-zinc-400">
-            Select an instructor to view their schedule
-          </div>
-        )}
-      </div>
-    </div>
+      <SidebarInset>
+        <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border px-4">
+          <SidebarTrigger />
+          <h1 className="sr-only">Office Dashboard</h1>
+        </header>
+
+        <div className="flex flex-1 flex-col overflow-hidden">
+          {instructorId && selectedInstructor ? (
+            <Suspense>
+              <LessonPanel
+                instructor={selectedInstructor}
+                lessons={lessons}
+                weekStart={weekStart.toISOString().slice(0, 10)}
+                availableStudents={students ?? []}
+                activeCategory={category}
+              />
+            </Suspense>
+          ) : (
+            <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+              Select an instructor to view their schedule
+            </div>
+          )}
+        </div>
+      </SidebarInset>
+    </>
   )
 }

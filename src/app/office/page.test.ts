@@ -89,7 +89,7 @@ describe('Risk #4 — office view reflects live DB state, not a cached snapshot'
 
     const firstResponse = await fetch(url, { headers })
     const firstHtml = await firstResponse.text()
-    expect(firstHtml).toContain('bg-yellow-200') // pending color
+    expect(firstHtml).toContain('bg-amber-100') // pending color
 
     const { error: updateError } = await svc
       .from('lessons')
@@ -99,7 +99,7 @@ describe('Risk #4 — office view reflects live DB state, not a cached snapshot'
 
     const secondResponse = await fetch(url, { headers })
     const secondHtml = await secondResponse.text()
-    expect(secondHtml).toContain('bg-green-200') // confirmed color
-    expect(secondHtml).not.toContain('bg-yellow-200') // stale pending color must be gone
+    expect(secondHtml).toContain('bg-emerald-100') // confirmed color
+    expect(secondHtml).not.toContain('bg-amber-100') // stale pending color must be gone
   })
 })
