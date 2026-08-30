@@ -59,7 +59,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 - **Blockers:** —
 - **Unknowns:** Exact instructor licence categories and student records need to be confirmed with the client before the seeder reflects real data. Owner: user. Block: no (placeholder data unblocks all development; real data replaces it before launch).
 - **Risk:** Every downstream slice depends on this foundation; an incorrect schema ripples through S-01 and S-02. Risk is low — the domain model is simple (three entities, one foreign-key relationship each) and the PRD's Business Logic section specifies all three entities and their relationships explicitly.
-- **Status:** done — implemented via `supabase-data-foundation` (commit `48941fb`, 2026-06-14; `change.md` status: impl_reviewed, updated 2026-06-20). Roadmap entry and GitHub issue #1 were left stale (status still "ready") until synced 2026-08-30 — same staleness pattern as F-02.
+- **Status:** done — implemented via `supabase-data-foundation` (commit `48941fb`, 2026-06-14; `change.md` status: impl_reviewed, updated 2026-06-20). GitHub issue #1 was correctly closed the same day; only this roadmap entry's own status field was left stale (still "ready") until synced 2026-08-30.
 
 ---
 
@@ -134,7 +134,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 
 | Roadmap ID | Change ID                | Suggested issue title                                                    | Ready for `/10x-plan` | Notes                                      |
 | ---------- | ------------------------ | ------------------------------------------------------------------------ | --------------------- | ------------------------------------------ |
-| F-01       | supabase-data-foundation | Set up Supabase client, schema (instructors / students / lessons), seeds | done — see `change.md` | Shipped 2026-06-14 (`48941fb`); roadmap entry and GitHub issue #1 were left stale until closed 2026-08-30 |
+| F-01       | supabase-data-foundation | Set up Supabase client, schema (instructors / students / lessons), seeds | done — see `change.md` | Shipped 2026-06-14 (`48941fb`); GitHub issue #1 was already closed same-day, only this roadmap entry's status field was stale until synced 2026-08-30 |
 | F-02       | auth-scaffold            | Wire office Supabase Auth login + middleware + instructor token guard    | done — see `change.md`  | Shipped 2026-06-27; roadmap entry and GitHub issue #2 were left stale until closed 2026-08-29 |
 | S-01       | office-books-lesson      | Office: category filter → instructor calendar → create pending lesson    | no                    | Requires F-01 and F-02 completed first     |
 | S-02       | instructor-responds      | Instructor: one-time emailed link, approve/reject; office polls status   | done — see `plan.md`  | Redesigned 2026-07-04; all 9 phases shipped 2026-07-11. Office polling confirmed unimplemented (2026-07-10) and closed as Phase 8. FR-013 reworked mid-implementation to a non-persisted, one-shot send-override instead of an editable `instructors.email` field. |
