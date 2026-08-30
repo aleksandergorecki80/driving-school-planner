@@ -43,6 +43,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl, { status: 302 })
   }
 
+  if (pathname === '/') {
+    const destination = new URL(user ? '/office' : '/login', request.url)
+    return NextResponse.redirect(destination, { status: 302 })
+  }
+
   return supabaseResponse
 }
 

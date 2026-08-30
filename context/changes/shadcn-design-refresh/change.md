@@ -1,9 +1,9 @@
 ---
 change_id: shadcn-design-refresh
 title: Align UI with shadcn/ui blocks + wire up dark mode
-status: preparing
+status: implementing
 created: 2026-08-10
-updated: 2026-08-10
+updated: 2026-08-30
 archived_at: null
 ---
 
