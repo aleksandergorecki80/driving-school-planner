@@ -491,30 +491,30 @@ Not applicable — no data model or schema changes.
 
 #### Automated
 
-- [x] 5.1 `npm run build` exits 0
-- [x] 5.2 `npm run lint` exits 0
-- [x] 5.3 `npm run typecheck` exits 0
-- [x] 5.4 `npm run test` passes (66/66)
-- [x] 5.5 `e2e/office-books-lesson.spec.ts` passes in full including updated lines (reliably in final confirmation runs; ~80% across the broader repeated-run diagnostic — residual risk tracked as roadmap `TD-05`)
+- [x] 5.1 `npm run build` exits 0 — a161607
+- [x] 5.2 `npm run lint` exits 0 — a161607
+- [x] 5.3 `npm run typecheck` exits 0 — a161607
+- [x] 5.4 `npm run test` passes (66/66) — a161607
+- [x] 5.5 `e2e/office-books-lesson.spec.ts` passes in full including updated lines (reliably in final confirmation runs; ~80% across the broader repeated-run diagnostic — residual risk tracked as roadmap `TD-05`) — a161607
 
 #### Manual
 
-- [x] 5.6 Drawer shows backdrop and closes on Escape/backdrop click
-- [x] 5.7 "Cancel lesson" requires confirmation before cancelling
-- [x] 5.8 Category/student selects behave like sidebar's category filter
-- [x] 5.9 Status colors match between calendar block and detail panel in both themes
+- [x] 5.6 Drawer shows backdrop and closes on Escape/backdrop click — a161607
+- [x] 5.7 "Cancel lesson" requires confirmation before cancelling — a161607
+- [x] 5.8 Category/student selects behave like sidebar's category filter — a161607
+- [x] 5.9 Status colors match between calendar block and detail panel in both themes — a161607
 
 ### Phase 6: Instructor lesson-response page
 
 #### Automated
 
-- [ ] 6.1 `npm run build` exits 0
-- [ ] 6.2 `npm run lint` exits 0
-- [ ] 6.3 `npm run typecheck` exits 0
-- [ ] 6.4 `npm run test` passes
+- [x] 6.1 `npm run build` exits 0
+- [x] 6.2 `npm run lint` exits 0
+- [x] 6.3 `npm run typecheck` exits 0
+- [x] 6.4 `npm run test` passes (66/66)
 
 #### Manual
 
-- [ ] 6.5 Page renders correctly in light/dark mode on mobile-width viewport, no horizontal scroll
-- [ ] 6.6 Theme toggle persists per-browser
-- [ ] 6.7 Approve/reject two-step flow behaves identically to before
+- [x] 6.5 Page renders correctly in light/dark mode on mobile-width viewport, no horizontal scroll
+- [x] 6.6 Theme toggle persists per-browser
+- [x] 6.7 Approve/reject two-step flow behaves identically to before
