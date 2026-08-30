@@ -196,6 +196,8 @@ Replace the hand-rolled `<aside>`/`<ul>` in `InstructorSidebar.tsx` and the hand
 
 **Contract**: `SidebarProvider` → `Sidebar` (rendered by the updated `InstructorSidebar`) + `SidebarInset` containing a slim bar with `SidebarTrigger` followed by `{children}`. A visually-hidden (`sr-only`) `<h1>` containing "Office Dashboard" (or equivalent, must match `/office/i`) is added in the `SidebarInset`'s top bar to close the `seed.spec.ts:17` heading gap — no other behavior changes to that assertion.
 
+**As implemented (post-impl-review F1)**: `office/layout.tsx` ended up as a 4-line file that only renders `<SidebarProvider>{children}</SidebarProvider>` — the `SidebarInset`/`SidebarTrigger`/sr-only-`<h1>` markup instead lives in `src/app/office/page.tsx`, which already fetches `instructorId`/`selectedInstructor` and would otherwise need a duplicate Supabase fetch to host that markup in `layout.tsx` as originally described above. Functionally equivalent (heading/trigger contracts both verified) — just a different file than this Contract names.
+
 #### 2. Instructor sidebar
 
 **File**: `src/app/office/components/sidebar/InstructorSidebar.tsx`
