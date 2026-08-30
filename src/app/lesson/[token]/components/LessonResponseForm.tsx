@@ -119,6 +119,7 @@ export default function LessonResponseForm({ token, scheduledAt, category }: Pro
                   variant="outline"
                   size="sm"
                   onClick={() => setReason(suggestion)}
+                  className="h-auto w-full min-w-0 shrink basis-full whitespace-normal py-1.5 text-left"
                 >
                   {suggestion}
                 </Button>
