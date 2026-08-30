@@ -508,13 +508,13 @@ Not applicable — no data model or schema changes.
 
 #### Automated
 
-- [x] 6.1 `npm run build` exits 0
-- [x] 6.2 `npm run lint` exits 0
-- [x] 6.3 `npm run typecheck` exits 0
-- [x] 6.4 `npm run test` passes (66/66)
+- [x] 6.1 `npm run build` exits 0 — ee50877
+- [x] 6.2 `npm run lint` exits 0 — ee50877
+- [x] 6.3 `npm run typecheck` exits 0 — ee50877
+- [x] 6.4 `npm run test` passes (66/66) — ee50877
 
 #### Manual
 
-- [x] 6.5 Page renders correctly in light/dark mode on mobile-width viewport, no horizontal scroll
-- [x] 6.6 Theme toggle persists per-browser
-- [x] 6.7 Approve/reject two-step flow behaves identically to before
+- [x] 6.5 Page renders correctly in light/dark mode on mobile-width viewport, no horizontal scroll — ee50877
+- [x] 6.6 Theme toggle persists per-browser — ee50877
+- [x] 6.7 Approve/reject two-step flow behaves identically to before — ee50877
