@@ -5,7 +5,7 @@
 - **Scope**: Phase 1 of 6 (full plan — all phases complete)
 - **Date**: 2026-08-30
 - **Verdict**: APPROVED
-- **Findings**: 0 critical, 1 warning, 1 observation — both fixed during triage (2026-08-30)
+- **Findings**: 1 critical (found post-review by user testing, fixed), 1 warning (fixed), 1 observation (fixed) — all resolved 2026-08-30
 
 ## Verdicts
 
@@ -39,6 +39,16 @@
 - **Detail**: `resolvedTheme` is `undefined` on the server and on the very first client render (before `next-themes`' mount effect resolves the real theme), so the toggle always paints `Moon` first, then flips to `Sun` a tick later for users whose OS/browser prefers dark. This does not produce a hydration-mismatch error (server and first client paint agree) — just a brief icon flash. Standard, well-known `next-themes` behavior.
 - **Fix**: Optional polish only — add a `mounted` guard (render `null`/a neutral icon until mount) if the flash is undesirable. No action required; not a correctness bug.
 - **Decision**: FIXED — added an `isHydrated` guard via `useSyncExternalStore` (not a `useEffect`+`setState`, which would retrigger the `react-hooks/set-state-in-effect` lint error this component was originally simplified to avoid); verified via lint/typecheck/build and a dark-mode screenshot that the Sun icon still resolves correctly post-hydration.
+
+### F3 — Rejection-reason suggestion chips overflow the viewport horizontally on mobile (found by user testing post-review)
+
+- **Severity**: ❌ CRITICAL
+- **Impact**: 🏃 LOW — quick decision; fix is obvious and narrowly scoped
+- **Dimension**: Success Criteria (Phase 6 manual criterion 6.5 — "no horizontal scroll" — did not actually hold for real AI-generated suggestion text)
+- **Location**: `src/app/lesson/[token]/components/LessonResponseForm.tsx`
+- **Detail**: Phase 6 restyled the rejection-reason suggestion chips from raw `<button>` pills to shadcn `Button variant="outline" size="sm"`. The installed `Button`'s base classes include `whitespace-nowrap` and `shrink-0` — fine for short labels, but the AI-suggested reasons are full sentences; with `shrink-0` the button refuses to shrink below its one-line content width regardless of `flex-wrap` on the parent, forcing the whole page to scroll horizontally on mobile widths (reported by the user with a screenshot at 360×760 showing suggestion text clipped off the right edge). The 66/66 vitest suite and Phase 6's own manual verification did not catch this because it only manifests with real (long) AI-generated suggestion text, which wasn't exercised on a narrow viewport during Phase 6's own verification.
+- **Fix**: Override the button's flex/whitespace defaults for these specific chips: `h-auto w-full min-w-0 shrink basis-full whitespace-normal py-1.5 text-left` — each suggestion now takes its own full-width row and wraps normally, instead of trying to fit on one unbreakable line.
+- **Decision**: FIXED — verified via `document.documentElement.scrollWidth === clientWidth` (360px, no overflow) at a 360×760 viewport with real AI-generated suggestion text, and a screenshot showing all five suggestions wrapping cleanly.
 
 ## Sub-agent notes (not separate findings, recorded for completeness)
 
