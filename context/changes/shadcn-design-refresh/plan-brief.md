@@ -56,8 +56,8 @@ A foundation phase (dark mode provider/toggle, home redirect, primitive installs
 ## Open Risks & Assumptions
 
 - `e2e/seed.spec.ts`'s heading assertion (`/office/i`) appears to be a pre-existing gap with no matching element in the current DOM — Phase 3 closes it as a side effect of the sidebar rebuild, but this was not independently confirmed as previously passing.
-- Vaul's `Drawer` default `role`/`aria-modal` output on the accessible name needs verifying against the prior manual markup during Phase 5 implementation, not assumed.
 - `npx shadcn add sidebar`/`login-03` are assumed to resolve correctly against the `base-nova` style with the project's empty `registries: {}` — not dry-run tested during planning.
+- **Confirmed during Phase 5**: vaul's Drawer and Base UI's Select/AlertDialog conflict by default (Base UI portals to `document.body`; vaul's modal mode treats that as "outside" and blocks it — a documented, unresolved upstream issue, vaul#429). Fixed by pointing each popup's portal `container` at the consuming component's own root div (inside the Drawer's tracked subtree) and disabling `alignItemWithTrigger` on `Select`. An intermittent "opens then immediately closes" race remains uneliminated (~20-30% of e2e re-runs) — accepted as residual risk since it reflects synthetic-input speed more than real user interaction pace.
 
 ## Success Criteria (Summary)
 

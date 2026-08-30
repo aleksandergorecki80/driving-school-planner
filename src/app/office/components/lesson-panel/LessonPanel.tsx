@@ -4,6 +4,7 @@ import type { LessonRow, StudentRow } from '../types'
 import WeeklyCalendar from '../calendar/WeeklyCalendar'
 import NewLessonForm from './NewLessonForm'
 import LessonPopover from './LessonPopover'
+import { Drawer, DrawerContent } from '@/components/ui/drawer'
 
 interface Props {
   instructor: { id: string; name: string; categories: string[]; email: string | null }
@@ -54,28 +55,22 @@ export default function LessonPanel({
         onLessonClick={handleLessonClick}
       />
 
-      {/* Slide-in drawer — sits below the 56px nav bar */}
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label={mode === 'create' ? 'New lesson' : 'Lesson details'}
-        className={`fixed right-0 top-14 z-30 flex h-[calc(100vh-3.5rem)] w-96 flex-col border-l border-zinc-200 bg-white shadow-2xl transition-transform duration-300 ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        {mode === 'create' && selectedSlot !== null ? (
-          <NewLessonForm
-            instructor={instructor}
-            slot={selectedSlot}
-            students={availableStudents}
-            activeCategory={activeCategory}
-            onSuccess={closePanel}
-            onClose={closePanel}
-          />
-        ) : mode === 'detail' && selectedLesson !== null ? (
-          <LessonPopover instructor={instructor} lesson={selectedLesson} onClose={closePanel} />
-        ) : null}
-      </div>
+      <Drawer direction="right" open={isOpen} onOpenChange={(open) => !open && closePanel()}>
+        <DrawerContent aria-label={mode === 'create' ? 'New lesson' : 'Lesson details'}>
+          {mode === 'create' && selectedSlot !== null ? (
+            <NewLessonForm
+              instructor={instructor}
+              slot={selectedSlot}
+              students={availableStudents}
+              activeCategory={activeCategory}
+              onSuccess={closePanel}
+              onClose={closePanel}
+            />
+          ) : mode === 'detail' && selectedLesson !== null ? (
+            <LessonPopover instructor={instructor} lesson={selectedLesson} onClose={closePanel} />
+          ) : null}
+        </DrawerContent>
+      </Drawer>
     </div>
   )
 }

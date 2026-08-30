@@ -19,8 +19,10 @@ test.describe('Office books a lesson', () => {
     await page.goto('/office?week=2099-01-06')
 
     // Filter sidebar to category B (shadcn Select — click trigger then pick option)
+    // exact: true avoids an ambiguous match against the "B+E" category also seeded in this DB.
     await page.getByLabel('Category').click()
-    await page.getByRole('option', { name: 'B' }).click()
+    await expect(page.getByRole('listbox')).toBeVisible()
+    await page.getByRole('option', { name: 'B', exact: true }).click()
 
     // Select an instructor
     await page.getByRole('button', { name: 'Jan Kowalski' }).click()
@@ -35,8 +37,17 @@ test.describe('Office books a lesson', () => {
 
     // Pre-filled slot time is shown in the panel ("at 09:00" to avoid matching the time-label column)
     await expect(createPanel.getByText(/at 09:00/)).toBeVisible()
-    await createPanel.getByLabel('Category').selectOption('B')
-    await createPanel.getByLabel('Student').selectOption('Adam Wójcik')
+    // Select popups are portaled outside createPanel's DOM subtree, so options are
+    // queried on `page`, not scoped to createPanel — same pattern as the sidebar
+    // filter above. The explicit listbox wait absorbs the popup's open animation
+    // before the option click, matching the same synchronization used for the
+    // alert dialog below.
+    await createPanel.getByLabel('Category').click()
+    await expect(page.getByRole('listbox')).toBeVisible()
+    await page.getByRole('option', { name: 'B', exact: true }).click()
+    await createPanel.getByLabel('Student').click()
+    await expect(page.getByRole('listbox')).toBeVisible()
+    await page.getByRole('option', { name: 'Adam Wójcik' }).click()
 
     // Submit
     await page.getByRole('button', { name: 'Book lesson' }).click()
@@ -46,10 +57,12 @@ test.describe('Office books a lesson', () => {
     const lessonBlock = page.getByRole('button', { name: /Adam Wójcik/ })
     await expect(lessonBlock).toBeVisible()
 
-    // Cleanup: open the detail popover and cancel
+    // Cleanup: open the detail popover, confirm the cancel alert dialog
     await lessonBlock.click()
     await expect(page.getByRole('button', { name: 'Cancel lesson' })).toBeVisible()
     await page.getByRole('button', { name: 'Cancel lesson' }).click()
+    await expect(page.getByRole('alertdialog', { name: /cancel this lesson/i })).toBeVisible()
+    await page.getByRole('button', { name: 'Yes, cancel lesson' }).click()
     await expect(lessonBlock).not.toBeVisible()
   })
 })

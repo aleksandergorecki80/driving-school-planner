@@ -1,9 +1,21 @@
 'use client'
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { X } from 'lucide-react'
 import { createLesson } from '@/app/actions/lessons'
 import type { StudentRow } from '../types'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { DetailRow } from '@/components/lesson/DetailRow'
+import { OverrideEmailField } from '@/components/lesson/OverrideEmailField'
+import { formatLessonDateTime } from '@/lib/format-lesson-datetime'
 
 interface Props {
   instructor: { id: string; name: string; categories: string[]; email: string | null }
@@ -12,22 +24,6 @@ interface Props {
   activeCategory?: string
   onSuccess: () => void
   onClose: () => void
-}
-
-function formatSlot(slot: Date): string {
-  const date = slot.toLocaleDateString('en-GB', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
-  const time = slot.toLocaleTimeString('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'UTC',
-  })
-  return `${date} at ${time}`
 }
 
 export default function NewLessonForm({
@@ -41,11 +37,18 @@ export default function NewLessonForm({
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+  // Select popups default to portaling into document.body, which the vaul Drawer's
+  // modal mode treats as "outside" and immediately closes on open — pointing the
+  // portal container at this form's own root (inside the drawer) fixes that. State
+  // (not a plain ref) is required: the container must trigger a re-render once the
+  // DOM node exists, or Select's portal can capture a stale null on first paint.
+  const [rootEl, setRootEl] = useState<HTMLDivElement | null>(null)
 
   const categories = instructor.categories.slice().sort()
   const initialCategory =
     activeCategory && categories.includes(activeCategory) ? activeCategory : (categories[0] ?? '')
   const [selectedCategory, setSelectedCategory] = useState(initialCategory)
+  const [selectedStudentId, setSelectedStudentId] = useState('')
   const [useOverrideEmail, setUseOverrideEmail] = useState(false)
 
   const filteredStudents = students.filter((s) => s.category === selectedCategory)
@@ -89,100 +92,90 @@ export default function NewLessonForm({
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex shrink-0 items-center justify-between border-b border-zinc-200 px-4 py-3">
-        <h2 className="text-sm font-semibold text-zinc-900">New Lesson</h2>
+    <div ref={setRootEl} className="flex flex-col h-full">
+      <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
+        <h2 className="text-sm font-semibold text-foreground">New Lesson</h2>
         <Button
           type="button"
           variant="ghost"
           size="icon-sm"
           onClick={onClose}
           aria-label="Close panel"
-          className="text-zinc-400 hover:text-zinc-700"
         >
-          ✕
+          <X />
         </Button>
       </div>
 
       <form action={handleAction} className="flex flex-col gap-4 overflow-y-auto p-4">
-        <div>
-          <p className="text-xs text-zinc-500">Instructor</p>
-          <p className="text-sm font-medium text-zinc-900">{instructor.name}</p>
-        </div>
+        <DetailRow label="Instructor" value={instructor.name} />
+        <DetailRow label="Slot" value={formatLessonDateTime(slot)} />
 
         <div>
-          <p className="text-xs text-zinc-500">Slot</p>
-          <p className="text-sm font-medium text-zinc-900">{formatSlot(slot)}</p>
-        </div>
-
-        <div>
-          <label htmlFor="nl-category" className="mb-1 block text-xs font-medium text-zinc-700">
+          <Label htmlFor="nl-category" className="mb-1">
             Category
-          </label>
-          <select
-            id="nl-category"
-            name="category"
+          </Label>
+          <input type="hidden" name="category" value={selectedCategory} />
+          <Select
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onValueChange={(value) => {
+              setSelectedCategory(value ?? '')
+              setSelectedStudentId('')
+            }}
             disabled={isPending}
-            className="w-full rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm disabled:opacity-50"
+            modal={false}
           >
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger id="nl-category" className="w-full">
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent container={rootEl} alignItemWithTrigger={false}>
+              {categories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
-          <label htmlFor="nl-student" className="mb-1 block text-xs font-medium text-zinc-700">
+          <Label htmlFor="nl-student" className="mb-1">
             Student
-          </label>
-          <select
-            id="nl-student"
-            name="studentId"
+          </Label>
+          <input type="hidden" name="studentId" value={selectedStudentId} />
+          <Select
+            value={selectedStudentId}
+            onValueChange={(value) => setSelectedStudentId(value ?? '')}
             disabled={isPending || filteredStudents.length === 0}
-            className="w-full rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm disabled:opacity-50"
+            modal={false}
+            items={filteredStudents.map((s) => ({ label: s.name, value: s.id }))}
           >
-            {filteredStudents.length === 0 ? (
-              <option value="">No students in this category</option>
-            ) : (
-              filteredStudents.map((s) => (
-                <option key={s.id} value={s.id}>
+            <SelectTrigger id="nl-student" className="w-full">
+              <SelectValue
+                placeholder={
+                  filteredStudents.length === 0 ? 'No students in this category' : 'Select a student'
+                }
+              />
+            </SelectTrigger>
+            <SelectContent container={rootEl} alignItemWithTrigger={false}>
+              {filteredStudents.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
                   {s.name}
-                </option>
-              ))
-            )}
-          </select>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        <div>
-          <p className="text-xs text-zinc-500">Link will be sent to</p>
-          <p className="text-sm font-medium text-zinc-900">
-            {instructor.email ?? 'No email on file'}
-          </p>
-          <label className="mt-1 flex items-center gap-1.5 text-xs text-zinc-600">
-            <input
-              type="checkbox"
-              checked={useOverrideEmail}
-              onChange={(e) => setUseOverrideEmail(e.target.checked)}
-              disabled={isPending}
-            />
-            Send to a different email for this lesson only
-          </label>
-          {useOverrideEmail && (
-            <input
-              type="email"
-              name="overrideEmail"
-              placeholder="one-off@example.com"
-              disabled={isPending}
-              className="mt-1.5 w-full rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm disabled:opacity-50"
-            />
-          )}
-        </div>
+        <OverrideEmailField
+          targetEmail={instructor.email}
+          checked={useOverrideEmail}
+          onCheckedChange={setUseOverrideEmail}
+          disabled={isPending}
+          checkboxLabel="Send to a different email for this lesson only"
+          inputName="overrideEmail"
+        />
 
-        {error && <p className="text-xs text-red-600">{error}</p>}
+        {error && <p className="text-xs text-destructive">{error}</p>}
 
         <div className="flex gap-2">
           <Button
