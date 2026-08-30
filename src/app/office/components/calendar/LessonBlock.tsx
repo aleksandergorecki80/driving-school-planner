@@ -2,6 +2,7 @@
 import type { LessonRow } from '../types'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { LESSON_STATUS } from '@/components/lesson/lesson-status'
 
 interface Props {
   lesson: LessonRow
@@ -10,15 +11,9 @@ interface Props {
   onClick: () => void
 }
 
-const STATUS_COLORS: Record<LessonRow['status'], string> = {
-  pending: 'bg-yellow-200 border-yellow-400 text-yellow-900',
-  confirmed: 'bg-green-200 border-green-400 text-green-900',
-  rejected: 'bg-red-200 border-red-400 text-red-900',
-}
-
 export default function LessonBlock({ lesson, gridRow, gridColumn, onClick }: Props) {
   const studentName = lesson.students?.name ?? 'Unknown'
-  const colorClass = STATUS_COLORS[lesson.status]
+  const colorClass = LESSON_STATUS[lesson.status].chipClassName
 
   return (
     <Button

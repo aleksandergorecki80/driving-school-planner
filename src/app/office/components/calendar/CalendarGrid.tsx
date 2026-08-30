@@ -30,13 +30,13 @@ export default function CalendarGrid({ days, lessons, onSlotClick, onLessonClick
       }}
     >
       {/* Corner cell */}
-      <div className="sticky top-0 z-20 border-b border-r border-zinc-200 bg-white" />
+      <div className="sticky top-0 z-20 border-b border-r border-border bg-background" />
 
       {/* Day headers — sticky, row 1, columns 2–8 */}
       {days.map((day, i) => (
         <div
           key={i}
-          className="sticky top-0 z-20 flex items-center justify-center border-b border-r border-zinc-200 bg-white text-xs font-medium text-zinc-600"
+          className="sticky top-0 z-20 flex items-center justify-center border-b border-r border-border bg-background text-xs font-medium text-muted-foreground"
           style={{ gridRow: 1, gridColumn: i + 2 }}
         >
           {DAY_NAMES[i]}{' '}
@@ -48,7 +48,7 @@ export default function CalendarGrid({ days, lessons, onSlotClick, onLessonClick
       {SLOT_LABELS.map((label, i) => (
         <div
           key={label}
-          className="flex items-start justify-end border-b border-r border-zinc-100 pr-2 pt-0.5 text-xs text-zinc-400"
+          className="flex items-start justify-end border-b border-r border-border pr-2 pt-0.5 text-xs text-muted-foreground"
           style={{ gridRow: i + 2, gridColumn: 1 }}
         >
           {label}
@@ -65,7 +65,7 @@ export default function CalendarGrid({ days, lessons, onSlotClick, onLessonClick
               key={`${colIdx}-${rowIdx}`}
               onClick={() => onSlotClick(slotDate)}
               aria-label={`${DAY_NAMES[colIdx]} ${SLOT_LABELS[rowIdx]}`}
-              className="cursor-pointer border-b border-r border-zinc-100 hover:bg-zinc-50"
+              className="cursor-pointer border-b border-r border-border hover:bg-accent"
               style={{ gridRow: rowIdx + 2, gridColumn: colIdx + 2 }}
             />
           )

@@ -1,5 +1,6 @@
 'use client'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { LessonRow } from '../types'
 import CalendarGrid from './CalendarGrid'
 import { Button } from '@/components/ui/button'
@@ -53,8 +54,8 @@ export default function WeeklyCalendar({
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       {/* Week navigation bar */}
-      <div className="flex shrink-0 items-center gap-2 border-b border-zinc-200 px-4 py-2">
-        <span className="text-sm font-semibold text-zinc-800">{instructor.name}</span>
+      <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-2">
+        <span className="text-sm font-semibold text-foreground">{instructor.name}</span>
         <div className="ml-auto flex items-center gap-2">
           <Button
             type="button"
@@ -62,9 +63,9 @@ export default function WeeklyCalendar({
             size="sm"
             onClick={() => navigateWeek(-1)}
           >
-            ← Prev
+            <ChevronLeft /> Prev
           </Button>
-          <span className="w-44 text-center text-sm text-zinc-700">
+          <span className="w-44 text-center text-sm text-muted-foreground">
             {formatWeekLabel(weekStart)}
           </span>
           <Button
@@ -73,7 +74,7 @@ export default function WeeklyCalendar({
             size="sm"
             onClick={() => navigateWeek(1)}
           >
-            Next →
+            Next <ChevronRight />
           </Button>
         </div>
       </div>
