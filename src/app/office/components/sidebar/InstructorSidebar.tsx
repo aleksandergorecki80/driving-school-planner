@@ -1,6 +1,6 @@
 'use client'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { cn } from '@/lib/utils'
+import { User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -9,6 +9,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarSeparator,
+} from '@/components/ui/sidebar'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 interface Instructor {
   id: string
@@ -60,48 +72,69 @@ export default function InstructorSidebar({ instructors, selectedId, selectedCat
   }
 
   return (
-    <aside className="w-56 shrink-0 flex flex-col overflow-y-auto border-r border-zinc-200">
-      <div className="p-3 border-b border-zinc-100">
-        <label htmlFor="category-filter" className="block mb-1 text-xs text-zinc-500">
-          Category
-        </label>
-        <Select value={selectedCategory ?? ''} onValueChange={handleCategoryChange}>
-          <SelectTrigger id="category-filter" className="w-full">
-            <SelectValue placeholder="All categories" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All categories</SelectItem>
-            {categories.map((cat) => (
-              <SelectItem key={cat} value={cat}>
-                {cat}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+    <Sidebar collapsible="icon">
+      <SidebarHeader>
+        <span className="px-2 text-sm font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">
+          DrivePlan
+        </span>
+      </SidebarHeader>
 
-      <ul className="flex-1">
-        {visibleInstructors.length === 0 && (
-          <li className="px-4 py-3 text-sm text-zinc-400">No instructors found</li>
-        )}
-        {visibleInstructors.map((instructor) => (
-          <li key={instructor.id}>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => handleInstructorClick(instructor.id)}
-              className={cn(
-                'h-auto w-full justify-start rounded-none px-4 py-2 text-left text-sm',
-                selectedId === instructor.id
-                  ? 'bg-zinc-100 font-medium text-zinc-900'
-                  : 'text-zinc-700',
-              )}
-            >
-              {instructor.name}
+      <SidebarContent>
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <label htmlFor="category-filter" className="mb-1 block px-2 text-xs text-sidebar-foreground/70">
+            Category
+          </label>
+          <Select value={selectedCategory ?? ''} onValueChange={handleCategoryChange}>
+            <SelectTrigger id="category-filter" className="w-full">
+              <SelectValue placeholder="All categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">All categories</SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        <SidebarGroup>
+          <SidebarMenu>
+            {visibleInstructors.length === 0 && (
+              <li className="px-4 py-3 text-sm text-sidebar-foreground/50 group-data-[collapsible=icon]:hidden">
+                No instructors found
+              </li>
+            )}
+            {visibleInstructors.map((instructor) => (
+              <SidebarMenuItem key={instructor.id}>
+                <SidebarMenuButton
+                  type="button"
+                  isActive={selectedId === instructor.id}
+                  tooltip={instructor.name}
+                  onClick={() => handleInstructorClick(instructor.id)}
+                >
+                  <User />
+                  <span>{instructor.name}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter>
+        <div className="flex items-center justify-between gap-2 group-data-[collapsible=icon]:flex-col">
+          <ThemeToggle />
+          <form action="/auth/signout" method="post">
+            <Button type="submit" variant="ghost" size="sm" className="group-data-[collapsible=icon]:hidden">
+              Log out
             </Button>
-          </li>
-        ))}
-      </ul>
-    </aside>
+          </form>
+        </div>
+      </SidebarFooter>
+    </Sidebar>
   )
 }

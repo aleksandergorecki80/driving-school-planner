@@ -25,12 +25,10 @@ Call log:
 
 ```yaml
 - generic [ref=e1]:
-  - banner [ref=e2]:
-    - generic [ref=e3]: DrivePlan
-    - button "Log out" [ref=e5]
-  - main [ref=e6]:
-    - generic [ref=e7]:
-      - complementary [ref=e8]:
+  - generic [ref=e2]:
+    - generic [ref=e5]:
+      - generic [ref=e7]: DrivePlan
+      - generic [ref=e8]:
         - generic [ref=e9]:
           - generic [ref=e10]: Category
           - combobox "Category" [expanded] [ref=e11]:
@@ -54,23 +52,76 @@ Call log:
             - option "T" [ref=e29]:
               - generic [ref=e30]: T
           - textbox [ref=e33]
-        - list [ref=e34]:
-          - listitem [ref=e35]:
-            - button "Anna Nowak" [ref=e36]
+        - separator [ref=e34]
+        - list [ref=e36]:
           - listitem [ref=e37]:
-            - button "Jan Kowalski" [ref=e38]
-          - listitem [ref=e39]:
-            - button "Maria Dąbrowska" [ref=e40]
-          - listitem [ref=e41]:
-            - button "Piotr Wiśniewski" [ref=e42]
+            - button "Anna Nowak" [ref=e38]:
+              - img [ref=e39]
+              - generic [ref=e42]: Anna Nowak
           - listitem [ref=e43]:
-            - button "test-instr-cat-1783161649785" [ref=e44]
-          - listitem [ref=e45]:
-            - button "Tomasz Zając" [ref=e46]
-      - generic [ref=e48]: Select an instructor to view their schedule
-  - button "Open Next.js Dev Tools" [ref=e54] [cursor=pointer]:
-    - img [ref=e55]
-  - alert [ref=e58]
+            - button "Jan Kowalski" [ref=e44]:
+              - img [ref=e45]
+              - generic [ref=e48]: Jan Kowalski
+          - listitem [ref=e49]:
+            - button "Maria Dąbrowska" [ref=e50]:
+              - img [ref=e51]
+              - generic [ref=e54]: Maria Dąbrowska
+          - listitem [ref=e55]:
+            - button "Piotr Wiśniewski" [ref=e56]:
+              - img [ref=e57]
+              - generic [ref=e60]: Piotr Wiśniewski
+          - listitem [ref=e61]:
+            - button "test-instr-cat-1783161649785" [ref=e62]:
+              - img [ref=e63]
+              - generic [ref=e66]: test-instr-cat-1783161649785
+          - listitem [ref=e67]:
+            - button "test-instr-lessons-1783250616993" [ref=e68]:
+              - img [ref=e69]
+              - generic [ref=e72]: test-instr-lessons-1783250616993
+          - listitem [ref=e73]:
+            - button "test-instr-no-email-1783250625597" [ref=e74]:
+              - img [ref=e75]
+              - generic [ref=e78]: test-instr-no-email-1783250625597
+          - listitem [ref=e79]:
+            - button "test-office-poll-1783760866133" [ref=e80]:
+              - img [ref=e81]
+              - generic [ref=e84]: test-office-poll-1783760866133
+          - listitem [ref=e85]:
+            - button "test-office-poll-1783760940874" [ref=e86]:
+              - img [ref=e87]
+              - generic [ref=e90]: test-office-poll-1783760940874
+          - listitem [ref=e91]:
+            - button "test-office-poll-1783761019461" [ref=e92]:
+              - img [ref=e93]
+              - generic [ref=e96]: test-office-poll-1783761019461
+          - listitem [ref=e97]:
+            - button "test-office-poll-1783761322664" [ref=e98]:
+              - img [ref=e99]
+              - generic [ref=e102]: test-office-poll-1783761322664
+          - listitem [ref=e103]:
+            - button "test-office-poll-1783761426897" [ref=e104]:
+              - img [ref=e105]
+              - generic [ref=e108]: test-office-poll-1783761426897
+          - listitem [ref=e109]:
+            - button "test-office-poll-1783763671508" [ref=e110]:
+              - img [ref=e111]
+              - generic [ref=e114]: test-office-poll-1783763671508
+          - listitem [ref=e115]:
+            - button "Tomasz Zając" [ref=e116]:
+              - img [ref=e117]
+              - generic [ref=e120]: Tomasz Zając
+      - generic [ref=e122]:
+        - button "Toggle theme" [ref=e123]:
+          - img
+        - button "Log out" [ref=e125]
+    - main [ref=e126]:
+      - generic [ref=e127]:
+        - button "Toggle Sidebar" [ref=e128]:
+          - img
+          - generic [ref=e129]: Toggle Sidebar
+        - heading "Office Dashboard" [level=1] [ref=e130]
+      - generic [ref=e132]: Select an instructor to view their schedule
+  - alert [ref=e133]
 ```
 
 # Test source
