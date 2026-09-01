@@ -243,18 +243,18 @@ Additive-only migration (new `error_code` branch in an existing `CREATE OR REPLA
 
 #### Automated
 
-- [x] 1.1 `npm run test -- src/domain/lesson/Lesson.test.ts` passes, including the new past-time cases
-- [x] 1.2 Type checking passes: `npm run typecheck`
-- [x] 1.3 Linting passes: `npm run lint`
+- [x] 1.1 `npm run test -- src/domain/lesson/Lesson.test.ts` passes, including the new past-time cases — c04596b
+- [x] 1.2 Type checking passes: `npm run typecheck` — c04596b
+- [x] 1.3 Linting passes: `npm run lint` — c04596b
 
 ### Phase 2: DB RPC mirror — book_lesson
 
 #### Automated
 
-- [ ] 2.1 `npx supabase db push` exits with code 0 (migration applies cleanly)
-- [ ] 2.2 `npm run test -- src/lib/supabase/book-lesson.test.ts` passes, including the new past-time case
-- [ ] 2.3 Type checking passes: `npm run typecheck`
-- [ ] 2.4 Linting passes: `npm run lint`
+- [x] 2.1 `npx supabase db push` exits with code 0 (migration applies cleanly)
+- [x] 2.2 `npm run test -- src/lib/supabase/book-lesson.test.ts` passes, including the new past-time case
+- [x] 2.3 Type checking passes: `npm run typecheck`
+- [x] 2.4 Linting passes: `npm run lint`
 
 ### Phase 3: Server action wiring — createLesson
 

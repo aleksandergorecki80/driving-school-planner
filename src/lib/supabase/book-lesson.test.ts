@@ -115,6 +115,28 @@ describe('book_lesson RPC', () => {
     expect(row?.error_code).toBe('INSTRUCTOR_CATEGORY_MISMATCH')
   })
 
+  it('returns SCHEDULED_AT_IN_PAST for a scheduled_at before now, and inserts no row', async () => {
+    const { data, error } = await office.rpc('book_lesson', {
+      p_instructor_id: instructorId,
+      p_student_id: studentId,
+      p_category: 'C',
+      p_scheduled_at: '2020-01-01T10:00:00.000Z',
+    })
+
+    expect(error).toBeNull()
+    const row = data?.[0]
+    expect(row?.ok).toBe(false)
+    expect(row?.error_code).toBe('SCHEDULED_AT_IN_PAST')
+    expect(row?.lesson_id).toBeNull()
+
+    const { data: inserted } = await svc
+      .from('lessons')
+      .select('id')
+      .eq('instructor_id', instructorId)
+      .eq('scheduled_at', '2020-01-01T10:00:00.000Z')
+    expect(inserted).toHaveLength(0)
+  })
+
   describe('instructor slot overlap', () => {
     it('rejects an exact-duplicate slot with SLOT_UNAVAILABLE_INSTRUCTOR', async () => {
       const scheduledAt = '2099-07-05T10:00:00.000Z'
