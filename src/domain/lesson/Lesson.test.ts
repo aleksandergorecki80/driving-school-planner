@@ -1,5 +1,10 @@
-import { describe, it, expect } from 'vitest'
-import { Lesson, InstructorCategoryMismatchError, StudentCategoryMismatchError } from './Lesson'
+import { describe, it, expect, afterEach, vi } from 'vitest'
+import {
+  Lesson,
+  InstructorCategoryMismatchError,
+  StudentCategoryMismatchError,
+  PastScheduledAtError,
+} from './Lesson'
 
 const instructor = { id: 'instructor-1', categories: ['C'] }
 const student = { id: 'student-1', category: 'C' }
@@ -35,5 +40,43 @@ describe('Lesson.propose', () => {
     expect(() =>
       Lesson.propose({ instructor, student: mismatchedStudent, category: 'D', scheduledAt }),
     ).toThrow(InstructorCategoryMismatchError)
+  })
+
+  describe('past scheduledAt', () => {
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it('throws PastScheduledAtError when scheduledAt is before now', () => {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2050-06-15T12:00:00.000Z'))
+
+      const pastScheduledAt = new Date('2050-06-15T11:59:59.999Z')
+
+      expect(() =>
+        Lesson.propose({ instructor, student, category: 'C', scheduledAt: pastScheduledAt }),
+      ).toThrow(PastScheduledAtError)
+    })
+
+    it('succeeds when scheduledAt is exactly now', () => {
+      const now = new Date('2050-06-15T12:00:00.000Z')
+      vi.useFakeTimers()
+      vi.setSystemTime(now)
+
+      const lesson = Lesson.propose({ instructor, student, category: 'C', scheduledAt: now })
+
+      expect(lesson.scheduledAt).toBe(now)
+    })
+
+    it('succeeds when scheduledAt is after now', () => {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2050-06-15T12:00:00.000Z'))
+
+      const futureScheduledAt = new Date('2050-06-15T12:00:00.001Z')
+
+      const lesson = Lesson.propose({ instructor, student, category: 'C', scheduledAt: futureScheduledAt })
+
+      expect(lesson.scheduledAt).toBe(futureScheduledAt)
+    })
   })
 })

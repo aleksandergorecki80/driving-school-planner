@@ -26,6 +26,12 @@ export class StudentCategoryMismatchError extends Error {
   }
 }
 
+export class PastScheduledAtError extends Error {
+  constructor(readonly scheduledAt: Date) {
+    super(`Cannot schedule a lesson in the past: ${scheduledAt.toISOString()}`)
+  }
+}
+
 export class Lesson {
   private constructor(
     readonly instructorId: string,
@@ -40,6 +46,9 @@ export class Lesson {
     category: string
     scheduledAt: Date
   }): Lesson {
+    if (input.scheduledAt.getTime() < Date.now()) {
+      throw new PastScheduledAtError(input.scheduledAt)
+    }
     if (!input.instructor.categories.includes(input.category)) {
       throw new InstructorCategoryMismatchError(input.instructor.id, input.category)
     }
