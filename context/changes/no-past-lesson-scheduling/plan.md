@@ -260,19 +260,19 @@ Additive-only migration (new `error_code` branch in an existing `CREATE OR REPLA
 
 #### Automated
 
-- [x] 3.1 `npm run test -- src/app/actions/lessons.test.ts` passes in full (all pre-existing + new tests)
-- [x] 3.2 Type checking passes: `npm run typecheck`
-- [x] 3.3 Linting passes: `npm run lint`
+- [x] 3.1 `npm run test -- src/app/actions/lessons.test.ts` passes in full (all pre-existing + new tests) — 1e3111a
+- [x] 3.2 Type checking passes: `npm run typecheck` — 1e3111a
+- [x] 3.3 Linting passes: `npm run lint` — 1e3111a
 
 ### Phase 4: UI click-guard — office calendar grid
 
 #### Automated
 
-- [ ] 4.1 Full test suite passes: `npm run test`
-- [ ] 4.2 Type checking passes: `npm run typecheck`
-- [ ] 4.3 Linting passes: `npm run lint`
+- [x] 4.1 Full test suite passes: `npm run test`
+- [x] 4.2 Type checking passes: `npm run typecheck`
+- [x] 4.3 Linting passes: `npm run lint`
 
 #### Manual
 
-- [ ] 4.4 Past slots in the current week are visually muted and unclickable in `/office`; future slots remain clickable and bookable
-- [ ] 4.5 Browsing to a past week still works, with past lesson blocks still rendering and clickable
+- [x] 4.4 Past slots in the current week are visually muted and unclickable in `/office`; future slots remain clickable and bookable
+- [x] 4.5 Browsing to a past week still works, with past lesson blocks still rendering and clickable
