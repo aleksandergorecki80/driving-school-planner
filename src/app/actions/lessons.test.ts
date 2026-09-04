@@ -163,6 +163,25 @@ describe('createLesson', () => {
     expect(result.error).toBe('Invalid scheduledAt timestamp')
   })
 
+  test('returns { error: "Cannot schedule a lesson in the past" } for a past scheduledAt, and inserts no row', async () => {
+    const pastScheduledAt = '2020-01-01T10:00:00.000Z'
+    const result = await createLesson({
+      instructorId,
+      studentId,
+      category: 'B',
+      scheduledAt: pastScheduledAt,
+    })
+
+    expect(result.error).toBe('Cannot schedule a lesson in the past')
+
+    const { data } = await svc
+      .from('lessons')
+      .select('id')
+      .eq('instructor_id', instructorId)
+      .eq('scheduled_at', pastScheduledAt)
+    expect(data).toHaveLength(0)
+  })
+
   test('returns { error: "This slot is already booked" } for an exact duplicate slot', async () => {
     // First booking succeeds
     const first = await createLesson({

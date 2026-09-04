@@ -60,12 +60,14 @@ export default function CalendarGrid({ days, lessons, onSlotClick, onLessonClick
         Array.from({ length: SLOT_COUNT }, (_, rowIdx) => {
           const offsetMs = (SLOT_START_HOUR * 60 + rowIdx * 30) * 60 * 1000
           const slotDate = new Date(day.getTime() + offsetMs)
+          const isPast = slotDate.getTime() < Date.now()
           return (
             <div
               key={`${colIdx}-${rowIdx}`}
-              onClick={() => onSlotClick(slotDate)}
+              onClick={isPast ? undefined : () => onSlotClick(slotDate)}
               aria-label={`${DAY_NAMES[colIdx]} ${SLOT_LABELS[rowIdx]}`}
-              className="cursor-pointer border-b border-r border-border hover:bg-accent"
+              aria-disabled={isPast}
+              className="cursor-pointer border-b border-r border-border hover:bg-accent aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent"
               style={{ gridRow: rowIdx + 2, gridColumn: colIdx + 2 }}
             />
           )

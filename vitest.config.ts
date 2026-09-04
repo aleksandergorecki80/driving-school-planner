@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
     plugins: [tsconfigPaths()],
     test: {
       environment: 'node',
-      include: ['src/**/*.test.ts'],
+      include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
       passWithNoTests: true,
       env,
       globalSetup: ['./vitest.global-setup.ts'],

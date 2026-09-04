@@ -1,5 +1,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { Lesson, InstructorCategoryMismatchError, StudentCategoryMismatchError } from './Lesson'
+import {
+  Lesson,
+  InstructorCategoryMismatchError,
+  StudentCategoryMismatchError,
+  PastScheduledAtError,
+} from './Lesson'
 
 export class InstructorNotFoundError extends Error {
   constructor(readonly instructorId: string) {
@@ -44,6 +49,8 @@ export class LessonRepository {
     const row = (data as BookLessonRow[] | null)?.[0]
     if (!row || !row.ok) {
       switch (row?.error_code) {
+        case 'SCHEDULED_AT_IN_PAST':
+          throw new PastScheduledAtError(lesson.scheduledAt)
         case 'INSTRUCTOR_NOT_FOUND':
           throw new InstructorNotFoundError(lesson.instructorId)
         case 'STUDENT_NOT_FOUND':
