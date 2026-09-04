@@ -5,6 +5,7 @@ import {
   Lesson,
   InstructorCategoryMismatchError,
   StudentCategoryMismatchError,
+  PastScheduledAtError,
 } from '@/domain/lesson/Lesson'
 import {
   LessonRepository,
@@ -18,6 +19,7 @@ function mapDomainErrorToMessage(err: unknown): string {
   if (err instanceof StudentNotFoundError) return 'Student not found'
   if (err instanceof InstructorCategoryMismatchError) return 'Instructor does not hold this category'
   if (err instanceof StudentCategoryMismatchError) return 'Student is not enrolled in this category'
+  if (err instanceof PastScheduledAtError) return 'Cannot schedule a lesson in the past'
   if (err instanceof SlotUnavailableError) {
     return err.side === 'instructor' ? 'This slot is already booked' : 'Student is already booked at this time'
   }

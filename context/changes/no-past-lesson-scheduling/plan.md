@@ -251,18 +251,18 @@ Additive-only migration (new `error_code` branch in an existing `CREATE OR REPLA
 
 #### Automated
 
-- [x] 2.1 `npx supabase db push` exits with code 0 (migration applies cleanly)
-- [x] 2.2 `npm run test -- src/lib/supabase/book-lesson.test.ts` passes, including the new past-time case
-- [x] 2.3 Type checking passes: `npm run typecheck`
-- [x] 2.4 Linting passes: `npm run lint`
+- [x] 2.1 `npx supabase db push` exits with code 0 (migration applies cleanly) — 45688c4
+- [x] 2.2 `npm run test -- src/lib/supabase/book-lesson.test.ts` passes, including the new past-time case — 45688c4
+- [x] 2.3 Type checking passes: `npm run typecheck` — 45688c4
+- [x] 2.4 Linting passes: `npm run lint` — 45688c4
 
 ### Phase 3: Server action wiring — createLesson
 
 #### Automated
 
-- [ ] 3.1 `npm run test -- src/app/actions/lessons.test.ts` passes in full (all pre-existing + new tests)
-- [ ] 3.2 Type checking passes: `npm run typecheck`
-- [ ] 3.3 Linting passes: `npm run lint`
+- [x] 3.1 `npm run test -- src/app/actions/lessons.test.ts` passes in full (all pre-existing + new tests)
+- [x] 3.2 Type checking passes: `npm run typecheck`
+- [x] 3.3 Linting passes: `npm run lint`
 
 ### Phase 4: UI click-guard — office calendar grid
 
