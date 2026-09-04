@@ -268,11 +268,11 @@ Additive-only migration (new `error_code` branch in an existing `CREATE OR REPLA
 
 #### Automated
 
-- [x] 4.1 Full test suite passes: `npm run test`
-- [x] 4.2 Type checking passes: `npm run typecheck`
-- [x] 4.3 Linting passes: `npm run lint`
+- [x] 4.1 Full test suite passes: `npm run test` — d4b69c9
+- [x] 4.2 Type checking passes: `npm run typecheck` — d4b69c9
+- [x] 4.3 Linting passes: `npm run lint` — d4b69c9
 
 #### Manual
 
-- [x] 4.4 Past slots in the current week are visually muted and unclickable in `/office`; future slots remain clickable and bookable
-- [x] 4.5 Browsing to a past week still works, with past lesson blocks still rendering and clickable
+- [x] 4.4 Past slots in the current week are visually muted and unclickable in `/office`; future slots remain clickable and bookable — d4b69c9
+- [x] 4.5 Browsing to a past week still works, with past lesson blocks still rendering and clickable — d4b69c9

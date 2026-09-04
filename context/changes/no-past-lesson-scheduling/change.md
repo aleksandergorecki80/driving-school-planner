@@ -1,9 +1,9 @@
 ---
 change_id: no-past-lesson-scheduling
 title: Block booking a lesson with a scheduled time in the past
-status: implementing
+status: implemented
 created: 2026-09-01
-updated: 2026-09-01
+updated: 2026-09-02
 archived_at: null
 ---
 
