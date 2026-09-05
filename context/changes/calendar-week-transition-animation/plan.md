@@ -127,17 +127,17 @@ None — no schema or data changes.
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run typecheck`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Full build succeeds: `npm run build`
-- [x] 1.4 Existing test suite still passes: `npm test`
+- [x] 1.1 Type checking passes: `npm run typecheck` — 8e4b70f
+- [x] 1.2 Linting passes: `npm run lint` — 8e4b70f
+- [x] 1.3 Full build succeeds: `npm run build` — 8e4b70f
+- [x] 1.4 Existing test suite still passes: `npm test` — 8e4b70f
 
 #### Manual
 
-- [x] 1.5 Next slides in from the right, Prev slides in from the left
-- [x] 1.6 Initial grid render has no animation
-- [x] 1.7 AutoRefresh poll cycle does not replay the animation
-- [x] 1.8 No transient horizontal scrollbar/layout shift during the animation
-- [x] 1.9 `prefers-reduced-motion` disables the animation entirely
-- [x] 1.10 Rapid repeated Next/Prev clicks do not glitch or leave a half-animated state
-- [x] 1.11 Prev/Next buttons disable/dim immediately on click, before the new week loads
+- [x] 1.5 Next slides in from the right, Prev slides in from the left — 8e4b70f
+- [x] 1.6 Initial grid render has no animation — 8e4b70f
+- [x] 1.7 AutoRefresh poll cycle does not replay the animation — 8e4b70f
+- [x] 1.8 No transient horizontal scrollbar/layout shift during the animation — 8e4b70f
+- [x] 1.9 `prefers-reduced-motion` disables the animation entirely — 8e4b70f
+- [x] 1.10 Rapid repeated Next/Prev clicks do not glitch or leave a half-animated state — 8e4b70f
+- [x] 1.11 Prev/Next buttons disable/dim immediately on click, before the new week loads — 8e4b70f

@@ -1,7 +1,7 @@
 ---
 change_id: calendar-week-transition-animation
 title: Add a subtle transition animation when navigating between weeks
-status: implementing
+status: implemented
 created: 2026-09-05
 updated: 2026-09-05
 archived_at: null
