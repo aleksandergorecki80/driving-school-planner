@@ -16,7 +16,7 @@ interface Props {
 // react-day-picker compares/selects days in the browser's local timezone.
 // Re-anchor the same calendar day (Y/M/D) to local midnight so the
 // currently-displayed week highlights correctly regardless of UTC offset.
-function toLocalMidnight(d: Date): Date {
+export function toLocalMidnight(d: Date): Date {
   return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())
 }
 
@@ -26,7 +26,7 @@ function toLocalMidnight(d: Date): Date {
 // toISODate, goToWeek). Without this, a local offset ahead of UTC (e.g.
 // UTC+2) can shift the picked day back by one calendar day once converted
 // via .toISOString(), which then snaps to the wrong Monday.
-function toUTCMidnight(d: Date): Date {
+export function toUTCMidnight(d: Date): Date {
   return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
 }
 
