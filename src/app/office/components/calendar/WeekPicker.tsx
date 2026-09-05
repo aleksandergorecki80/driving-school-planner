@@ -1,5 +1,7 @@
 'use client'
 import { useState } from 'react'
+import { getDefaultClassNames } from 'react-day-picker'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -28,6 +30,8 @@ function toUTCMidnight(d: Date): Date {
   return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
 }
 
+const defaultClassNames = getDefaultClassNames()
+
 export default function WeekPicker({ weekStart, weekLabel, onSelect }: Props) {
   const [open, setOpen] = useState(false)
 
@@ -49,6 +53,20 @@ export default function WeekPicker({ weekStart, weekLabel, onSelect }: Props) {
             if (!date) return
             setOpen(false)
             onSelect(toUTCMidnight(date))
+          }}
+          classNames={{
+            // Highlight the whole week row on hover/focus of any of its days —
+            // pure CSS (has-*), so it never re-renders the grid on mouse
+            // move/focus. A JS-state-driven version of this (tracking hover
+            // via onDayMouseEnter/onDayFocus) caused a real regression: it
+            // re-rendered the entire day grid on every pointer move, which
+            // could race with a real click's mousedown/mouseup and silently
+            // drop the click.
+            week: cn(
+              'mt-2 flex w-full rounded-(--cell-radius)',
+              'has-[:hover]:bg-accent has-[:focus]:bg-accent',
+              defaultClassNames.week,
+            ),
           }}
         />
       </PopoverContent>

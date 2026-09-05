@@ -120,13 +120,13 @@ Layer on a visual preview: hovering or keyboard-focusing any day in the picker h
 
 ### Changes Required:
 
-#### 1. Week-row highlight modifier
+#### 1. Week-row highlight — pure CSS, no React state
 
 **File**: `src/app/office/components/calendar/WeekPicker.tsx`
 
 **Intent**: Preview which whole week is about to be jumped to, for both mouse and keyboard users (not hover-only, for accessibility).
 
-**Contract**: Track the currently hovered-or-focused day as component state. Pass a `modifiers` prop to `Calendar` marking every day sharing an ISO week (Monday-based) with that day, plus a `modifiersClassNames` entry applying a highlight background across the row. Wire the installed `react-day-picker` version's actual day-level hover and focus event props into that state (see Critical Implementation Details — confirm the exact prop names against the installed version's types before implementing, since this differs across react-day-picker major versions).
+**Contract — revised after a regression found in manual testing**: The originally-planned approach (track hovered/focused day as component state, drive a custom `modifiers`/`modifiersClassNames` pair off it) caused a real regression: `onDayMouseEnter`/`onDayFocus` re-rendering the *entire* ~35-day grid on every pointer move raced with real click events — a mousedown/mouseup pair could straddle a re-render and land on a non-interactive wrapper instead of the day button, silently dropping the click (no console error; confirmed via direct DOM `.click()` succeeding while coordinate-based clicks intermittently failed). Fixed by dropping all JS state/handlers (`onDayMouseEnter/Leave/Focus/Blur`, `modifiers`, `modifiersClassNames`, the `previewDay` state) and using pure CSS instead: react-day-picker already renders each week as its own row element, so `classNames.week` gets `has-[:hover]:bg-accent has-[:focus]:bg-accent` (Tailwind v4's built-in `has-*` variant) appended to the existing default week classes (`getDefaultClassNames().week`, imported from `react-day-picker`, since the `classNames` prop replaces rather than merges per-key). This produces the identical visual preview with zero re-renders and zero risk of click interception — the fix is structural, not a patch.
 
 ### Success Criteria:
 
@@ -142,7 +142,8 @@ Layer on a visual preview: hovering or keyboard-focusing any day in the picker h
 - Hovering any day with the mouse highlights the entire Monday-Sunday row it belongs to.
 - Tabbing to a day via keyboard also highlights its whole week row (not mouse-only).
 - The highlight clears when the pointer leaves the calendar or focus moves elsewhere.
-- No layout shift or visual glitch is introduced by the modifier styling.
+- No layout shift or visual glitch is introduced by the CSS highlight.
+- Clicking a date reliably navigates every time — including immediately after hovering over other days first (regression check for the click-dropping bug).
 
 **Implementation Note**: After completing this phase and all automated verification passes, pause here for manual confirmation from the human that the manual testing was successful before proceeding.
 
@@ -186,34 +187,35 @@ None — no schema or data changes; `getWeekStart`'s hardening is backward-compa
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run typecheck`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Full build succeeds: `npm run build`
-- [x] 1.4 Existing test suite still passes: `npm test`
+- [x] 1.1 Type checking passes: `npm run typecheck` — a76ad5e
+- [x] 1.2 Linting passes: `npm run lint` — a76ad5e
+- [x] 1.3 Full build succeeds: `npm run build` — a76ad5e
+- [x] 1.4 Existing test suite still passes: `npm test` — a76ad5e
 
 #### Manual
 
-- [x] 1.5 Clicking the week-range label opens a calendar popover
-- [x] 1.6 Popover shows the current week's Monday as selected
-- [x] 1.7 Picking any day (including mid-week) navigates to the correct Monday-starting week
-- [x] 1.8 Manually-edited non-Monday `?week=` still renders the correct week
-- [x] 1.9 Direction-aware slide + pending-feedback still work for the new navigation path
-- [x] 1.10 Picking a date within the current week closes the popover with no errors or spurious animation
-- [x] 1.11 Picker's calendar weeks start on Monday, matching CalendarGrid
-- [x] 1.12 Clicking a specific date navigates to that exact date's week (no timezone off-by-one/week)
+- [x] 1.5 Clicking the week-range label opens a calendar popover — a76ad5e
+- [x] 1.6 Popover shows the current week's Monday as selected — a76ad5e
+- [x] 1.7 Picking any day (including mid-week) navigates to the correct Monday-starting week — a76ad5e
+- [x] 1.8 Manually-edited non-Monday `?week=` still renders the correct week — a76ad5e
+- [x] 1.9 Direction-aware slide + pending-feedback still work for the new navigation path — a76ad5e
+- [x] 1.10 Picking a date within the current week closes the popover with no errors or spurious animation — a76ad5e
+- [x] 1.11 Picker's calendar weeks start on Monday, matching CalendarGrid — a76ad5e
+- [x] 1.12 Clicking a specific date navigates to that exact date's week (no timezone off-by-one/week) — a76ad5e
 
 ### Phase 2: Whole-week hover/focus highlight
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npm run typecheck`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Full build succeeds: `npm run build`
-- [ ] 2.4 Existing test suite still passes: `npm test`
+- [x] 2.1 Type checking passes: `npm run typecheck`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Full build succeeds: `npm run build`
+- [x] 2.4 Existing test suite still passes: `npm test`
 
 #### Manual
 
-- [ ] 2.5 Hovering any day highlights its entire week row
-- [ ] 2.6 Keyboard-focusing any day highlights its entire week row
-- [ ] 2.7 Highlight clears when pointer/focus leaves the calendar
-- [ ] 2.8 No layout shift or visual glitch from the modifier styling
+- [x] 2.5 Hovering any day highlights its entire week row
+- [x] 2.6 Keyboard-focusing any day highlights its entire week row
+- [x] 2.7 Highlight clears when pointer/focus leaves the calendar
+- [x] 2.8 No layout shift or visual glitch from the CSS highlight
+- [x] 2.9 Clicking a date reliably navigates every time, including right after hovering other days (regression check)
