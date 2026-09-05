@@ -142,9 +142,9 @@ Wire the actual click-to-toast behavior into the calendar grid and extend the ex
 
 #### Automated
 
-- [ ] 1.1 Typecheck passes: `npm run typecheck`
-- [ ] 1.2 Lint passes: `npm run lint`
-- [ ] 1.3 Build succeeds: `npm run build`
+- [x] 1.1 Typecheck passes: `npm run typecheck`
+- [x] 1.2 Lint passes: `npm run lint`
+- [x] 1.3 Build succeeds: `npm run build`
 
 #### Manual
 

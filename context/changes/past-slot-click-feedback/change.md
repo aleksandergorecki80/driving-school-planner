@@ -1,7 +1,7 @@
 ---
 change_id: past-slot-click-feedback
 title: Past slot click feedback
-status: planned
+status: implementing
 created: 2026-09-05
 updated: 2026-09-05
 archived_at: null
