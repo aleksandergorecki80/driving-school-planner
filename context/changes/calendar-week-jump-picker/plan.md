@@ -207,15 +207,15 @@ None — no schema or data changes; `getWeekStart`'s hardening is backward-compa
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npm run typecheck`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Full build succeeds: `npm run build`
-- [x] 2.4 Existing test suite still passes: `npm test`
+- [x] 2.1 Type checking passes: `npm run typecheck` — 36c967d
+- [x] 2.2 Linting passes: `npm run lint` — 36c967d
+- [x] 2.3 Full build succeeds: `npm run build` — 36c967d
+- [x] 2.4 Existing test suite still passes: `npm test` — 36c967d
 
 #### Manual
 
-- [x] 2.5 Hovering any day highlights its entire week row
-- [x] 2.6 Keyboard-focusing any day highlights its entire week row
-- [x] 2.7 Highlight clears when pointer/focus leaves the calendar
-- [x] 2.8 No layout shift or visual glitch from the CSS highlight
-- [x] 2.9 Clicking a date reliably navigates every time, including right after hovering other days (regression check)
+- [x] 2.5 Hovering any day highlights its entire week row — 36c967d
+- [x] 2.6 Keyboard-focusing any day highlights its entire week row — 36c967d
+- [x] 2.7 Highlight clears when pointer/focus leaves the calendar — 36c967d
+- [x] 2.8 No layout shift or visual glitch from the CSS highlight — 36c967d
+- [x] 2.9 Clicking a date reliably navigates every time, including right after hovering other days (regression check) — 36c967d

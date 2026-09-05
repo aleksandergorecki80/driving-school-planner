@@ -1,7 +1,7 @@
 ---
 change_id: calendar-week-jump-picker
 title: Add a date picker to jump directly to a week from the week-range label
-status: implementing
+status: implemented
 created: 2026-09-05
 updated: 2026-09-05
 archived_at: null
