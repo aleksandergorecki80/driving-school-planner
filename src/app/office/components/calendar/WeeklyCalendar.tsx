@@ -1,4 +1,5 @@
 'use client'
+import { useState, useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { LessonRow } from '../types'
@@ -38,6 +39,8 @@ export default function WeeklyCalendar({
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [direction, setDirection] = useState<'forward' | 'backward' | null>(null)
+  const [isPending, startTransition] = useTransition()
 
   const weekStart = parseWeekStart(weekStartStr)
   const days = Array.from({ length: 7 }, (_, i) =>
@@ -45,10 +48,13 @@ export default function WeeklyCalendar({
   )
 
   function navigateWeek(delta: number) {
+    setDirection(delta > 0 ? 'forward' : 'backward')
     const newStart = new Date(weekStart.getTime() + delta * 7 * 24 * 60 * 60 * 1000)
     const params = new URLSearchParams(searchParams.toString())
     params.set('week', toISODate(newStart))
-    router.push(`/office?${params.toString()}`)
+    startTransition(() => {
+      router.push(`/office?${params.toString()}`)
+    })
   }
 
   return (
@@ -62,6 +68,7 @@ export default function WeeklyCalendar({
             variant="ghost"
             size="sm"
             onClick={() => navigateWeek(-1)}
+            disabled={isPending}
           >
             <ChevronLeft /> Prev
           </Button>
@@ -73,6 +80,7 @@ export default function WeeklyCalendar({
             variant="ghost"
             size="sm"
             onClick={() => navigateWeek(1)}
+            disabled={isPending}
           >
             Next <ChevronRight />
           </Button>
@@ -80,10 +88,12 @@ export default function WeeklyCalendar({
       </div>
 
       {/* Scrollable calendar grid */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
         <CalendarGrid
+          key={weekStartStr}
           days={days}
           lessons={lessons}
+          direction={direction}
           onSlotClick={onSlotClick}
           onLessonClick={onLessonClick}
         />
