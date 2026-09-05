@@ -1,5 +1,6 @@
 'use client'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 import type { LessonRow } from '../types'
 import LessonBlock from './LessonBlock'
 
@@ -24,14 +25,21 @@ function handlePastSlotClick() {
 interface Props {
   days: Date[]
   lessons: LessonRow[]
+  direction?: 'forward' | 'backward' | null
   onSlotClick: (date: Date) => void
   onLessonClick: (lesson: LessonRow) => void
 }
 
-export default function CalendarGrid({ days, lessons, onSlotClick, onLessonClick }: Props) {
+export default function CalendarGrid({ days, lessons, direction, onSlotClick, onLessonClick }: Props) {
   return (
     <div
-      className="grid w-full"
+      className={cn(
+        'grid w-full',
+        direction != null &&
+          'motion-reduce:animate-none animate-in fade-in-0 duration-200',
+        direction === 'forward' && 'slide-in-from-right-4',
+        direction === 'backward' && 'slide-in-from-left-4',
+      )}
       style={{
         gridTemplateColumns: '4rem repeat(7, 1fr)',
         gridTemplateRows: `2.5rem repeat(${SLOT_COUNT}, 2rem)`,
