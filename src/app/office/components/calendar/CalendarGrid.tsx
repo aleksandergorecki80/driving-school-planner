@@ -1,4 +1,5 @@
 'use client'
+import { toast } from 'sonner'
 import type { LessonRow } from '../types'
 import LessonBlock from './LessonBlock'
 
@@ -12,6 +13,13 @@ const SLOT_LABELS = Array.from({ length: SLOT_COUNT }, (_, i) => {
 })
 
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+function handlePastSlotClick() {
+  toast('Cannot schedule a lesson in the past', {
+    id: 'past-slot-click',
+    cancel: { label: '✕', onClick: () => {} },
+  })
+}
 
 interface Props {
   days: Date[]
@@ -64,10 +72,10 @@ export default function CalendarGrid({ days, lessons, onSlotClick, onLessonClick
           return (
             <div
               key={`${colIdx}-${rowIdx}`}
-              onClick={isPast ? undefined : () => onSlotClick(slotDate)}
+              onClick={isPast ? handlePastSlotClick : () => onSlotClick(slotDate)}
               aria-label={`${DAY_NAMES[colIdx]} ${SLOT_LABELS[rowIdx]}`}
               aria-disabled={isPast}
-              className="cursor-pointer border-b border-r border-border hover:bg-accent aria-disabled:pointer-events-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent"
+              className="cursor-pointer border-b border-r border-border hover:bg-accent aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent"
               style={{ gridRow: rowIdx + 2, gridColumn: colIdx + 2 }}
             />
           )

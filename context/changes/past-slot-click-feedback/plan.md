@@ -142,24 +142,24 @@ Wire the actual click-to-toast behavior into the calendar grid and extend the ex
 
 #### Automated
 
-- [x] 1.1 Typecheck passes: `npm run typecheck`
-- [x] 1.2 Lint passes: `npm run lint`
-- [x] 1.3 Build succeeds: `npm run build`
+- [x] 1.1 Typecheck passes: `npm run typecheck` — 7639c3c
+- [x] 1.2 Lint passes: `npm run lint` — 7639c3c
+- [x] 1.3 Build succeeds: `npm run build` — 7639c3c
 
 #### Manual
 
-- [ ] 1.4 `npm run dev` boots without hydration or console errors after the `<Toaster />` mount
+- [x] 1.4 `npm run dev` boots without hydration or console errors after the `<Toaster />` mount — 7639c3c
 
 ### Phase 2: CalendarGrid click feedback + tests
 
 #### Automated
 
-- [ ] 2.1 Unit tests pass: `npm run test`
-- [ ] 2.2 Typecheck passes: `npm run typecheck`
-- [ ] 2.3 Lint passes: `npm run lint`
+- [x] 2.1 Unit tests pass: `npm run test`
+- [x] 2.2 Typecheck passes: `npm run typecheck`
+- [x] 2.3 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.4 Clicking a past slot shows the toast, correctly styled in both light and dark mode
-- [ ] 2.5 Clicking several past slots in a row shows/resets a single toast rather than stacking duplicates
-- [ ] 2.6 Clicking a future slot still opens the new-lesson panel as before (no regression)
+- [x] 2.4 Clicking a past slot shows the toast, correctly styled in both light and dark mode
+- [x] 2.5 Clicking several past slots in a row shows/resets a single toast rather than stacking duplicates
+- [x] 2.6 Clicking a future slot still opens the new-lesson panel as before (no regression)
