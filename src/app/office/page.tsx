@@ -47,7 +47,7 @@ export default async function OfficePage({ searchParams }: PageProps) {
   if (instructorId) {
     const { data } = await db
       .from('lessons')
-      .select('id, scheduled_at, status, category, students(name)')
+      .select('id, scheduled_at, status, category, rejection_reason, students(name)')
       .eq('instructor_id', instructorId)
       .neq('status', 'cancelled')
       .gte('scheduled_at', weekStart.toISOString())

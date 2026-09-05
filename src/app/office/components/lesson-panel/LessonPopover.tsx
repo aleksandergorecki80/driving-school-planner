@@ -103,6 +103,10 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
           <Badge className={status.badgeClassName}>{status.label}</Badge>
         </div>
 
+        {lesson.status === 'rejected' && lesson.rejection_reason && (
+          <DetailRow label="Rejection reason" value={lesson.rejection_reason} />
+        )}
+
         {lesson.status === 'pending' && (
           <OverrideEmailField
             targetEmail={instructor.email}

@@ -5,6 +5,7 @@ export type LessonRow = {
   scheduled_at: string
   status: 'pending' | 'confirmed' | 'rejected'
   category: string
+  rejection_reason: string | null
   students: { name: string } | null
 }
 
