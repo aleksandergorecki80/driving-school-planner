@@ -1,7 +1,7 @@
 ---
 change_id: office-rejection-reason-display
 title: Show the persisted rejection reason in the office UI
-status: implementing
+status: implemented
 created: 2026-09-05
 updated: 2026-09-05
 archived_at: null

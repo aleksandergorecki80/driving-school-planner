@@ -122,14 +122,14 @@ None — no schema change, `rejection_reason` already exists and is populated by
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run typecheck`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Full build succeeds: `npm run build`
-- [x] 1.4 Existing test suite still passes: `npm test`
+- [x] 1.1 Type checking passes: `npm run typecheck` — 13b3082
+- [x] 1.2 Linting passes: `npm run lint` — 13b3082
+- [x] 1.3 Full build succeeds: `npm run build` — 13b3082
+- [x] 1.4 Existing test suite still passes: `npm test` — 13b3082
 
 #### Manual
 
-- [x] 1.5 Rejection with typed reason shows the "Rejection reason" row in the office popover
-- [x] 1.6 Rejection with blank reason shows no "Rejection reason" row
-- [x] 1.7 Pending/confirmed lessons show no "Rejection reason" row
-- [x] 1.8 Long rejection reason wraps/scrolls without layout breakage
+- [x] 1.5 Rejection with typed reason shows the "Rejection reason" row in the office popover — 13b3082
+- [x] 1.6 Rejection with blank reason shows no "Rejection reason" row — 13b3082
+- [x] 1.7 Pending/confirmed lessons show no "Rejection reason" row — 13b3082
+- [x] 1.8 Long rejection reason wraps/scrolls without layout breakage — 13b3082
