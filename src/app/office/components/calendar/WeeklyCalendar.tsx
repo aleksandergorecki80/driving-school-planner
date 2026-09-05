@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import type { LessonRow } from '../types'
 import CalendarGrid from './CalendarGrid'
+import WeekPicker from './WeekPicker'
 import { Button } from '@/components/ui/button'
 
 interface Props {
@@ -47,14 +48,17 @@ export default function WeeklyCalendar({
     new Date(weekStart.getTime() + i * 24 * 60 * 60 * 1000),
   )
 
-  function navigateWeek(delta: number) {
-    setDirection(delta > 0 ? 'forward' : 'backward')
-    const newStart = new Date(weekStart.getTime() + delta * 7 * 24 * 60 * 60 * 1000)
+  function goToWeek(newStart: Date) {
+    setDirection(newStart > weekStart ? 'forward' : newStart < weekStart ? 'backward' : null)
     const params = new URLSearchParams(searchParams.toString())
     params.set('week', toISODate(newStart))
     startTransition(() => {
       router.push(`/office?${params.toString()}`)
     })
+  }
+
+  function navigateWeek(delta: number) {
+    goToWeek(new Date(weekStart.getTime() + delta * 7 * 24 * 60 * 60 * 1000))
   }
 
   return (
@@ -72,9 +76,7 @@ export default function WeeklyCalendar({
           >
             <ChevronLeft /> Prev
           </Button>
-          <span className="w-44 text-center text-sm text-muted-foreground">
-            {formatWeekLabel(weekStart)}
-          </span>
+          <WeekPicker weekStart={weekStart} weekLabel={formatWeekLabel(weekStart)} onSelect={goToWeek} />
           <Button
             type="button"
             variant="ghost"

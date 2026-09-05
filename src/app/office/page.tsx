@@ -14,16 +14,22 @@ interface PageProps {
   }>
 }
 
-// Derive the Monday of the week. weekParam is expected as YYYY-MM-DD (UTC).
+// Snaps any date to the Monday of its week (UTC).
+function snapToMonday(d: Date): Date {
+  const dayOfWeek = d.getUTCDay() // 0=Sun, 1=Mon, ..., 6=Sat
+  const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - daysFromMonday))
+}
+
+// Derive the Monday of the week. weekParam is expected as YYYY-MM-DD (UTC);
+// it is always snapped to its week's Monday, since callers (e.g. the week
+// jump picker) may pass any day of the week, not just an already-aligned one.
 function getWeekStart(weekParam: string | undefined): Date {
   if (weekParam) {
     const d = new Date(weekParam + 'T00:00:00.000Z')
-    if (!isNaN(d.getTime())) return d
+    if (!isNaN(d.getTime())) return snapToMonday(d)
   }
-  const now = new Date()
-  const dayOfWeek = now.getUTCDay() // 0=Sun, 1=Mon, ..., 6=Sat
-  const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1
-  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - daysFromMonday))
+  return snapToMonday(new Date())
 }
 
 export default async function OfficePage({ searchParams }: PageProps) {
