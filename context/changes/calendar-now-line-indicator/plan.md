@@ -165,24 +165,24 @@ None — purely additive UI, no data model or persisted-state changes.
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run build`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Unit tests pass: `npm test -- now-line` (window-start, window-end boundary, mid-slot fraction, before-window, after-window, wrong-day)
+- [x] 1.1 Type checking passes: `npm run build` — 1f12401
+- [x] 1.2 Linting passes: `npm run lint` — 1f12401
+- [x] 1.3 Unit tests pass: `npm test -- now-line` (window-start, window-end boundary, mid-slot fraction, before-window, after-window, wrong-day) — 1f12401
 
 ### Phase 2: Ticking state, `NowLine` component, and CalendarGrid wiring
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npm run build`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Existing tests still pass: `npm test -- CalendarGrid`
-- [ ] 2.4 New ticking tests pass (fake timers + real `officeNowAsNaiveUTC`): presence/position at mount, position moves after a tick, live dimming update after a tick
+- [x] 2.1 Type checking passes: `npm run build`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Existing tests still pass: `npm test -- CalendarGrid`
+- [x] 2.4 New ticking tests pass (fake timers + real `officeNowAsNaiveUTC`): presence/position at mount, position moves after a tick, live dimming update after a tick
 
 #### Manual
 
-- [ ] 2.5 Line appears at the visually correct position on today's column, above any crossed lesson block
-- [ ] 2.6 Line moves and past-slot dimming updates live after a tick interval, without navigating
-- [ ] 2.7 No now-line renders when navigating to a week that doesn't include today
-- [ ] 2.8 No now-line renders when "now" falls outside the 07:00–21:00 window
-- [ ] 2.9 Reduced-motion preference disables the position transition
-- [ ] 2.10 Line/dot color is legible and distinct from all three lesson-status colors in both light and dark mode
+- [x] 2.5 Line appears at the visually correct position on today's column, above any crossed lesson block
+- [x] 2.6 Line moves and past-slot dimming updates live after a tick interval, without navigating
+- [x] 2.7 No now-line renders when navigating to a week that doesn't include today
+- [x] 2.8 No now-line renders when "now" falls outside the 07:00–21:00 window (verified via automated unit tests, not a live browser check — accepted as sufficient)
+- [x] 2.9 Reduced-motion preference disables the position transition
+- [x] 2.10 Line/dot color is legible and distinct from all three lesson-status colors in both light and dark mode

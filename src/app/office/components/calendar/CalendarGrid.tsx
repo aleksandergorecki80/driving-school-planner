@@ -1,10 +1,13 @@
 'use client'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { officeNowAsNaiveUTC } from '@/lib/office-time'
 import type { LessonRow } from '../types'
 import LessonBlock from './LessonBlock'
+import NowLine from './NowLine'
 import { SLOT_START_HOUR, SLOT_COUNT } from './grid-constants'
+import { NOW_LINE_TICK_MS } from './now-line'
 
 const SLOT_LABELS = Array.from({ length: SLOT_COUNT }, (_, i) => {
   const h = SLOT_START_HOUR + Math.floor(i / 2)
@@ -30,9 +33,14 @@ interface Props {
 }
 
 export default function CalendarGrid({ days, lessons, direction, onSlotClick, onLessonClick }: Props) {
-  // Computed once per render, not per slot — officeNowAsNaiveUTC() does real
-  // Intl.DateTimeFormat work and this grid renders up to 7 * SLOT_COUNT slots.
-  const nowMs = officeNowAsNaiveUTC().getTime()
+  // Ticks independently of AutoRefresh's 30s poll so the now-line and
+  // past-slot dimming/click-guard stay live between polls/navigations.
+  const [now, setNow] = useState(() => officeNowAsNaiveUTC())
+  useEffect(() => {
+    const id = setInterval(() => setNow(officeNowAsNaiveUTC()), NOW_LINE_TICK_MS)
+    return () => clearInterval(id)
+  }, [])
+  const nowMs = now.getTime()
 
   return (
     <div
@@ -116,6 +124,11 @@ export default function CalendarGrid({ days, lessons, direction, onSlotClick, on
           />
         )
       })}
+
+      {/* Now-line — renders only on today's column, if today is in view */}
+      {days.map((day, colIdx) => (
+        <NowLine key={colIdx} day={day} now={now} gridColumn={colIdx + 2} />
+      ))}
     </div>
   )
 }
