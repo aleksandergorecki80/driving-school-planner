@@ -1,7 +1,7 @@
 ---
 change_id: lesson-block-status-badge
 title: Add a status badge/label to lesson blocks in the calendar grid
-status: implementing
+status: implemented
 created: 2026-09-06
 updated: 2026-09-06
 archived_at: null

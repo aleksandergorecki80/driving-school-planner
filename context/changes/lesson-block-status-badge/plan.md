@@ -83,13 +83,13 @@ Render the status badge as a third line in `LessonBlock.tsx`, extend the tile's 
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run build`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 New unit tests pass: `npm test -- LessonBlock` (badge text + aria-label per status)
-- [x] 1.4 Existing tests still pass: `npm test -- CalendarGrid`
+- [x] 1.1 Type checking passes: `npm run build` — a6b8e82
+- [x] 1.2 Linting passes: `npm run lint` — a6b8e82
+- [x] 1.3 New unit tests pass: `npm test -- LessonBlock` (badge text + aria-label per status) — a6b8e82
+- [x] 1.4 Existing tests still pass: `npm test -- CalendarGrid` — a6b8e82
 
 #### Manual
 
-- [x] 1.5 Status badge visible and legible on tiles in both light and dark theme
-- [x] 1.6 Long status labels truncate with ellipsis on a narrow/mobile viewport instead of wrapping or overflowing
-- [x] 1.7 Badge doesn't visually crowd out student name / category at the tile's fixed 64px height
+- [x] 1.5 Status badge visible and legible on tiles in both light and dark theme — a6b8e82
+- [x] 1.6 Long status labels truncate with ellipsis on a narrow/mobile viewport instead of wrapping or overflowing — a6b8e82
+- [x] 1.7 Badge doesn't visually crowd out student name / category at the tile's fixed 64px height — a6b8e82
