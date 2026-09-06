@@ -661,6 +661,11 @@ describe('cancelLesson', () => {
     expect(updated.status).toBe('cancelled')
     expect(updated.token).toBeNull()
   })
+
+  test('returns "not found" error for an unknown lesson id, instead of throwing', async () => {
+    const result = await cancelLesson('00000000-0000-0000-0000-000000000000')
+    expect(result).toEqual({ error: 'Lesson not found or already cancelled' })
+  })
 })
 
 describe('respondToLesson', () => {

@@ -13,7 +13,7 @@ export async function cancelLesson(lessonId: string): Promise<{ error?: string }
     .eq('id', lessonId)
     .in('status', ['pending', 'confirmed'])
     .select('id')
-    .single()
+    .maybeSingle()
 
   if (error) {
     return { error: error.message }
