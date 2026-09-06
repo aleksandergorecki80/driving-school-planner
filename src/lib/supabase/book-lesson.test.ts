@@ -140,12 +140,12 @@ describe('book_lesson RPC', () => {
 
   it('returns SCHEDULED_AT_IN_PAST for a scheduled_at that is true-UTC-future but Warsaw-wall-clock-past — the exact production bug shape (2026-09-05)', async () => {
     // officeNowAsNaiveUTC() is real_now + Warsaw's current UTC offset (+1h winter, +2h
-    // summer), relabeled as UTC. Subtracting a few minutes from it still yields a
+    // summer), relabeled as UTC. Subtracting 30 minutes from it still yields a
     // timestamp genuinely after the true current UTC instant (since the offset is at
     // least an hour) — reproducing exactly the shape that slipped through in production:
     // "in the future" by a naive Date.now() comparison, but already past by the office's
     // real wall clock.
-    const wallClockPastButUtcFuture = new Date(officeNowAsNaiveUTC().getTime() - 5 * 60 * 1000)
+    const wallClockPastButUtcFuture = new Date(officeNowAsNaiveUTC().getTime() - 30 * 60 * 1000)
 
     const { data, error } = await office.rpc('book_lesson', {
       p_instructor_id: instructorId,

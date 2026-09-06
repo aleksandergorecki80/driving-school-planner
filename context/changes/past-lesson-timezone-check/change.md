@@ -1,7 +1,7 @@
 ---
 change_id: past-lesson-timezone-check
 title: Fix timezone bug letting past lessons slip through the past-time check
-status: implemented
+status: impl_reviewed
 created: 2026-09-05
 updated: 2026-09-06
 archived_at: null
