@@ -4,9 +4,7 @@ import { cn } from '@/lib/utils'
 import { officeNowAsNaiveUTC } from '@/lib/office-time'
 import type { LessonRow } from '../types'
 import LessonBlock from './LessonBlock'
-
-const SLOT_START_HOUR = 7
-const SLOT_COUNT = 28  // 07:00–20:30 in 30-min steps
+import { SLOT_START_HOUR, SLOT_COUNT } from './grid-constants'
 
 const SLOT_LABELS = Array.from({ length: SLOT_COUNT }, (_, i) => {
   const h = SLOT_START_HOUR + Math.floor(i / 2)
