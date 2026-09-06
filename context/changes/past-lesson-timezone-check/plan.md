@@ -282,13 +282,13 @@ The new SQL migration only changes a comparison condition inside an existing fun
 
 #### Automated
 
-- [x] 4.1 Type checking passes: `npm run typecheck`
-- [x] 4.2 Linting passes: `npm run lint`
-- [x] 4.3 Full build succeeds: `npm run build`
-- [x] 4.4 Migration applies cleanly
-- [x] 4.5 book-lesson.test.ts passes: `npx vitest run src/lib/supabase/book-lesson.test.ts`
-- [x] 4.6 Full test suite passes: `npm test`
+- [x] 4.1 Type checking passes: `npm run typecheck` — 09f4bbb
+- [x] 4.2 Linting passes: `npm run lint` — 09f4bbb
+- [x] 4.3 Full build succeeds: `npm run build` — 09f4bbb
+- [x] 4.4 Migration applies cleanly — 09f4bbb
+- [x] 4.5 book-lesson.test.ts passes: `npx vitest run src/lib/supabase/book-lesson.test.ts` — 09f4bbb
+- [x] 4.6 Full test suite passes: `npm test` — 09f4bbb
 
 #### Manual
 
-- [x] 4.7 Full booking flow rejects a wall-clock-past, UTC-future lesson end-to-end
+- [x] 4.7 Full booking flow rejects a wall-clock-past, UTC-future lesson end-to-end — 09f4bbb
