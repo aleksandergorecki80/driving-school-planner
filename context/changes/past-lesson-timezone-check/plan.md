@@ -260,23 +260,23 @@ The new SQL migration only changes a comparison condition inside an existing fun
 
 #### Automated
 
-- [x] 2.1 Type checking passes: `npm run typecheck`
-- [x] 2.2 Linting passes: `npm run lint`
-- [x] 2.3 Full build succeeds: `npm run build`
-- [x] 2.4 CalendarGrid.test.tsx passes: `npx vitest run src/app/office/components/calendar/CalendarGrid.test.tsx`
+- [x] 2.1 Type checking passes: `npm run typecheck` — 36acdb4
+- [x] 2.2 Linting passes: `npm run lint` — 36acdb4
+- [x] 2.3 Full build succeeds: `npm run build` — 36acdb4
+- [x] 2.4 CalendarGrid.test.tsx passes: `npx vitest run src/app/office/components/calendar/CalendarGrid.test.tsx` — 36acdb4
 
 #### Manual
 
-- [x] 2.5 A wall-clock-past, UTC-future slot renders disabled with the past-slot toast
+- [x] 2.5 A wall-clock-past, UTC-future slot renders disabled with the past-slot toast — 36acdb4
 
 ### Phase 3: Fix the domain invariant
 
 #### Automated
 
-- [ ] 3.1 Type checking passes: `npm run typecheck`
-- [ ] 3.2 Linting passes: `npm run lint`
-- [ ] 3.3 Full build succeeds: `npm run build`
-- [ ] 3.4 Lesson.test.ts passes: `npx vitest run src/domain/lesson/Lesson.test.ts`
+- [x] 3.1 Type checking passes: `npm run typecheck`
+- [x] 3.2 Linting passes: `npm run lint`
+- [x] 3.3 Full build succeeds: `npm run build`
+- [x] 3.4 Lesson.test.ts passes: `npx vitest run src/domain/lesson/Lesson.test.ts`
 
 ### Phase 4: Fix the RPC
 
