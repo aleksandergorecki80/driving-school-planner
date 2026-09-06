@@ -1,3 +1,5 @@
+import { officeNowAsNaiveUTC } from '@/lib/office-time'
+
 interface InstructorProfile {
   id: string
   categories: string[]
@@ -46,7 +48,7 @@ export class Lesson {
     category: string
     scheduledAt: Date
   }): Lesson {
-    if (input.scheduledAt.getTime() < Date.now()) {
+    if (input.scheduledAt.getTime() < officeNowAsNaiveUTC().getTime()) {
       throw new PastScheduledAtError(input.scheduledAt)
     }
     if (!input.instructor.categories.includes(input.category)) {

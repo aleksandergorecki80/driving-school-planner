@@ -1,6 +1,7 @@
 'use client'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { officeNowAsNaiveUTC } from '@/lib/office-time'
 import type { LessonRow } from '../types'
 import LessonBlock from './LessonBlock'
 
@@ -31,6 +32,10 @@ interface Props {
 }
 
 export default function CalendarGrid({ days, lessons, direction, onSlotClick, onLessonClick }: Props) {
+  // Computed once per render, not per slot — officeNowAsNaiveUTC() does real
+  // Intl.DateTimeFormat work and this grid renders up to 7 * SLOT_COUNT slots.
+  const nowMs = officeNowAsNaiveUTC().getTime()
+
   return (
     <div
       className={cn(
@@ -76,7 +81,7 @@ export default function CalendarGrid({ days, lessons, direction, onSlotClick, on
         Array.from({ length: SLOT_COUNT }, (_, rowIdx) => {
           const offsetMs = (SLOT_START_HOUR * 60 + rowIdx * 30) * 60 * 1000
           const slotDate = new Date(day.getTime() + offsetMs)
-          const isPast = slotDate.getTime() < Date.now()
+          const isPast = slotDate.getTime() < nowMs
           return (
             <div
               key={`${colIdx}-${rowIdx}`}

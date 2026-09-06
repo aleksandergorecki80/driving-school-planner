@@ -1,4 +1,5 @@
 import { describe, it, expect, afterEach, vi } from 'vitest'
+import * as officeTime from '@/lib/office-time'
 import {
   Lesson,
   InstructorCategoryMismatchError,
@@ -44,12 +45,11 @@ describe('Lesson.propose', () => {
 
   describe('past scheduledAt', () => {
     afterEach(() => {
-      vi.useRealTimers()
+      vi.restoreAllMocks()
     })
 
     it('throws PastScheduledAtError when scheduledAt is before now', () => {
-      vi.useFakeTimers()
-      vi.setSystemTime(new Date('2050-06-15T12:00:00.000Z'))
+      vi.spyOn(officeTime, 'officeNowAsNaiveUTC').mockReturnValue(new Date('2050-06-15T12:00:00.000Z'))
 
       const pastScheduledAt = new Date('2050-06-15T11:59:59.999Z')
 
@@ -60,8 +60,7 @@ describe('Lesson.propose', () => {
 
     it('succeeds when scheduledAt is exactly now', () => {
       const now = new Date('2050-06-15T12:00:00.000Z')
-      vi.useFakeTimers()
-      vi.setSystemTime(now)
+      vi.spyOn(officeTime, 'officeNowAsNaiveUTC').mockReturnValue(now)
 
       const lesson = Lesson.propose({ instructor, student, category: 'C', scheduledAt: now })
 
@@ -69,14 +68,34 @@ describe('Lesson.propose', () => {
     })
 
     it('succeeds when scheduledAt is after now', () => {
-      vi.useFakeTimers()
-      vi.setSystemTime(new Date('2050-06-15T12:00:00.000Z'))
+      vi.spyOn(officeTime, 'officeNowAsNaiveUTC').mockReturnValue(new Date('2050-06-15T12:00:00.000Z'))
 
       const futureScheduledAt = new Date('2050-06-15T12:00:00.001Z')
 
       const lesson = Lesson.propose({ instructor, student, category: 'C', scheduledAt: futureScheduledAt })
 
       expect(lesson.scheduledAt).toBe(futureScheduledAt)
+    })
+
+    it('throws PastScheduledAtError for a scheduledAt that is UTC-future but Warsaw-wall-clock-past — the exact production bug (2026-09-05)', () => {
+      // True system clock: 15:03 UTC. Under the old (buggy) Date.now()
+      // comparison, a 15:30 scheduledAt would look like it's still ~27
+      // minutes in the future and would NOT throw — exactly what let a past
+      // lesson slip through in production.
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-09-05T15:03:00.000Z'))
+
+      // But Warsaw is UTC+2 (CEST) in September, so the office's real wall
+      // clock reads 17:03 at that same instant — well past the 15:30 slot.
+      vi.spyOn(officeTime, 'officeNowAsNaiveUTC').mockReturnValue(new Date('2026-09-05T17:03:00.000Z'))
+
+      const scheduledAt = new Date('2026-09-05T15:30:00.000Z')
+
+      expect(() =>
+        Lesson.propose({ instructor, student, category: 'C', scheduledAt }),
+      ).toThrow(PastScheduledAtError)
+
+      vi.useRealTimers()
     })
   })
 })
