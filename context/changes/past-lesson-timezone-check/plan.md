@@ -273,22 +273,22 @@ The new SQL migration only changes a comparison condition inside an existing fun
 
 #### Automated
 
-- [x] 3.1 Type checking passes: `npm run typecheck`
-- [x] 3.2 Linting passes: `npm run lint`
-- [x] 3.3 Full build succeeds: `npm run build`
-- [x] 3.4 Lesson.test.ts passes: `npx vitest run src/domain/lesson/Lesson.test.ts`
+- [x] 3.1 Type checking passes: `npm run typecheck` — dfdc603
+- [x] 3.2 Linting passes: `npm run lint` — dfdc603
+- [x] 3.3 Full build succeeds: `npm run build` — dfdc603
+- [x] 3.4 Lesson.test.ts passes: `npx vitest run src/domain/lesson/Lesson.test.ts` — dfdc603
 
 ### Phase 4: Fix the RPC
 
 #### Automated
 
-- [ ] 4.1 Type checking passes: `npm run typecheck`
-- [ ] 4.2 Linting passes: `npm run lint`
-- [ ] 4.3 Full build succeeds: `npm run build`
-- [ ] 4.4 Migration applies cleanly
-- [ ] 4.5 book-lesson.test.ts passes: `npx vitest run src/lib/supabase/book-lesson.test.ts`
-- [ ] 4.6 Full test suite passes: `npm test`
+- [x] 4.1 Type checking passes: `npm run typecheck`
+- [x] 4.2 Linting passes: `npm run lint`
+- [x] 4.3 Full build succeeds: `npm run build`
+- [x] 4.4 Migration applies cleanly
+- [x] 4.5 book-lesson.test.ts passes: `npx vitest run src/lib/supabase/book-lesson.test.ts`
+- [x] 4.6 Full test suite passes: `npm test`
 
 #### Manual
 
-- [ ] 4.7 Full booking flow rejects a wall-clock-past, UTC-future lesson end-to-end
+- [x] 4.7 Full booking flow rejects a wall-clock-past, UTC-future lesson end-to-end
