@@ -1,7 +1,7 @@
 ---
 change_id: calendar-now-line-indicator
 title: Add a clear now-line indicator separating past from future slots in the calendar
-status: implemented
+status: impl_reviewed
 created: 2026-09-06
 updated: 2026-09-06
 archived_at: null

@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { officeNowAsNaiveUTC } from '@/lib/office-time'
@@ -23,6 +23,34 @@ function handlePastSlotClick() {
     cancel: { label: '✕', onClick: () => {} },
   })
 }
+
+// Memoized so a 60s now-tick only re-renders the (at most one) cell whose
+// isPast value actually flipped, not all 196 slot cells.
+const SlotCell = memo(function SlotCell({
+  day,
+  rowIdx,
+  colIdx,
+  isPast,
+  onSlotClick,
+}: {
+  day: Date
+  rowIdx: number
+  colIdx: number
+  isPast: boolean
+  onSlotClick: (date: Date) => void
+}) {
+  const offsetMs = (SLOT_START_HOUR * 60 + rowIdx * 30) * 60 * 1000
+  const slotDate = new Date(day.getTime() + offsetMs)
+  return (
+    <div
+      onClick={isPast ? handlePastSlotClick : () => onSlotClick(slotDate)}
+      aria-label={`${DAY_NAMES[colIdx]} ${SLOT_LABELS[rowIdx]}`}
+      aria-disabled={isPast}
+      className="cursor-pointer border-b border-r border-border hover:bg-accent aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent"
+      style={{ gridRow: rowIdx + 2, gridColumn: colIdx + 2 }}
+    />
+  )
+})
 
 interface Props {
   days: Date[]
@@ -86,16 +114,15 @@ export default function CalendarGrid({ days, lessons, direction, onSlotClick, on
       {days.map((day, colIdx) =>
         Array.from({ length: SLOT_COUNT }, (_, rowIdx) => {
           const offsetMs = (SLOT_START_HOUR * 60 + rowIdx * 30) * 60 * 1000
-          const slotDate = new Date(day.getTime() + offsetMs)
-          const isPast = slotDate.getTime() < nowMs
+          const isPast = day.getTime() + offsetMs < nowMs
           return (
-            <div
+            <SlotCell
               key={`${colIdx}-${rowIdx}`}
-              onClick={isPast ? handlePastSlotClick : () => onSlotClick(slotDate)}
-              aria-label={`${DAY_NAMES[colIdx]} ${SLOT_LABELS[rowIdx]}`}
-              aria-disabled={isPast}
-              className="cursor-pointer border-b border-r border-border hover:bg-accent aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent"
-              style={{ gridRow: rowIdx + 2, gridColumn: colIdx + 2 }}
+              day={day}
+              rowIdx={rowIdx}
+              colIdx={colIdx}
+              isPast={isPast}
+              onSlotClick={onSlotClick}
             />
           )
         }),

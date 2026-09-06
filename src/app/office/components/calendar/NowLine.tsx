@@ -18,6 +18,7 @@ export default function NowLine({ day, now, gridColumn }: Props) {
       className="pointer-events-none relative z-20"
       style={{ gridRow: '2 / -1', gridColumn }}
     >
+      {/* Blue is deliberate — amber/emerald/red are all taken by lesson status (see lesson-status.ts) */}
       <div
         data-testid="now-line-marker"
         className="absolute inset-x-0 -translate-y-1/2 transition-[top] duration-300 motion-reduce:transition-none"
