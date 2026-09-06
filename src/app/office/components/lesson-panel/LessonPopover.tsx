@@ -33,8 +33,7 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
   const [isPending, startTransition] = useTransition()
   const [isResending, startResendTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
-  const [useOverrideEmail, setUseOverrideEmail] = useState(false)
-  const [overrideEmail, setOverrideEmail] = useState('')
+  const [overrideEmail, setOverrideEmail] = useState<string | undefined>(undefined)
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false)
   // AlertDialog defaults to portaling into document.body, which the vaul Drawer's
   // modal mode treats as "outside" and blocks with its own overlay — pointing the
@@ -59,13 +58,9 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
   }
 
   function handleResend() {
-    const trimmedOverride = useOverrideEmail ? overrideEmail.trim() : ''
     startResendTransition(async () => {
       setError(null)
-      const result = await regenerateLessonToken(
-        lesson.id,
-        trimmedOverride || undefined,
-      )
+      const result = await regenerateLessonToken(lesson.id, overrideEmail)
       if (result.error) {
         setError(result.error)
       } else if (result.warning) {
@@ -110,12 +105,9 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
         {lesson.status === 'pending' && (
           <OverrideEmailField
             targetEmail={instructor.email}
-            checked={useOverrideEmail}
-            onCheckedChange={setUseOverrideEmail}
             disabled={isResending}
-            checkboxLabel="Send to a different email for this resend only"
-            inputValue={overrideEmail}
-            onInputChange={setOverrideEmail}
+            editAriaLabel="Send to a different email for this resend only"
+            onOverrideChange={setOverrideEmail}
           />
         )}
 

@@ -49,7 +49,7 @@ export default function NewLessonForm({
     activeCategory && categories.includes(activeCategory) ? activeCategory : (categories[0] ?? '')
   const [selectedCategory, setSelectedCategory] = useState(initialCategory)
   const [selectedStudentId, setSelectedStudentId] = useState('')
-  const [useOverrideEmail, setUseOverrideEmail] = useState(false)
+  const [overrideEmail, setOverrideEmail] = useState<string | undefined>(undefined)
 
   const filteredStudents = students.filter((s) => s.category === selectedCategory)
 
@@ -68,8 +68,8 @@ export default function NewLessonForm({
     }
 
     const overrideEmailValue = formData.get('overrideEmail')
-    const overrideEmail =
-      useOverrideEmail && typeof overrideEmailValue === 'string' && overrideEmailValue.trim()
+    const submittedOverrideEmail =
+      typeof overrideEmailValue === 'string' && overrideEmailValue.trim()
         ? overrideEmailValue.trim()
         : undefined
 
@@ -80,7 +80,7 @@ export default function NewLessonForm({
         studentId,
         category,
         scheduledAt: slot.toISOString(),
-        overrideEmail,
+        overrideEmail: submittedOverrideEmail,
       })
       if (result.error) {
         setError(result.error)
@@ -166,13 +166,12 @@ export default function NewLessonForm({
           </Select>
         </div>
 
+        <input type="hidden" name="overrideEmail" value={overrideEmail ?? ''} />
         <OverrideEmailField
           targetEmail={instructor.email}
-          checked={useOverrideEmail}
-          onCheckedChange={setUseOverrideEmail}
           disabled={isPending}
-          checkboxLabel="Send to a different email for this lesson only"
-          inputName="overrideEmail"
+          editAriaLabel="Send to a different email for this lesson only"
+          onOverrideChange={setOverrideEmail}
         />
 
         {error && <p className="text-xs text-destructive">{error}</p>}
