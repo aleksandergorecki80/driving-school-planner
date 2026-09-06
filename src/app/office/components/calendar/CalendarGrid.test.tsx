@@ -2,6 +2,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, fireEvent, cleanup } from '@testing-library/react'
 import { toast } from 'sonner'
+import * as officeTime from '@/lib/office-time'
 import CalendarGrid from './CalendarGrid'
 
 vi.mock('sonner', () => ({ toast: vi.fn() }))
@@ -12,13 +13,12 @@ const day = new Date('2050-06-15T00:00:00.000Z')
 describe('CalendarGrid — past slot click-guard', () => {
   afterEach(() => {
     cleanup()
-    vi.useRealTimers()
+    vi.restoreAllMocks()
     vi.mocked(toast).mockClear()
   })
 
   it('does not call onSlotClick, but shows a toast, for a slot whose time has already passed today', () => {
-    vi.useFakeTimers()
-    vi.setSystemTime(NOW)
+    vi.spyOn(officeTime, 'officeNowAsNaiveUTC').mockReturnValue(NOW)
 
     const onSlotClick = vi.fn()
     const { getByLabelText } = render(
@@ -40,8 +40,7 @@ describe('CalendarGrid — past slot click-guard', () => {
   })
 
   it('calls onSlotClick, and does not show a toast, for a slot later today', () => {
-    vi.useFakeTimers()
-    vi.setSystemTime(NOW)
+    vi.spyOn(officeTime, 'officeNowAsNaiveUTC').mockReturnValue(NOW)
 
     const onSlotClick = vi.fn()
     const { getByLabelText } = render(

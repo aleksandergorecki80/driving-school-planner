@@ -251,23 +251,23 @@ The new SQL migration only changes a comparison condition inside an existing fun
 
 #### Automated
 
-- [x] 1.1 Type checking passes: `npm run typecheck`
-- [x] 1.2 Linting passes: `npm run lint`
-- [x] 1.3 Full build succeeds: `npm run build`
-- [x] 1.4 New test passes: `npx vitest run src/lib/office-time.test.ts`
+- [x] 1.1 Type checking passes: `npm run typecheck` — 894a621
+- [x] 1.2 Linting passes: `npm run lint` — 894a621
+- [x] 1.3 Full build succeeds: `npm run build` — 894a621
+- [x] 1.4 New test passes: `npx vitest run src/lib/office-time.test.ts` — 894a621
 
 ### Phase 2: Fix the calendar UI guard
 
 #### Automated
 
-- [ ] 2.1 Type checking passes: `npm run typecheck`
-- [ ] 2.2 Linting passes: `npm run lint`
-- [ ] 2.3 Full build succeeds: `npm run build`
-- [ ] 2.4 CalendarGrid.test.tsx passes: `npx vitest run src/app/office/components/calendar/CalendarGrid.test.tsx`
+- [x] 2.1 Type checking passes: `npm run typecheck`
+- [x] 2.2 Linting passes: `npm run lint`
+- [x] 2.3 Full build succeeds: `npm run build`
+- [x] 2.4 CalendarGrid.test.tsx passes: `npx vitest run src/app/office/components/calendar/CalendarGrid.test.tsx`
 
 #### Manual
 
-- [ ] 2.5 A wall-clock-past, UTC-future slot renders disabled with the past-slot toast
+- [x] 2.5 A wall-clock-past, UTC-future slot renders disabled with the past-slot toast
 
 ### Phase 3: Fix the domain invariant
 
