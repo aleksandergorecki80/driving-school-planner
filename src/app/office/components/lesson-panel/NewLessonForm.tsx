@@ -13,6 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox'
 import { DetailRow } from '@/components/lesson/DetailRow'
 import { OverrideEmailField } from '@/components/lesson/OverrideEmailField'
 import { formatLessonDateTime } from '@/lib/format-lesson-datetime'
@@ -142,28 +150,31 @@ export default function NewLessonForm({
             Student
           </Label>
           <input type="hidden" name="studentId" value={selectedStudentId} />
-          <Select
-            value={selectedStudentId}
-            onValueChange={(value) => setSelectedStudentId(value ?? '')}
-            disabled={isPending || filteredStudents.length === 0}
-            modal={false}
-            items={filteredStudents.map((s) => ({ label: s.name, value: s.id }))}
+          <Combobox
+            items={filteredStudents}
+            value={filteredStudents.find((s) => s.id === selectedStudentId) ?? null}
+            onValueChange={(student) => setSelectedStudentId(student?.id ?? '')}
+            itemToStringValue={(student: StudentRow) => student.name}
+            itemToStringLabel={(student: StudentRow) => student.name}
           >
-            <SelectTrigger id="nl-student" className="w-full">
-              <SelectValue
-                placeholder={
-                  filteredStudents.length === 0 ? 'No students in this category' : 'Select a student'
-                }
-              />
-            </SelectTrigger>
-            <SelectContent container={rootEl} alignItemWithTrigger={false}>
-              {filteredStudents.map((s) => (
-                <SelectItem key={s.id} value={s.id}>
-                  {s.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <ComboboxInput
+              id="nl-student"
+              disabled={isPending || filteredStudents.length === 0}
+              placeholder={
+                filteredStudents.length === 0 ? 'No students in this category' : 'Select a student'
+              }
+            />
+            <ComboboxContent container={rootEl}>
+              <ComboboxEmpty>No students found.</ComboboxEmpty>
+              <ComboboxList>
+                {(student: StudentRow) => (
+                  <ComboboxItem key={student.id} value={student}>
+                    {student.name}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
         </div>
 
         <input type="hidden" name="overrideEmail" value={overrideEmail ?? ''} />
