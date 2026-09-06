@@ -1,12 +1,13 @@
 'use client'
+import { memo, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { officeNowAsNaiveUTC } from '@/lib/office-time'
 import type { LessonRow } from '../types'
 import LessonBlock from './LessonBlock'
-
-const SLOT_START_HOUR = 7
-const SLOT_COUNT = 28  // 07:00–20:30 in 30-min steps
+import NowLine from './NowLine'
+import { SLOT_START_HOUR, SLOT_COUNT } from './grid-constants'
+import { NOW_LINE_TICK_MS } from './now-line'
 
 const SLOT_LABELS = Array.from({ length: SLOT_COUNT }, (_, i) => {
   const h = SLOT_START_HOUR + Math.floor(i / 2)
@@ -23,6 +24,34 @@ function handlePastSlotClick() {
   })
 }
 
+// Memoized so a 60s now-tick only re-renders the (at most one) cell whose
+// isPast value actually flipped, not all 196 slot cells.
+const SlotCell = memo(function SlotCell({
+  day,
+  rowIdx,
+  colIdx,
+  isPast,
+  onSlotClick,
+}: {
+  day: Date
+  rowIdx: number
+  colIdx: number
+  isPast: boolean
+  onSlotClick: (date: Date) => void
+}) {
+  const offsetMs = (SLOT_START_HOUR * 60 + rowIdx * 30) * 60 * 1000
+  const slotDate = new Date(day.getTime() + offsetMs)
+  return (
+    <div
+      onClick={isPast ? handlePastSlotClick : () => onSlotClick(slotDate)}
+      aria-label={`${DAY_NAMES[colIdx]} ${SLOT_LABELS[rowIdx]}`}
+      aria-disabled={isPast}
+      className="cursor-pointer border-b border-r border-border hover:bg-accent aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent"
+      style={{ gridRow: rowIdx + 2, gridColumn: colIdx + 2 }}
+    />
+  )
+})
+
 interface Props {
   days: Date[]
   lessons: LessonRow[]
@@ -32,9 +61,14 @@ interface Props {
 }
 
 export default function CalendarGrid({ days, lessons, direction, onSlotClick, onLessonClick }: Props) {
-  // Computed once per render, not per slot — officeNowAsNaiveUTC() does real
-  // Intl.DateTimeFormat work and this grid renders up to 7 * SLOT_COUNT slots.
-  const nowMs = officeNowAsNaiveUTC().getTime()
+  // Ticks independently of AutoRefresh's 30s poll so the now-line and
+  // past-slot dimming/click-guard stay live between polls/navigations.
+  const [now, setNow] = useState(() => officeNowAsNaiveUTC())
+  useEffect(() => {
+    const id = setInterval(() => setNow(officeNowAsNaiveUTC()), NOW_LINE_TICK_MS)
+    return () => clearInterval(id)
+  }, [])
+  const nowMs = now.getTime()
 
   return (
     <div
@@ -80,16 +114,15 @@ export default function CalendarGrid({ days, lessons, direction, onSlotClick, on
       {days.map((day, colIdx) =>
         Array.from({ length: SLOT_COUNT }, (_, rowIdx) => {
           const offsetMs = (SLOT_START_HOUR * 60 + rowIdx * 30) * 60 * 1000
-          const slotDate = new Date(day.getTime() + offsetMs)
-          const isPast = slotDate.getTime() < nowMs
+          const isPast = day.getTime() + offsetMs < nowMs
           return (
-            <div
+            <SlotCell
               key={`${colIdx}-${rowIdx}`}
-              onClick={isPast ? handlePastSlotClick : () => onSlotClick(slotDate)}
-              aria-label={`${DAY_NAMES[colIdx]} ${SLOT_LABELS[rowIdx]}`}
-              aria-disabled={isPast}
-              className="cursor-pointer border-b border-r border-border hover:bg-accent aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-transparent"
-              style={{ gridRow: rowIdx + 2, gridColumn: colIdx + 2 }}
+              day={day}
+              rowIdx={rowIdx}
+              colIdx={colIdx}
+              isPast={isPast}
+              onSlotClick={onSlotClick}
             />
           )
         }),
@@ -118,6 +151,11 @@ export default function CalendarGrid({ days, lessons, direction, onSlotClick, on
           />
         )
       })}
+
+      {/* Now-line — renders only on today's column, if today is in view */}
+      {days.map((day, colIdx) => (
+        <NowLine key={colIdx} day={day} now={now} gridColumn={colIdx + 2} />
+      ))}
     </div>
   )
 }
