@@ -3,7 +3,7 @@ project: "DrivePlan"
 version: 1
 status: draft
 created: 2026-06-04
-updated: 2026-09-06 (TD-13 shipped)
+updated: 2026-09-06 (PM-01 course-management ticket added)
 prd_version: 1
 main_goal: speed
 top_blocker: capacity
@@ -158,6 +158,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 
 | TD-16      | calendar-now-line-indicator | Add a clear now-line indicator separating past from future slots in the calendar | done — see `plan.md` | ✅ Shipped 2026-09-06 (2 phases, commits `1f12401`/`8cbc9f8`, PR #89, `context/changes/calendar-now-line-indicator/plan.md`): shared `grid-constants.ts` (`SLOT_START_HOUR`/`SLOT_COUNT`) + pure `computeNowLineTop(day, now)` position math, unit-tested at window boundaries/mid-slot/wrong-day; `CalendarGrid` now ticks its `nowMs` state every 60s (shared by dimming, click-guard, and the new `NowLine` component — a blue line+dot on today's column, above lesson blocks, motion-reduce-gated). Impl review verdict: APPROVED, 0 critical/warning findings, 3 observations. GitHub issue #87 closed. |
 | TD-17      | server-side-override-email-validation | Add server-side email format/length validation for `overrideEmail` | no | 🟡 Found 2026-09-06 during impl-review of `override-email-inline-edit` (TD-10): `createLesson.ts` (~line 74) and `regenerateLessonToken.ts` (~line 37) accept `overrideEmail` with only `.trim() || fallback` — no format/length check server-side. The new `OverrideEmailField`'s `checkValidity()` is client-side UX only; both server actions are directly callable, bypassing it. Deliberately left out of the `override-email-inline-edit` phase (its plan's "What We're NOT Doing" explicitly excluded server-action changes). Not shown exploitable for XSS/injection from what was reviewed. GitHub issue #94 (open). |
+| PM-01      | course-management        | Office creates a "course" (kurs): date, licence category, lead instructor — students are then enrolled/added to the course | no | 🟢 Post-MVP feature request (2026-09-06). Explicitly parked as a PRD non-goal ("No course management or student-to-course enrollment — multi-session courses with enrolled students are a later iteration", `prd.md` §Non-Goals). Scope as requested: a `course` entity carrying a date, a licence category, and a lead (prowadzący) instructor; students are added to the course after creation. Needs a `/10x-shape` + PRD pass before `/10x-plan` — relationship to the existing `lessons` table (does a course group multiple lessons, replace ad-hoc lesson booking for enrolled students, or stand alone as a roster?) and category/instructor coherence with `TD-01`'s invariant are both unresolved. GitHub issue #103 (open). |
 
 ## Open Roadmap Questions
 
@@ -174,6 +175,7 @@ What is already in place in the codebase as of 2026-06-04 (auto-researched + use
 - **Native mobile app** — Why parked: PRD §Non-Goals; instructor view is responsive web only.
 - **Instructor self-service availability** — Why parked: PRD §Non-Goals; the office manages all scheduling.
 - **GitHub Actions CI/CD workflow** — Why parked: `.vercel/` is already linked; manual deploys via the Vercel CLI are sufficient for MVP. Auto-deploy on merge is a developer-workflow polish item, not a user-facing feature.
+- **Course (kurs) management and student enrollment** — Why parked: PRD §Non-Goals; marked as a later iteration. Tracked as **PM-01** in Backlog Handoff above.
 
 ## Done
 
