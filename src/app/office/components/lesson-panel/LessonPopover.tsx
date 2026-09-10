@@ -3,6 +3,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { X } from 'lucide-react'
 import { cancelLesson, regenerateLessonToken } from '@/app/actions/lessons'
+import { cn } from '@/lib/utils'
 import type { LessonRow } from '../types'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -37,7 +38,11 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
   const [confirmCancelOpen, setConfirmCancelOpen] = useState(false)
   // AlertDialog defaults to portaling into document.body, which the vaul Drawer's
   // modal mode treats as "outside" and blocks with its own overlay — pointing the
-  // portal container at this panel's own root (inside the drawer) fixes that.
+  // portal container at this panel's own root (inside the drawer) fixes that. The
+  // trigger below blocks pointer events until rootEl is set (see NewLessonForm's
+  // rootEl comment for the full mechanism — Base UI's `disabled` prop alone doesn't
+  // close this window, since it's enforced in the onClick handler rather than via the
+  // native `disabled` attribute).
   const [rootEl, setRootEl] = useState<HTMLDivElement | null>(null)
 
   const studentName = lesson.students?.name ?? 'Unknown'
@@ -132,8 +137,11 @@ export default function LessonPopover({ instructor, lesson, onClose }: Props) {
                 <Button
                   type="button"
                   variant="destructive"
-                  disabled={isPending}
-                  className={lesson.status === 'pending' ? 'w-full' : 'mt-auto w-full'}
+                  disabled={isPending || !rootEl}
+                  className={cn(
+                    lesson.status === 'pending' ? 'w-full' : 'mt-auto w-full',
+                    !rootEl && 'pointer-events-none',
+                  )}
                 >
                   {isPending ? 'Cancelling…' : 'Cancel lesson'}
                 </Button>

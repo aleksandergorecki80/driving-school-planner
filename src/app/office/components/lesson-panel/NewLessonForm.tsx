@@ -3,6 +3,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { X } from 'lucide-react'
 import { createLesson } from '@/app/actions/lessons'
+import { cn } from '@/lib/utils'
 import type { StudentRow } from '../types'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -49,7 +50,18 @@ export default function NewLessonForm({
   // modal mode treats as "outside" and immediately closes on open — pointing the
   // portal container at this form's own root (inside the drawer) fixes that. State
   // (not a plain ref) is required: the container must trigger a re-render once the
-  // DOM node exists, or Select's portal can capture a stale null on first paint.
+  // DOM node exists, or Select's portal can capture a stale null on first paint. Even
+  // with state, the trigger renders one commit before that re-render lands — a click
+  // fast enough to land in that window opens the popup with a still-null container,
+  // which then never renders anything for the rest of that mount (confirmed via a
+  // Playwright trace: the click registers, aria-expanded never even flips, and no
+  // listbox ever appears). Base UI's own `disabled` prop doesn't close this window —
+  // it's enforced inside the React onClick handler (so a real DOM click still lands
+  // and gets silently no-op'd), not via the native `disabled` attribute, so it neither
+  // blocks a fast automated click nor gives Playwright's actionability wait anything to
+  // wait on. `pointer-events-none` on the trigger while `!rootEl` blocks the click at
+  // the browser/hit-testing level instead, which Playwright's "receives events" check
+  // does wait out.
   const [rootEl, setRootEl] = useState<HTMLDivElement | null>(null)
 
   const categories = instructor.categories.slice().sort()
@@ -129,10 +141,13 @@ export default function NewLessonForm({
               setSelectedCategory(value ?? '')
               setSelectedStudentId('')
             }}
-            disabled={isPending}
+            disabled={isPending || !rootEl}
             modal={false}
           >
-            <SelectTrigger id="nl-category" className="w-full">
+            <SelectTrigger
+              id="nl-category"
+              className={cn('w-full', !rootEl && 'pointer-events-none opacity-50')}
+            >
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>
             <SelectContent container={rootEl} alignItemWithTrigger={false}>
@@ -159,7 +174,8 @@ export default function NewLessonForm({
           >
             <ComboboxInput
               id="nl-student"
-              disabled={isPending || filteredStudents.length === 0}
+              disabled={isPending || filteredStudents.length === 0 || !rootEl}
+              className={!rootEl ? 'pointer-events-none opacity-50' : undefined}
               placeholder={
                 filteredStudents.length === 0 ? 'No students in this category' : 'Select a student'
               }
