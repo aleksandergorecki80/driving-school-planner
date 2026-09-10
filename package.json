@@ -12,6 +12,7 @@
     "prepare": "lefthook install",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
     "review": "npx tsx --env-file=.env.local tools/code-review/review.ts",
     "review:ci": "npx tsx tools/code-review/review.ts",
     "review:working": "git diff | npx tsx --env-file=.env.local tools/code-review/review.ts",

@@ -3,6 +3,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, cleanup } from '@testing-library/react'
 import type { LessonRow } from '../types'
 import LessonBlock from './LessonBlock'
+import { formatLessonDateTime } from '@/lib/format-lesson-datetime'
 
 function makeLesson(status: LessonRow['status']): LessonRow {
   return {
@@ -36,7 +37,9 @@ describe('LessonBlock — status badge', () => {
 
     expect(getByText(label).textContent).toBe(label)
 
-    const tile = getByRole('button', { name: `Jane Doe – B – ${label}` })
+    const tile = getByRole('button', {
+      name: `Jane Doe – B – ${label} – ${formatLessonDateTime('2050-06-15T13:00:00.000Z')}`,
+    })
     expect(tile).not.toBeNull()
   })
 })
