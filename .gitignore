@@ -89,6 +89,8 @@ skills-lock.json
 
 # playwright
 playwright/.auth/
+/test-results/
+/playwright-report/
 
 # Sentry Config File
 .env.sentry-build-plugin

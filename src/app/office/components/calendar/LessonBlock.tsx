@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { LESSON_STATUS } from '@/components/lesson/lesson-status'
+import { formatLessonDateTime } from '@/lib/format-lesson-datetime'
 
 interface Props {
   lesson: LessonRow
@@ -24,7 +25,7 @@ export default function LessonBlock({ lesson, gridRow, gridColumn, onClick }: Pr
         e.stopPropagation()
         onClick()
       }}
-      aria-label={`${studentName} – ${lesson.category} – ${status.label}`}
+      aria-label={`${studentName} – ${lesson.category} – ${status.label} – ${formatLessonDateTime(lesson.scheduled_at)}`}
       className={cn(
         'm-0.5 h-auto w-full cursor-pointer flex-col items-start justify-start gap-0.5 overflow-hidden rounded border px-1 py-0.5 text-xs text-left z-10',
         status.chipClassName,
