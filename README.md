@@ -1,3 +1,39 @@
+## About
+
+**DrivePlan** is a lesson-scheduling web app for driving schools. It replaces the
+phone/SMS coordination between office staff and instructors with a shared,
+durable scheduling record.
+
+- **Office staff** log in with a shared account and book lessons: pick a licence
+  category (B, C, D, T…), choose an instructor who holds that category, pick a
+  date/time, and attach a student from the pre-seeded roster. The lesson is
+  created with status `pending`.
+- **Instructors** have no login. Each instructor gets a unique tokenized URL
+  (e.g. `/lesson/[token]`) emailed to them, showing only their own calendar.
+  From there they approve or reject each pending lesson; a rejection requires a
+  short reason, which can optionally be AI-suggested.
+- Status changes (`pending` → `confirmed` / `rejected`) are picked up by the
+  office view via polling — no manual reload, no push infrastructure.
+
+### Data flow
+
+1. **Office UI** (`src/app/office`) calls **Server Actions**
+   (`src/app/actions/lessons`) to create, cancel, or regenerate the token for a
+   lesson — no client-side REST calls for mutations.
+2. Server Actions operate on **domain logic** in `src/domain/lesson`
+   (`Lesson`, `LessonRepository`), which enforces the core business rule:
+   a lesson can only be created for an instructor who holds the lesson's
+   licence category, with students filtered the same way.
+3. The repository persists through **Supabase** (PostgreSQL) using
+   `src/lib/supabase` clients; Supabase Auth backs the office's session.
+4. On lesson creation, `src/lib/email/sendLessonLink.ts` emails the instructor
+   their tokenized lesson-view link.
+5. The **instructor view** (`src/app/lesson/[token]`) reads and mutates lesson
+   state via `respondToLesson` using only the URL token — no login. Rejection
+   reasons can be generated through `src/lib/ai/suggestRejectionReasons.ts`.
+6. The **office view** re-polls lesson status on an interval, so approvals/
+   rejections made by instructors surface without a manual refresh.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
